@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="https://github.com/obase/spring-mysql"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://github.com/obase/spring-mysql"
+	elementFormDefault="qualified">
+
+	<xs:complexType name="classType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="xs:string" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="sqlType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:element name="spring-mysql">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="table-class" type="classType" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element name="meta-class" type="classType" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element name="statement" type="sqlType" maxOccurs="unbounded" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="namespace" type="xs:string" />
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
