@@ -1,4 +1,4 @@
-package com.yy.risedev.jedis;
+package com.github.obase.jedis;
 
 /**
  * The Jedis client exception thrown to indicate an execution error

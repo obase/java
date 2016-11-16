@@ -1,4 +1,4 @@
-package com.yy.risedev.jedis.impl;
+package com.github.obase.jedis.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import com.yy.risedev.jedis.JedisCallback;
-import com.yy.risedev.jedis.JedisClient;
-import com.yy.risedev.jedis.PipelineCallback;
-import com.yy.risedev.jedis.TransactionCallback;
+import com.github.obase.jedis.JedisCallback;
+import com.github.obase.jedis.JedisClient;
+import com.github.obase.jedis.PipelineCallback;
+import com.github.obase.jedis.TransactionCallback;
 
 import java.util.Set;
 

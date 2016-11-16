@@ -1,4 +1,4 @@
-package com.yy.risedev.jedis.impl;
+package com.github.obase.jedis.impl;
 
 import static redis.clients.util.Hashing.MURMUR_HASH;
 
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.yy.risedev.jedis.JedisClient;
-import com.yy.risedev.jedis.JedisClientException;
-import com.yy.risedev.jedis.JedisClientSharding;
-import com.yy.risedev.jedis.ShardInfo;
+import com.github.obase.jedis.JedisClient;
+import com.github.obase.jedis.JedisClientException;
+import com.github.obase.jedis.JedisClientSharding;
+import com.github.obase.jedis.ShardInfo;
 
 public class JedisClientShardingImpl implements JedisClientSharding {
 
