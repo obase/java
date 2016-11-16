@@ -1,4 +1,4 @@
-package com.yy.risedev.jedis.impl;
+package com.github.obase.jedis.impl;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import com.yy.risedev.jedis.JedisCallback;
-import com.yy.risedev.jedis.JedisClient;
-import com.yy.risedev.jedis.PipelineCallback;
-import com.yy.risedev.jedis.TransactionCallback;
+import com.github.obase.jedis.JedisCallback;
+import com.github.obase.jedis.JedisClient;
+import com.github.obase.jedis.PipelineCallback;
+import com.github.obase.jedis.TransactionCallback;
 
 import java.util.Set;
 
@@ -4692,7 +4692,7 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@Override
+	/*@Override FOR 2.9.0
 	public List<byte[]> bitfield(byte[] key, byte[]... arguments) {
 		Jedis jedis = null;
 		try {
@@ -4703,9 +4703,9 @@ public class JedisClientImpl implements JedisClient {
 				jedis.close();
 			}
 		}
-	}
+	}*/
 
-	@Override
+	/*@Override FOR: 2.9.0
 	public List<Long> bitfield(String key, String... arguments) {
 		Jedis jedis = null;
 		try {
@@ -4716,7 +4716,7 @@ public class JedisClientImpl implements JedisClient {
 				jedis.close();
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public byte[] getex(byte[] key, int seconds) {

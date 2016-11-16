@@ -1,4 +1,4 @@
-package com.yy.risedev.jedis;
+package com.github.obase.jedis;
 
 import redis.clients.jedis.Transaction;
 
