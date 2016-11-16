@@ -1,6 +1,6 @@
 # Summary
 
-È·¶¨obaseËùÓÃspring, servlet, jsp, jdkµÈÃ÷È·°æ±¾
+ç¡®å®šobaseæ‰€ç”¨spring, servlet, jsp, jdkç­‰æ˜ç¡®ç‰ˆæœ¬
 
 # Maven dependency
 
