@@ -3,11 +3,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.obase</groupId>
-	<artifactId>spring-parent</artifactId>
+	<artifactId>obase-parent</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/obase/spring-parent</url>
+	<url>https://github.com/obase/java</url>
 	<description>
 		技术支撑:Spring4.2.8+/JDK7+/JavaEE6/Servlet3.0+/JSP2.2+. 
 		具体参见:http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/index.html#6
@@ -195,6 +195,20 @@
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
 				</plugin>
+				<!-- gpg plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.5</version>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<!-- uniform setting for sub project -->
@@ -206,26 +220,13 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
