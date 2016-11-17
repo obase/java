@@ -40,6 +40,16 @@
 			</dependency>
 
 			<!-- =============================== -->
+			<!-- embedded tomcat -->
+			<!-- =============================== -->
+			<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-core</artifactId>
+				<version>7.0.72</version>
+			</dependency>
+
+			<!-- =============================== -->
 			<!-- logging -->
 			<!-- =============================== -->
 			<dependency>
@@ -270,4 +280,15 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+	<modules>
+		<module>obase-config</module>
+		<module>obase-util</module>
+		<module>obase-jackson</module>
+		<module>obase-office</module>
+		<module>obase-pdf</module>
+		<module>obase-mail</module>
+		<module>obase-test</module>
+		<module>obase-web</module>
+		<module>obase-web-boot</module>
+	</modules>
 </project>
