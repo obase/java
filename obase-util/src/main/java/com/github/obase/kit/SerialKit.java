@@ -8,6 +8,9 @@ import java.io.ObjectOutputStream;
 
 public final class SerialKit {
 
+	private SerialKit() {
+	}
+
 	public static byte[] serialize(Object object) {
 		if (object == null) {
 			return null;

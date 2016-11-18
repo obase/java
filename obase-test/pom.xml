@@ -1,11 +1,74 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.github.obase</groupId>
-    <artifactId>obase-parent</artifactId>
-    <version>1.0.0</version>
-  </parent>
-  <artifactId>obase-test</artifactId>
-  <name>${project.groupId}:${project.artifactId}</name>
-  <description>Obase tool for junit test and web test</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.obase</groupId>
+		<artifactId>obase-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>obase-test</artifactId>
+	<version>1.0.0</version>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Obase tool for junit test and web test</description>
+
+	<dependencies>
+		<!-- ================================ -->
+		<!-- spring test frameworks -->
+		<!-- ================================ -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+
+		<!-- ================================ -->
+		<!-- junit frameworks -->
+		<!-- ================================ -->
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.stefanbirkner/system-rules -->
+		<dependency>
+			<groupId>com.github.stefanbirkner</groupId>
+			<artifactId>system-rules</artifactId>
+			<version>1.16.1</version>
+		</dependency>
+
+
+		<!-- ================================ -->
+		<!-- tomcat frameworks -->
+		<!-- ================================ -->
+		<!-- https://devcenter.heroku.com/articles/create-a-java-web-application-using-embedded-tomcat#add-a-launcher-class -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-websocket</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jasper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jasper-el</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jsp-api</artifactId>
+		</dependency>
+	</dependencies>
 </project>
