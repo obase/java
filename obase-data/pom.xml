@@ -6,7 +6,7 @@
 		<artifactId>obase-parent</artifactId>
 		<version>1.0.0</version>
 	</parent>
-	<artifactId>obase-serial</artifactId>
+	<artifactId>obase-data</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Objase tool for generic data: json, xml, csv... etc </description>
 </project>
