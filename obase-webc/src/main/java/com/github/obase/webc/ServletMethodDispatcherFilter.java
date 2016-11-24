@@ -138,7 +138,6 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			final ServletMethodObject object = objects[hmethod.index];
 			if (object != null) {
 				
-				/*设置上下文变量*/
 				req.setAttribute(Webc.ATTR_NAMESPACE, namespace);
 				
 				final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
