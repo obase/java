@@ -1,4 +1,4 @@
-package com.github.obase.config;
+package com.github.obase.env;
 
 public final class Envs {
 

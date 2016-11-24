@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:config="http://risedev.yy.com/schema/config"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:dsn="http://risedev.yy.com/schema/dsn" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://risedev.yy.com/schema/dsn http://risedev.yy.com/schema/dsn/rise-dsn-1.1.xsd
+	http://risedev.yy.com/schema/config http://risedev.yy.com/schema/config/rise-config-1.0.xsd">
+
+	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://${${host}}:${${port}}/${${default_db}}"></property>
+		<property name="username" value="${${user}}"></property>
+		<property name="password" value="${${password}}"></property>
+	</bean>
+
+	<dsn:jedisPool id="jedisPool">
+		<dsn:test dsn="cloudapp_cloudredis1031" />
+		<dsn:dev dsn="cloudapp_cloudredis1031" />
+	</dsn:jedisPool>
+
+	<bean id="mysqlClient" class="com.github.obase.mysql.impl.MysqlClientPlatformTransactionImpl" init-method="init">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.yy.risedev.myweb.entity,com.yy.risedev.myweb.model" />
+		<property name="configLocations" value="classpath:config/*.xml" />
+		<property name="showSql" value="true" />
+		<property name="updateTable" value="true" />
+	</bean>
+
+	<bean id="transactionManager" class="com.github.obase.spring.transaction.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<constructor-arg ref="transactionManager" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<context:component-scan base-package="com.yy.risedev.myweb.service,com.yy.risedev.myweb.controller" />
+
+	<dsn:shardedJedisPool id="jedis">
+		<dsn:dev dsn="cloudapp_cloudredis1031">
+			<property name="shards">
+				<list>
+					<dsn:jedisShardInfo name="first" weight="2" db="1" />
+					<dsn:jedisShardInfo name="second" weight="3" db="2" />
+					<dsn:jedisShardInfo name="three" weight="1" db="3" />
+				</list>
+			</property>
+		</dsn:dev>
+	</dsn:shardedJedisPool>
+
+	<bean id="jedisClient" class="com.github.risedragone.jedis.impl.JedisClientImpl">
+		<constructor-arg ref="jedisPool" />
+	</bean>
+	
+	<!-- <bean  class="com.yy.risedev.config.ApplicationProperties">
+		<property name="locations" value=""></property>
+		<property name="" value="dataSource"></property>
+		<property name="jedisPoolRef" value="jedisPool"></property>
+	</bean>
+	 -->
+	<config:application-properties 
+		id="appprops"
+		locations="classpath*:app.properties,classpath*:ip.properties"
+		rules="classpath:rules.xml"
+		dataSourceRef="dataSource"
+		query="select `key`, `val` from `app.properties`"
+		jedisPoolRef="jedisPool"
+		hash="testhash"
+		fatalIfError="false"
+		timer="20"/>
+</beans>
