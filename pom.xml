@@ -309,4 +309,7 @@
 		</repository>
 	</distributionManagement>
 
+	<modules>
+		<module>obase-demo</module>
+	</modules>
 </project>
