@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -71,4 +72,16 @@
 			<artifactId>tomcat-jsp-api</artifactId>
 		</dependency>
 	</dependencies>
+=======
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.github.obase</groupId>
+    <artifactId>obase-parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>obase-test</artifactId>
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>Obase tool for junit test and web test</description>
+>>>>>>> branch 'master' of https://github.com/obase/java.git
 </project>
