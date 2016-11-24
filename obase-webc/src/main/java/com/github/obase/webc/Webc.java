@@ -51,7 +51,6 @@ public interface Webc {
 	String CONTENT_TYPE_XML = "text/xml; charset=utf-8";
 	String CHARSET_NAME = "UTF-8";
 	Charset CHARSET = Charset.forName(CHARSET_NAME);
-	String _ = ""; // current method name
 	String $ = "$"; // using controller path
 	int BUILDER_CAPACITY = 2048;
 	char COMMA = ',';

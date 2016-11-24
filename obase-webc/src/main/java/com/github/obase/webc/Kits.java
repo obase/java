@@ -50,7 +50,6 @@ public abstract class Kits {
 		return new Kit(request, response, jedisPool);
 	}
 
-	/*********************************** 属性置换列表 ***********************************/
 	public static interface PropertyConverter<T> {
 		T convert(String value);
 	}
@@ -164,7 +163,6 @@ public abstract class Kits {
 		PropertyConverterCache.put(key, value);
 	}
 
-	/*********************************** 静态方法列表 ***********************************/
 	public static void render(HttpServletRequest request, HttpServletResponse response, String pagePath) throws ServletException, IOException {
 		request.getRequestDispatcher(pagePath).include(request, response);
 	}
