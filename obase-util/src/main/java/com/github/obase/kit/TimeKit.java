@@ -5,12 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * 该类是DateUtil的改进类, 专门用于处理Unix Time时间, 即格式为"yyyy-MM-dd HH:mm:ss".
- * 
- * @author HeZhaowu
- * 
- */
 public final class TimeKit {
 
 	static ThreadLocal<Calendar> CalendarLocal = new ThreadLocal<Calendar>() {
@@ -22,12 +16,6 @@ public final class TimeKit {
 
 	};
 
-	/**
-	 * 标记各个字段的起始位置;
-	 * 
-	 * @author HeZhaowu
-	 * 
-	 */
 	static interface Index {
 		/* yyyy-MM-dd HH:mm:ss */
 		int[] YEAR = { 0, 4 };
@@ -38,13 +26,6 @@ public final class TimeKit {
 		int[] SECOND = { 17, 19 };
 	}
 
-	/**
-	 * 解析日期字串,返回各个时间段的数值. 依次是年, 月, 日, 时, 分, 钞.
-	 * 
-	 * @param val
-	 *            , 日期字串, 固定格式为"yyyy-MM-dd HH:mm:ss"
-	 * @return 解析后的各个时间段的数值数组.
-	 */
 	public static int[] extractUnixTime(String val) {
 		int[] vals = new int[6];
 		int len = val.length();
@@ -69,13 +50,6 @@ public final class TimeKit {
 		return vals;
 	}
 
-	/**
-	 * 解析日期对象,返回各个时间段的数值. 依次是年, 月, 日, 时, 分, 钞.
-	 * 
-	 * @param val
-	 *            , 日期字串, 固定格式为"yyyy-MM-dd HH:mm:ss"
-	 * @return 解析后的各个时间段的数值数组.
-	 */
 	public static int[] extractUnixTime(Date val) {
 		int[] vals = new int[6];
 		Calendar cal = CalendarLocal.get();
@@ -89,12 +63,6 @@ public final class TimeKit {
 		return vals;
 	}
 
-	/**
-	 * 解析日期字串, 返回日期对象.
-	 * 
-	 * @param val
-	 * @return
-	 */
 	public static Date parseUnixTime(String val) {
 		int[] vals = extractUnixTime(val);
 		Calendar cal = CalendarLocal.get();
@@ -123,12 +91,6 @@ public final class TimeKit {
 		return sdf.format(val);
 	}
 
-	/**
-	 * 格式日期对象.
-	 * 
-	 * @param date
-	 * @return
-	 */
 	public static String formatUnixTime(Date date) {
 		int[] vals = extractUnixTime(date);
 		return String.format("%04d-%02d-%02d %02d:%02d:%02d", vals[0], vals[1] + 1, vals[2], vals[3], vals[4], vals[5]);
