@@ -318,21 +318,4 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-<<<<<<< HEAD
-
-	<modules>
-		<module>obase-demo</module>
-=======
-	<modules>
-		<module>obase-config</module>
-		<module>obase-util</module>
-		<module>obase-jackson</module>
-		<module>obase-office</module>
-		<module>obase-pdf</module>
-		<module>obase-mail</module>
-		<module>obase-test</module>
-		<module>obase-web</module>
-		<module>obase-web-boot</module>
->>>>>>> branch 'master' of https://github.com/obase/java.git
-	</modules>
 </project>
