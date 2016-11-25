@@ -13,7 +13,7 @@ import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.Webc.AuthType;
+import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;

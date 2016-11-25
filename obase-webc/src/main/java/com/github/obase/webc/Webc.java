@@ -268,33 +268,4 @@ public interface Webc {
 
 	}
 
-	enum HttpMethod {
-
-		POST(0), GET(1), PUT(2), DELETE(3);
-
-		public final int index;
-
-		private HttpMethod(int index) {
-			this.index = index;
-		}
-	}
-
-	enum AuthType {
-		DEFAULT, // adjust by application
-		NONE, // require nothing
-		LOGINED, // require login
-		PERMISSION, // require permission
-	}
-
-	static class DelegatedClassLoader extends ClassLoader {
-
-		public DelegatedClassLoader(ClassLoader delegate) {
-			super(delegate);
-		}
-
-		public Class<?> defineClass(String name, byte[] data) {
-			return super.defineClass(name, data, 0, data.length);
-		}
-	};
-
 }

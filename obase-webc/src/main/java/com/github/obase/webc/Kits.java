@@ -22,17 +22,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.springframework.cglib.beans.BeanMap;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.util.HtmlUtils;
 
-import com.github.obase.webc.Webc.HttpMethod;
-import com.github.obase.webc.support.security.Principal;
-import com.github.obase.json.Jsons;
 import com.github.obase.data.Message;
+import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.MapKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.kit.TimeKit;
+import com.github.obase.webc.support.security.Principal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

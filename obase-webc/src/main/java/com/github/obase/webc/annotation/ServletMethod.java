@@ -7,8 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.github.obase.webc.Webc;
-import com.github.obase.webc.Webc.AuthType;
-import com.github.obase.webc.Webc.HttpMethod;
+import com.github.obase.webc.AuthType;
 
 /**
  * Auto create httpservlet instance
@@ -21,7 +20,7 @@ public @interface ServletMethod {
 
 	String value() default Webc.$; // "$": join methodName to lookupPath, "": ignore, other: join value to lookupPath
 
-	HttpMethod[] method() default {}; // if empty support all methods
+	org.springframework.http.HttpMethod[] method() default {}; // if empty support all methods
 
 	AuthType auth() default AuthType.DEFAULT;
 

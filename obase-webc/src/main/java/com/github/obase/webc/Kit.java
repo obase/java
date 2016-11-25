@@ -9,7 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.obase.webc.Webc.HttpMethod;
+import org.springframework.http.HttpMethod;
+
 import com.github.obase.webc.support.security.Principal;
 
 import redis.clients.jedis.JedisPool;

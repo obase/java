@@ -18,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartException;
@@ -25,8 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.util.WebUtils;
 
-import com.github.obase.webc.Webc.DelegatedClassLoader;
-import com.github.obase.webc.Webc.HttpMethod;
+import com.github.obase.loader.DelegatedClassLoader;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
@@ -105,7 +105,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 							methods = HttpMethod.values();
 						}
 						for (HttpMethod m : methods) {
-							if (objs[m.index] == null) {
+							if (objs[m.ordinal()] == null) {
 								objs[m.index] = obj;
 							} else {
 								throw new IllegalStateException("Duplicate servlet method lookup path : " + m.name() + " " + lookupPath);
@@ -137,9 +137,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			final HttpMethod hmethod = HttpMethod.valueOf(request.getMethod());
 			final ServletMethodObject object = objects[hmethod.index];
 			if (object != null) {
-				
+
 				req.setAttribute(Webc.ATTR_NAMESPACE, namespace);
-				
+
 				final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
 				if (listener != null) {
 					asyncContext.addListener(listener);
