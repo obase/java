@@ -198,8 +198,8 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			sb.deleteCharAt(sb.length() - 1);
 		}
 
-		if (StringKit.isNotEmpty(methodAnnotation.value())) {
-			if (Webc.$.equals(methodAnnotation.value())) {
+		if (!Webc.$.equals(methodAnnotation.value())) {
+			if (StringKit.isEmpty(methodAnnotation.value())) {
 				sb.append('.').append(targetMethod.getName());
 			} else {
 				sb.append('.').append(methodAnnotation.value());
