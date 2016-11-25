@@ -106,7 +106,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 						}
 						for (HttpMethod m : methods) {
 							if (objs[m.ordinal()] == null) {
-								objs[m.index] = obj;
+								objs[m.ordinal()] = obj;
 							} else {
 								throw new IllegalStateException("Duplicate servlet method lookup path : " + m.name() + " " + lookupPath);
 							}
@@ -135,7 +135,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		final ServletMethodObject[] objects = servletMethodHandlerMap.get(request.getServletPath());
 		if (objects != null) {
 			final HttpMethod hmethod = HttpMethod.valueOf(request.getMethod());
-			final ServletMethodObject object = objects[hmethod.index];
+			final ServletMethodObject object = objects[hmethod.ordinal()];
 			if (object != null) {
 
 				req.setAttribute(Webc.ATTR_NAMESPACE, namespace);
