@@ -111,7 +111,7 @@ import redis.clients.jedis.JedisPool;
 
 **用法**
 ```
-AES <-e|-d> <key> <content>
+AES (-e|-d) (key) (content)
 ```
 参数|作用
 ---|---
