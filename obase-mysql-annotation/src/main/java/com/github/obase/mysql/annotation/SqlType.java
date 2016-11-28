@@ -1,4 +1,4 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.annotation;
 
 import java.sql.Types;
 

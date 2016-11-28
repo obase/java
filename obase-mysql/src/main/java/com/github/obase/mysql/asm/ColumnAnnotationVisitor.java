@@ -3,7 +3,7 @@ package com.github.obase.mysql.asm;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.SpringAsmInfo;
 
-import com.github.obase.mysql.SqlType;
+import com.github.obase.mysql.annotation.SqlType;
 import com.github.obase.mysql.data.ColumnAnnotation;
 
 class ColumnAnnotationVisitor extends AnnotationVisitor {

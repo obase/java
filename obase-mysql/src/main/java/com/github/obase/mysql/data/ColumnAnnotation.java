@@ -1,6 +1,6 @@
 package com.github.obase.mysql.data;
 
-import com.github.obase.mysql.SqlType;
+import com.github.obase.mysql.annotation.SqlType;
 
 public class ColumnAnnotation {
 

@@ -15,6 +15,8 @@ import java.sql.Timestamp;
 
 import org.springframework.asm.Type;
 
+import com.github.obase.mysql.annotation.SqlType;
+
 /**
  * The scalar type supported by mysqlClient, and its default sqlType, length and decimals for creating table.
  * 

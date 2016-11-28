@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.github.obase.mysql.JavaType;
 import com.github.obase.mysql.MysqlClientException;
-import com.github.obase.mysql.SqlType;
+import com.github.obase.mysql.annotation.SqlType;
 import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.data.ColumnAnnotation;
