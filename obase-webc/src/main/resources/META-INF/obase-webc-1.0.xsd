@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://risedev.yy.com/schema/webc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://risedev.yy.com/schema/webc"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:complexType name="identifiedType" abstract="true">
+		<xsd:attribute name="id" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="filterConfigType">
+		<xsd:all>
+			<xsd:element name="namespace" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="contextConfigLocation" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="asyncTimeout" type="xsd:int" minOccurs="0" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:element name="webc">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="withoutApplicationContext" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+				<xsd:element name="contextConfigLocation" type="xsd:string" minOccurs="0" maxOccurs="1" />
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="servlet" type="filterConfigType" />
+					<xsd:element name="service" type="filterConfigType" />
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>  
