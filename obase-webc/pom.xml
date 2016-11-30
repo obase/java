@@ -40,15 +40,6 @@
 			<groupId>com.github.obase</groupId>
 			<artifactId>obase-util</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
-<<<<<<< HEAD
-=======
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.obase</groupId>
-			<artifactId>obase-data</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
->>>>>>> branch 'master' of https://github.com/obase/java.git
 		</dependency>
 
 		<dependency>
