@@ -9,7 +9,7 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/obase/java</url>
 	<description>
-		技术支撑:Spring4.2.8+/JDK7+/JavaEE6/Servlet3.0+/JSP2.2+. 
+		技术支撑:Spring4.3.4+/JDK7+/JavaEE6/Servlet3.0+/JSP2.2+. 
 		具体参见:http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/index.html#6
 	</description>
 
@@ -18,7 +18,7 @@
 	<!-- ================================ -->
 	<properties>
 		<!-- 第三方版本 -->
-		<spring.version>4.2.4.RELEASE</spring.version>
+		<spring.version>4.3.4.RELEASE</spring.version>
 		<server.version>3.0.1</server.version>
 		<jsp.version>2.2.1</jsp.version>
 		<tomcat.version>7.0.72</tomcat.version>
