@@ -276,9 +276,13 @@
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 			</plugin>
+<<<<<<< HEAD
 			<plugin>
 				<artifactId>maven-gpg-plugin</artifactId>
 			</plugin>
+=======
+
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 		</plugins>
 	</build>
 
