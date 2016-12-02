@@ -15,6 +15,8 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="withoutApplicationContext" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+				<xsd:element name="withoutServletContext" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+				<xsd:element name="withoutServiceContext" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
 				<xsd:element name="contextConfigLocation" type="xsd:string" minOccurs="0" maxOccurs="1" />
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="servlet" type="filterConfigType" />
