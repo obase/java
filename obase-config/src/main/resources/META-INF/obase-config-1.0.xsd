@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://risedev.yy.com/schema/config"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://risedev.yy.com/schema/config"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
+
+	<xsd:complexType name="applicationConfigurationType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:group ref="beans:beanElements" />
+				<xsd:attribute name="locations" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[app.properties配置路径,支持多值,用逗号分隔]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="ignoreSystemEnvironment" type="xsd:boolean"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[是否忽略System.getenv()变量]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="ignoreSystemProperties" type="xsd:boolean"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[是否忽略System.getProperties()变量]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="ignorePropertyPlaceholder" type="xsd:boolean"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[是否忽略PropertySourcePlaceholderResolver功能]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="dataSourceRef" type="xsd:string"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[数据源ID引用]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="query" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[查询SQL]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="jedisPoolRef" type="xsd:string"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[缓存池ID引用]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="hash" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[缓存池hash引用]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="rules" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[约束规则的xml路径]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="timer" type="xsd:int" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[定时器,单位秒]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="fatalIfError" type="xsd:boolean"
+					use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[错误是否抛出异常]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:element name="application-properties" type="applicationConfigurationType" />
+
+	<xsd:complexType name="ruleType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<xsd:attribute name="type" default="String" use="optional">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="Boolean" />
+							<xsd:enumeration value="Integer" />
+							<xsd:enumeration value="Long" />
+							<xsd:enumeration value="Double" />
+							<xsd:enumeration value="String" />
+							<xsd:enumeration value="BooleanArray" />
+							<xsd:enumeration value="IntegerArray" />
+							<xsd:enumeration value="LongArray" />
+							<xsd:enumeration value="DoubleArray" />
+							<xsd:enumeration value="StringArray" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+				<xsd:attribute name="required" type="xsd:boolean" use="optional" />
+				<xsd:attribute name="default" type="xsd:string" use="optional" />
+				<xsd:attribute name="crypted" type="xsd:boolean" use="optional" />
+				<xsd:attribute name="passwd" type="xsd:string" use="optional" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="rulesType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:sequence>
+					<xsd:element name="rule" type="ruleType" maxOccurs="unbounded"
+						minOccurs="0" />
+				</xsd:sequence>
+				<xsd:attribute name="passwd" type="xsd:string" use="optional" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:element name="rules" type="rulesType" />
+
+</xsd:schema>  

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="https://github.com/obase/spring-mysql"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://github.com/obase/spring-mysql"
+<xs:schema xmlns="http://obase.github.com/schema/mysql"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://obase.github.com/schema/mysql"
 	elementFormDefault="qualified">
 
 	<xs:complexType name="classType">
