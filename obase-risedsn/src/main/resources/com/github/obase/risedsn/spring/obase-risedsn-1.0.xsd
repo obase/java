@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://obase.github.io/schema/risedsn"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://obase.github.io/schema/risedsn"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans"
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
+
+	<xsd:complexType name="dwenvType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:group ref="beans:beanElements" />
+				<xsd:attribute name="dsn" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[数据源名称]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="key" type="xsd:string" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[旧数据源密钥]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="dataSourceType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:all>
+					<xsd:element name="prod" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="test" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="dev" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="zaibei" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="gray" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="prev" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+					<xsd:element name="other" type="dwenvType" maxOccurs="1"
+						minOccurs="0" />
+				</xsd:all>
+				<xsd:attributeGroup ref="beans:beanAttributes" />
+				<xsd:attribute name="slave" type="xsd:boolean" use="optional" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+
+	<xsd:element name="comboPooledDataSource" type="dataSourceType" />
+	<xsd:element name="basicDataSource" type="dataSourceType" />
+	<xsd:element name="tomcatDataSource" type="dataSourceType" />
+	<xsd:element name="jedisPool" type="dataSourceType" />
+	<xsd:element name="shardedJedisPool" type="dataSourceType" />
+	<xsd:element name="redisClient" type="dataSourceType" />
+
+	<xsd:element name="jedisShardInfo">
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute name="dsn" type="xsd:string" use="optional" />
+					<xsd:attribute name="key" type="xsd:string" use="optional" />
+					<xsd:attribute name="name" type="xsd:string" use="optional" />
+					<xsd:attribute name="weight" type="xsd:positiveInteger"
+						use="optional" />
+					<xsd:attribute name="connectionTimeout" type="xsd:positiveInteger"
+						use="optional" />
+					<xsd:attribute name="soTimeout" type="xsd:positiveInteger"
+						use="optional" />
+					<xsd:attribute name="db" type="xsd:positiveInteger"
+						use="optional" />
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>  
