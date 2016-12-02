@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns="http://obase.github.io/schema/webc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://obase.github.io/schema/webc"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
-
 	<xsd:complexType name="identifiedType" abstract="true">
 		<xsd:attribute name="id" type="xsd:string" />
 	</xsd:complexType>
-
 	<xsd:complexType name="filterConfigType">
 		<xsd:all>
 			<xsd:element name="namespace" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -13,7 +11,6 @@
 			<xsd:element name="asyncTimeout" type="xsd:int" minOccurs="0" maxOccurs="1" />
 		</xsd:all>
 	</xsd:complexType>
-
 	<xsd:element name="webc">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -26,5 +23,4 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-
 </xsd:schema>  
