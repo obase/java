@@ -1,2 +1,2 @@
-http\://obase.github.com/schema/config/obase-config-1.0.xsd=com/github/obase/config/spring/rise-config-1.0.xsd
-https\://obase.github.com/schema/config/obase-config-1.0.xsd=com/github/obase/config/spring/rise-config-1.0.xsd
+http\://obase.github.io/schema/config/obase-config-1.0.xsd=com/github/obase/config/spring/rise-config-1.0.xsd
+https\://obase.github.io/schema/config/obase-config-1.0.xsd=com/github/obase/config/spring/rise-config-1.0.xsd

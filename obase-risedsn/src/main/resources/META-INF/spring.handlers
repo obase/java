@@ -1,2 +1,2 @@
-http\://obase.github.io/schema/risedsn=com.github.obase.spring.DsnNamespaceHandler
-https\://obase.github.io/schema/risedsn=com.github.obase.spring.DsnNamespaceHandler
+http\://obase.github.io/schema/risedsn=com.github.obase.risedsn.spring.DsnNamespaceHandler
+https\://obase.github.io/schema/risedsn=com.github.obase.risedsn.spring.DsnNamespaceHandler
