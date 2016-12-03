@@ -1,0 +1,2 @@
+http\://obase.github.com/schema/config=com.github.obase.config.spring.DsnNamespaceHandler
+https\://obase.github.com/schema/config=com.github.obase.config.spring.DsnNamespaceHandler
