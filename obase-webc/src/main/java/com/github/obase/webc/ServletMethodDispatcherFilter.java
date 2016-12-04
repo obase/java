@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.util.WebUtils;
 
+import com.github.obase.kit.StringKit;
 import com.github.obase.loader.DelegatedClassLoader;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
@@ -98,6 +99,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 						if (objs == null) {
 							objs = new ServletMethodObject[HttpMethod.values().length];
 							rules.put(lookupPath, objs);
+							if (StringKit.isEmpty(lookupPath)) {
+								rules.put("/", objs); //if it is home page
+							}
 						}
 
 						HttpMethod[] methods = annotation.method();

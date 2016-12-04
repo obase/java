@@ -52,7 +52,6 @@ public interface Webc {
 	String CHARSET_NAME = "UTF-8";
 	Charset CHARSET = Charset.forName(CHARSET_NAME);
 	String $ = "$"; // ignore method part
-	String $$ = "$$"; // ignore controller part
 	int BUILDER_CAPACITY = 2048;
 	char COMMA = ',';
 	char COLON = ':';

@@ -40,7 +40,8 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	protected String[] classSuffix;
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException {
+	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules)
+			throws ServletException {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(filterConfig.getFilterName()).append(" load lookup rules as follows :\n");
@@ -52,7 +53,8 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	@Override
-	public HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Exception {
+	public HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response,
+			ServletMethodObject object) throws Exception {
 		return request;
 	}
 
@@ -145,61 +147,60 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	@Override
-	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod, ServletMethod methodAnnotation) {
-		
-		if (Webc.$$.equals(methodAnnotation.value())) {
-			return ""; // namespace
-		}
-		
+	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod,
+			ServletMethod methodAnnotation) {
+
 		StringBuilder sb = new StringBuilder(512);
-		if (StringKit.isEmpty(classAnnotation.value())) {
+		if (!Webc.$.equals(classAnnotation.value())) {
+			if (StringKit.isEmpty(classAnnotation.value())) {
 
-			String className = targetClass.getCanonicalName();
-			sb.append(className);
+				String className = targetClass.getCanonicalName();
+				sb.append(className);
 
-			if (ArrayKit.isNotEmpty(packagePrefix)) {
-				for (String p : packagePrefix) {
-					if (className.startsWith(p)) {
-						sb.delete(0, p.length());
-						break;
+				if (ArrayKit.isNotEmpty(packagePrefix)) {
+					for (String p : packagePrefix) {
+						if (className.startsWith(p)) {
+							sb.delete(0, p.length());
+							break;
+						}
+					}
+				} else {
+					int pos = className.indexOf(Webc.DEFAULT_CONTROLLER_PREFIX);
+					if (pos == 0 || (pos > 0 && className.charAt(pos - 1) == '.')) {
+						sb.delete(0, pos + Webc.DEFAULT_CONTROLLER_PREFIX.length());
 					}
 				}
-			} else {
-				int pos = className.indexOf(Webc.DEFAULT_CONTROLLER_PREFIX);
-				if (pos == 0 || (pos > 0 && className.charAt(pos - 1) == '.')) {
-					sb.delete(0, pos + Webc.DEFAULT_CONTROLLER_PREFIX.length());
-				}
-			}
 
-			if (ArrayKit.isNotEmpty(classSuffix)) {
-				for (String s : classSuffix) {
-					if (className.endsWith(s)) {
-						sb.delete(sb.length() - s.length(), sb.length());
+				if (ArrayKit.isNotEmpty(classSuffix)) {
+					for (String s : classSuffix) {
+						if (className.endsWith(s)) {
+							sb.delete(sb.length() - s.length(), sb.length());
+						}
+					}
+				} else {
+					if (className.endsWith(Webc.DEFAULT_CONTROLLER_SUFFIX)) {
+						sb.delete(sb.length() - Webc.DEFAULT_CONTROLLER_SUFFIX.length(), sb.length());
 					}
 				}
-			} else {
-				if (className.endsWith(Webc.DEFAULT_CONTROLLER_SUFFIX)) {
-					sb.delete(sb.length() - Webc.DEFAULT_CONTROLLER_SUFFIX.length(), sb.length());
+
+				int pos = sb.lastIndexOf(".") + 1;
+				char ch = sb.charAt(pos);
+				if (ch >= 'A' && ch <= 'Z') {
+					ch -= ('A' - 'a');
+					sb.setCharAt(pos, ch);
 				}
+
+			} else {
+				sb.append(classAnnotation.value());
 			}
 
-			int pos = sb.lastIndexOf(".") + 1;
-			char ch = sb.charAt(pos);
-			if (ch >= 'A' && ch <= 'Z') {
-				ch -= ('A' - 'a');
-				sb.setCharAt(pos, ch);
+			if (sb.charAt(0) != '.') {
+				sb.insert(0, '.');
 			}
 
-		} else {
-			sb.append(classAnnotation.value());
-		}
-
-		if (sb.charAt(0) != '.') {
-			sb.insert(0, '.');
-		}
-
-		if (sb.charAt(sb.length() - 1) == '.') {
-			sb.deleteCharAt(sb.length() - 1);
+			if (sb.charAt(sb.length() - 1) == '.') {
+				sb.deleteCharAt(sb.length() - 1);
+			}
 		}
 
 		if (!Webc.$.equals(methodAnnotation.value())) {
