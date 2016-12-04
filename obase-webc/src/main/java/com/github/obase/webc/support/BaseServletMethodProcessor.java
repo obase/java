@@ -146,7 +146,11 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 	@Override
 	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod, ServletMethod methodAnnotation) {
-
+		
+		if (Webc.$$.equals(methodAnnotation.value())) {
+			return ""; // namespace
+		}
+		
 		StringBuilder sb = new StringBuilder(512);
 		if (StringKit.isEmpty(classAnnotation.value())) {
 
