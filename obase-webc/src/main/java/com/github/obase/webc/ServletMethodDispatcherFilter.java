@@ -15,6 +15,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +33,7 @@ import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 @SuppressWarnings("rawtypes")
+@WebFilter(asyncSupported = true)
 public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 	CommonsMultipartResolver multipartResolver; // filter not support StandardServletMultipartResolver
@@ -100,7 +102,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 							objs = new ServletMethodObject[HttpMethod.values().length];
 							rules.put(lookupPath, objs);
 							if (StringKit.isEmpty(lookupPath)) {
-								rules.put("/", objs); //if it is home page
+								rules.put("/", objs); // if it is home page
 							}
 						}
 
