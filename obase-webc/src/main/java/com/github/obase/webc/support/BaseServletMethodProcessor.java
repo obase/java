@@ -18,16 +18,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 
+import com.github.obase.data.Message;
+import com.github.obase.json.Jsons;
+import com.github.obase.kit.ArrayKit;
+import com.github.obase.kit.StringKit;
 import com.github.obase.webc.ApplicationException;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.ServletMethodProcessor;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.annotation.ServletMethod;
-import com.github.obase.json.Jsons;
-import com.github.obase.data.Message;
-import com.github.obase.kit.ArrayKit;
-import com.github.obase.kit.StringKit;
 
 public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
@@ -40,21 +40,21 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	protected String[] classSuffix;
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules)
-			throws ServletException {
+	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(filterConfig.getFilterName()).append(" load lookup rules as follows :\n");
-		for (Map.Entry<String, ServletMethodObject[]> entry : rules.entrySet()) {
-			sb.append(entry.getKey()).append(": ").append(Arrays.toString(entry.getValue())).append('\n');
+		if (logger.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(filterConfig.getFilterName()).append(" load lookup rules as follows :\n");
+			for (Map.Entry<String, ServletMethodObject[]> entry : rules.entrySet()) {
+				sb.append(entry.getKey()).append(": ").append(Arrays.toString(entry.getValue())).append('\n');
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			logger.debug(sb.toString());
 		}
-		sb.deleteCharAt(sb.length() - 1);
-		logger.info(sb.toString());
 	}
 
 	@Override
-	public HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response,
-			ServletMethodObject object) throws Exception {
+	public HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Exception {
 		return request;
 	}
 
@@ -147,8 +147,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	@Override
-	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod,
-			ServletMethod methodAnnotation) {
+	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod, ServletMethod methodAnnotation) {
 
 		StringBuilder sb = new StringBuilder(512);
 		if (!Webc.$.equals(classAnnotation.value())) {
