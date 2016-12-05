@@ -1,24 +1,25 @@
 package com.github.obase.webc;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.springframework.core.io.Resource;
-import org.springframework.web.WebApplicationInitializer;
 
-import com.github.obase.webc.config.WebcConfig;
-import com.github.obase.webc.config.WebcConfigParser;
-import com.github.obase.webc.config.WebcConfig.FilterConfig;
 import com.github.obase.kit.StringKit;
+import com.github.obase.webc.config.WebcConfig;
+import com.github.obase.webc.config.WebcConfig.FilterConfig;
+import com.github.obase.webc.config.WebcConfigParser;
 
-public class WebcApplicationInitializer implements WebApplicationInitializer {
+public final class WebcServletContainerInitializer implements ServletContainerInitializer {
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
+	public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) throws ServletException {
 
 		Resource configResource = Webc.Util.getDefaultConfigResource(servletContext, Webc.DEFAULT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_CONFIG_LOCATION2);
 		if (configResource != null) {
@@ -56,6 +57,9 @@ public class WebcApplicationInitializer implements WebApplicationInitializer {
 			}
 
 		}
+
+		servletContext.log("WebcServletContainerInitializer onStartup process completely");
+
 	}
 
 	private void initWebkitFrameworkListener(ServletContext servletContext, WebcConfig config) {
