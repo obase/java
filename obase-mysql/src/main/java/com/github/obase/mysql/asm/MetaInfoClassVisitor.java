@@ -143,7 +143,8 @@ class MetaInfoClassVisitor extends ClassVisitor {
 
 		try {
 			result.hierarchies++;
-			ClassReader cr = new ClassReader(this.getClass().getResourceAsStream(superName + ".class"));
+			// using current classLoader but not system class loader
+			ClassReader cr = new ClassReader(AsmKit.Loader.getResourceAsStream(new StringBuilder(128).append('/').append(superName).append(".class").toString()));
 			cr.accept(new MetaInfoClassVisitor(result), CLASS_READER_ACCEPT_FLAGS);
 
 		} catch (IOException e) {
