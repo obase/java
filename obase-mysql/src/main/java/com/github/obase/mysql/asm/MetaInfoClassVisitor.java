@@ -143,7 +143,7 @@ class MetaInfoClassVisitor extends ClassVisitor {
 
 		try {
 			result.hierarchies++;
-			ClassReader cr = new ClassReader(ClassLoader.getSystemResourceAsStream(superName + ".class"));
+			ClassReader cr = new ClassReader(this.getClass().getResourceAsStream(superName + ".class"));
 			cr.accept(new MetaInfoClassVisitor(result), CLASS_READER_ACCEPT_FLAGS);
 
 		} catch (IOException e) {
