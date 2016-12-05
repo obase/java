@@ -1,6 +1,15 @@
 package com.github.obase.mysql.asm;
 
-import static com.github.obase.mysql.asm.AsmKit.*;
+import static com.github.obase.mysql.asm.AsmKit.CLASS_READER_ACCEPT_FLAGS;
+import static com.github.obase.mysql.asm.AsmKit.FOREIGN_KEY_ANNOTATION_DESC;
+import static com.github.obase.mysql.asm.AsmKit.GETTER_METHOD_PREFIX;
+import static com.github.obase.mysql.asm.AsmKit.INDEXES_KEY_ANNOTATION_DESC;
+import static com.github.obase.mysql.asm.AsmKit.META_ANNOTATION_DESC;
+import static com.github.obase.mysql.asm.AsmKit.OPTIMISTIC_LOCK_ANNOTATION_DESC;
+import static com.github.obase.mysql.asm.AsmKit.Object_INTERNAL_NAME;
+import static com.github.obase.mysql.asm.AsmKit.PRIMARY_KEY_ANNOTATION_DESC;
+import static com.github.obase.mysql.asm.AsmKit.SETTER_METHOD_PREFIX;
+import static com.github.obase.mysql.asm.AsmKit.TABLE_ANNOTATION_DESC;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -131,12 +140,14 @@ class MetaInfoClassVisitor extends ClassVisitor {
 		if (Object_INTERNAL_NAME.equals(superName)) {
 			return;
 		}
+
 		try {
 			result.hierarchies++;
-			ClassReader cr = new ClassReader(getClassNameFromInternalName(superName));
+			ClassReader cr = new ClassReader(ClassLoader.getSystemResourceAsStream(superName + ".class"));
 			cr.accept(new MetaInfoClassVisitor(result), CLASS_READER_ACCEPT_FLAGS);
+
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("visit failed for " + superName, e);
 		}
 	}
 
