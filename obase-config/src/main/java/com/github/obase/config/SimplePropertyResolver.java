@@ -2,7 +2,6 @@ package com.github.obase.config;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 
 import org.springframework.core.env.AbstractPropertyResolver;
 import org.springframework.util.ClassUtils;
@@ -40,7 +39,7 @@ final class SimplePropertyResolver extends AbstractPropertyResolver {
 		if (val != null) {
 			return val;
 		}
-		val = ((Properties) systemProperties).getProperty(key);
+		val = (String) systemProperties.get(key);
 		if (val != null) {
 			return val;
 		}
