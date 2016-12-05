@@ -15,7 +15,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,7 +32,6 @@ import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 @SuppressWarnings("rawtypes")
-@WebFilter(asyncSupported = true)
 public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 	CommonsMultipartResolver multipartResolver; // filter not support StandardServletMultipartResolver
@@ -136,7 +134,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		req.setCharacterEncoding(Webc.CHARSET_NAME);
 		resp.setCharacterEncoding(Webc.CHARSET_NAME);
 
-		final HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletRequest request = (HttpServletRequest) req;
 
 		final ServletMethodObject[] objects = servletMethodHandlerMap.get(request.getServletPath());
 		if (objects != null) {
@@ -146,40 +144,63 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 				req.setAttribute(Webc.ATTR_NAMESPACE, namespace);
 
-				final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
-				if (listener != null) {
-					asyncContext.addListener(listener);
-				}
-				asyncContext.setTimeout(timeout);
-				asyncContext.start(new Runnable() {
+				// FIXBUG: resin 4.0.7 not support
+				if (req.isAsyncSupported()) {
 
-					@Override
-					public void run() {
-						HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
-						HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+					final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
+					if (listener != null) {
+						asyncContext.addListener(listener);
+					}
+					asyncContext.setTimeout(timeout);
+					asyncContext.start(new Runnable() {
 
-						HttpServletRequest processedRequest = null;
-						boolean multipartRequestParsed = false;
-						try {
-							processedRequest = checkMultipart(request);
-							multipartRequestParsed = processedRequest != request;
-							request = processor.preprocess(processedRequest, response, object);
-							if (request != null) {
-								object.service(request, response);
-								processor.postprocess(request, response, null);
-							}
-						} catch (Throwable t) {
-							processor.postprocess(request != null ? request : processedRequest, response, t);
-						} finally {
-							if (multipartRequestParsed) {
-								cleanupMultipart(processedRequest);
-							}
-							if (asyncContext.getRequest().isAsyncStarted()) {
-								asyncContext.complete();
+						@Override
+						public void run() {
+							HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
+							HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+
+							HttpServletRequest processedRequest = null;
+							boolean multipartRequestParsed = false;
+							try {
+								processedRequest = checkMultipart(request);
+								multipartRequestParsed = processedRequest != request;
+								request = processor.preprocess(processedRequest, response, object);
+								if (request != null) {
+									object.service(request, response);
+									processor.postprocess(request, response, null);
+								}
+							} catch (Throwable t) {
+								processor.postprocess(request != null ? request : processedRequest, response, t);
+							} finally {
+								if (multipartRequestParsed) {
+									cleanupMultipart(processedRequest);
+								}
+								if (asyncContext.getRequest().isAsyncStarted()) {
+									asyncContext.complete();
+								}
 							}
 						}
+					});
+				} else {
+					HttpServletRequest processedRequest = null;
+					HttpServletResponse response = (HttpServletResponse) resp;
+					boolean multipartRequestParsed = false;
+					try {
+						processedRequest = checkMultipart(request);
+						multipartRequestParsed = processedRequest != request;
+						request = processor.preprocess(processedRequest, response, object);
+						if (request != null) {
+							object.service(request, response);
+							processor.postprocess(request, response, null);
+						}
+					} catch (Throwable t) {
+						processor.postprocess(request != null ? request : processedRequest, response, t);
+					} finally {
+						if (multipartRequestParsed) {
+							cleanupMultipart(processedRequest);
+						}
 					}
-				});
+				}
 				return;
 			}
 		}

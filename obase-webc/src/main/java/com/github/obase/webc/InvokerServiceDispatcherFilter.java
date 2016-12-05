@@ -77,38 +77,54 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
-		final HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletRequest request = (HttpServletRequest) req;
 		final InvokerServiceObject object = invokerServiceExporterMap.get(request.getServletPath());
 
 		if (object != null) {
 
-			final AsyncContext actx = request.startAsync(request, resp);
-			if (listener != null) {
-				actx.addListener(listener);
-			}
-			actx.setTimeout(timeout);
-			actx.start(new Runnable() {
-				@Override
-				public void run() {
-					HttpServletRequest request = (HttpServletRequest) actx.getRequest();
-					HttpServletResponse response = (HttpServletResponse) actx.getResponse();
+			if (req.isAsyncSupported()) {
 
-					HttpServletRequest processedRequest = request;
-					try {
-						request = processor.preprocess(processedRequest, response, object);
-						if (request != null) {
-							object.handleRequest(request, response);
-							processor.postprocess(request, response, null);
-						}
-					} catch (Throwable t) {
-						processor.postprocess(request != null ? request : processedRequest, response, t);
-					} finally {
-						if (processedRequest.isAsyncStarted()) {
-							actx.complete();
+				final AsyncContext actx = request.startAsync(request, resp);
+				if (listener != null) {
+					actx.addListener(listener);
+				}
+				actx.setTimeout(timeout);
+				actx.start(new Runnable() {
+					@Override
+					public void run() {
+						HttpServletRequest request = (HttpServletRequest) actx.getRequest();
+						HttpServletResponse response = (HttpServletResponse) actx.getResponse();
+
+						HttpServletRequest processedRequest = request;
+						try {
+							request = processor.preprocess(processedRequest, response, object);
+							if (request != null) {
+								object.handleRequest(request, response);
+								processor.postprocess(request, response, null);
+							}
+						} catch (Throwable t) {
+							processor.postprocess(request != null ? request : processedRequest, response, t);
+						} finally {
+							if (processedRequest.isAsyncStarted()) {
+								actx.complete();
+							}
 						}
 					}
+				});
+			} else {
+
+				HttpServletRequest processedRequest = request;
+				HttpServletResponse response = (HttpServletResponse) resp;
+				try {
+					request = processor.preprocess(processedRequest, response, object);
+					if (request != null) {
+						object.handleRequest(request, response);
+						processor.postprocess(request, response, null);
+					}
+				} catch (Throwable t) {
+					processor.postprocess(request != null ? request : processedRequest, response, t);
 				}
-			});
+			}
 			return;
 		}
 		chain.doFilter(req, resp);
