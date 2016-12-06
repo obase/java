@@ -474,24 +474,16 @@ public class SqlDdlKit extends SqlKit {
 	private static String formatDefaultValue(String defaultValue, SqlType sqlType) {
 		switch (sqlType) {
 		case NULL:
-		case BIT:
-		case TINYINT:
-		case SMALLINT:
-		case MEDIUMINT:
-		case INT:
-		case INTEGER:
-		case BIGINT:
-		case REAL:
-		case DOUBLE:
-		case FLOAT:
-		case DECIMAL:
-		case NUMERIC:
-		case DATE:
-		case TIME:
-		case TIMESTAMP:
-		case DATETIME:
-			return defaultValue;
-		default:
+		case CHAR:
+		case CHAR_BINARY:
+		case VARCHAR:
+		case VARCHAR_BINARY:
+		case TINYTEXT:
+		case TINYTEXT_BINARY:
+		case TEXT:
+		case TEXT_BINARY:
+		case LONGTEXT:
+		case LONGTEXT_BINARY:
 			StringBuilder sb = new StringBuilder(defaultValue.length() + 4);
 			sb.append(defaultValue);
 			if (sb.length() > 0) {
@@ -505,6 +497,8 @@ public class SqlDdlKit extends SqlKit {
 				sb.append("''");
 			}
 			return sb.toString();
+		default:
+			return defaultValue;
 		}
 	}
 
