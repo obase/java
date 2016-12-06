@@ -68,11 +68,7 @@ public abstract class SecurityServletMethodProcessor extends BaseServletMethodPr
 			}
 		} else if (!wsid.validate(csrfSecretBytes, sessionTimeout)) {
 			Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0); // remove
-			if (sendError) {
-				Kits.sendError(response, Webc.ERRNO_MISSING_VERIFIER, "Missing verifier!");
-			} else {
-				Kits.writeErrorMessage(response, Webc.ERRNO_MISSING_VERIFIER, Webc.ERRNO_MISSING_VERIFIER, "Missing verifier!");
-			}
+			redirectToLoginPage(request, response);
 			return null;
 		}
 		request.setAttribute(Webc.ATTR_WSID, wsid);
