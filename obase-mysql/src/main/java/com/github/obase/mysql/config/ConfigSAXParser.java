@@ -15,7 +15,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ConfigSAXParser extends DefaultHandler {
 
-	static final String ELEM_MYSQL = "spring-mysql";
+	static final String ELEM_MYSQL = "obase-mysql";
 	static final String ELEM_TABLE = "table-class";
 	static final String ELEM_META = "meta-class";
 	static final String ELEM_SQL = "statement";
