@@ -12,7 +12,6 @@ public class Page<T> {
 
 	int start;
 	int limit;
-	int pageIndex;
 
 	String sortField;
 	boolean sortDesc;
@@ -49,14 +48,6 @@ public class Page<T> {
 
 	public void setLimit(int limit) {
 		this.limit = limit;
-	}
-
-	public int getPageIndex() {
-		return pageIndex;
-	}
-
-	public void setPageIndex(int pageIndex) {
-		this.pageIndex = pageIndex;
 	}
 
 	public String getSortField() {
