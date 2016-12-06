@@ -681,10 +681,12 @@ public abstract class Kits {
 	public static String getLookupPath(HttpServletRequest request) {
 		String namespace = (String) request.getAttribute(Webc.ATTR_NAMESPACE);
 		String servletPath = request.getServletPath();
-		if (StringKit.isEmpty(namespace)) {
+		int pos;
+		if (StringKit.isEmpty(namespace) || (pos = servletPath.indexOf(namespace)) == -1) {
 			return servletPath;
+		} else {
+			return servletPath.substring(pos + namespace.length());
 		}
-		return getLookupPath(namespace, servletPath);
 	}
 
 	public static String getServletPath(HttpServletRequest request) {
