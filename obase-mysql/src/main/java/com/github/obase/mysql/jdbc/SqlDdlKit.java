@@ -461,7 +461,7 @@ public class SqlDdlKit extends SqlKit {
 		if (Boolean.TRUE.equals(columnAnnotation.key)) {
 			cols.append(" PRIMARY KEY");
 		}
-		if (!"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
+		if (columnAnnotation.defaultValue != null && !"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
 			cols.append(" DEFAULT ").append(formatDefaultValue(columnAnnotation.defaultValue, sqlType));
 		}
 		if (AsmKit.isNotEmpty(columnAnnotation.comment)) {
@@ -486,6 +486,10 @@ public class SqlDdlKit extends SqlKit {
 		case FLOAT:
 		case DECIMAL:
 		case NUMERIC:
+		case DATE:
+		case TIME:
+		case TIMESTAMP:
+		case DATETIME:
 			return defaultValue;
 		default:
 			StringBuilder sb = new StringBuilder(defaultValue.length() + 4);
