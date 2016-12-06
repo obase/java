@@ -461,7 +461,7 @@ public class SqlDdlKit extends SqlKit {
 		if (Boolean.TRUE.equals(columnAnnotation.key)) {
 			cols.append(" PRIMARY KEY");
 		}
-		if (!"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
+		if (columnAnnotation.defaultValue != null && !"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
 			cols.append(" DEFAULT ").append(formatDefaultValue(columnAnnotation.defaultValue, sqlType));
 		}
 		if (AsmKit.isNotEmpty(columnAnnotation.comment)) {
