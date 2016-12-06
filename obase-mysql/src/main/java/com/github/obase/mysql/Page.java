@@ -10,76 +10,85 @@ import java.util.List;
  */
 public class Page<T> {
 
-	int offset;
-	int count;
+	int start;
+	int limit;
+	int pageIndex;
 
-	String orderBy;
-	boolean orderDesc;
+	String sortField;
+	boolean sortDesc;
 
-	int total;
-	List<T> data;
+	int results;
+	List<T> rows;
 
 	public Page() {
 		this(0, 0, null, false);
 	}
 
-	public Page(int start, int max) {
-		this(start, max, null, false);
+	public Page(int start, int limit) {
+		this(start, limit, null, false);
 	}
 
-	public Page(int start, int max, String orderBy, boolean orderDesc) {
-		this.offset = start;
-		this.count = max;
-		this.orderBy = orderBy;
-		this.orderDesc = orderDesc;
+	public Page(int start, int limit, String sortField, boolean sortDesc) {
+		this.start = start;
+		this.limit = limit;
+		this.sortField = sortField;
+		this.sortDesc = sortDesc;
 	}
 
-	public int getOffset() {
-		return offset;
+	public int getStart() {
+		return start;
 	}
 
-	public void setOffset(int offset) {
-		this.offset = offset;
+	public void setStart(int start) {
+		this.start = start;
 	}
 
-	public int getCount() {
-		return count;
+	public int getLimit() {
+		return limit;
 	}
 
-	public void setCount(int count) {
-		this.count = count;
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
-	public String getOrderBy() {
-		return orderBy;
+	public int getPageIndex() {
+		return pageIndex;
 	}
 
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
+	public void setPageIndex(int pageIndex) {
+		this.pageIndex = pageIndex;
 	}
 
-	public boolean isOrderDesc() {
-		return orderDesc;
+	public String getSortField() {
+		return sortField;
 	}
 
-	public void setOrderDesc(boolean orderDesc) {
-		this.orderDesc = orderDesc;
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
 	}
 
-	public int getTotal() {
-		return total;
+	public boolean isSortDesc() {
+		return sortDesc;
 	}
 
-	public void setTotal(int total) {
-		this.total = total;
+	public void setSortDesc(boolean sortDesc) {
+		this.sortDesc = sortDesc;
 	}
 
-	public List<T> getData() {
-		return data;
+	public int getResults() {
+		return results;
 	}
 
-	public void setData(List<T> data) {
-		this.data = data;
+	public void setResults(int results) {
+		this.results = results;
+	}
+
+	public List<T> getRows() {
+		return rows;
+	}
+
+	public void setRows(List<T> rows) {
+		this.rows = rows;
 	}
 
 }

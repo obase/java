@@ -626,11 +626,11 @@ abstract class MysqlClientOperation {
 	@SuppressWarnings("unchecked")
 	protected <T> void selectPage(Connection conn, Class<T> tableType, Page<T> page) throws SQLException {
 
-		int offset = page.getOffset();
+		int offset = page.getStart();
 		if (offset < 0) {
 			offset = 0;
 		}
-		int count = page.getCount();
+		int count = page.getLimit();
 		if (count <= 0) {
 			count = Integer.MAX_VALUE;
 		}
@@ -640,7 +640,7 @@ abstract class MysqlClientOperation {
 			throw new MysqlClientException("Not found table class: " + tableType);
 		}
 
-		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.getOrderBy(), page.isOrderDesc());
+		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.getSortField(), page.isSortDesc());
 		if (showSql) {
 			logger.info("Sql for selectPage: " + meta.toString(psql));
 		}
@@ -659,7 +659,7 @@ abstract class MysqlClientOperation {
 			while (rs.next()) {
 				result.add((T) action.getResult(rs, meta.labels));
 			}
-			page.setData(result);
+			page.setRows(result);
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -669,8 +669,8 @@ abstract class MysqlClientOperation {
 			}
 		}
 
-		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getData().size() < count)) {
-			page.setTotal(page.getData().size() + offset);
+		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getRows().size() < count)) {
+			page.setResults(page.getRows().size() + offset);
 		} else {
 			try {
 				pstmt = conn.prepareStatement(SqlMetaKit.modifyPsqlForPageTotal(meta));
@@ -679,7 +679,7 @@ abstract class MysqlClientOperation {
 				if (rs.next()) {
 					total = rs.getInt(1);
 				}
-				page.setTotal(total);
+				page.setResults(total);
 			} finally {
 				if (rs != null) {
 					rs.close();
@@ -1203,11 +1203,11 @@ abstract class MysqlClientOperation {
 	@SuppressWarnings("unchecked")
 	protected <T> void queryPage(Connection conn, String queryId, Class<T> elemType, Page<T> page, Object params) throws SQLException {
 
-		int offset = page.getOffset();
+		int offset = page.getStart();
 		if (offset < 0) {
 			offset = 0;
 		}
-		int count = page.getCount();
+		int count = page.getLimit();
 		if (count <= 0) {
 			count = Integer.MAX_VALUE;
 		}
@@ -1217,7 +1217,7 @@ abstract class MysqlClientOperation {
 			throw new MysqlClientException("Not found sql config: " + queryId);
 		}
 
-		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.getOrderBy(), page.isOrderDesc());
+		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.getSortField(), page.isSortDesc());
 		if (showSql) {
 			logger.info("Sql for queryPage: " + meta.toString(psql));
 		}
@@ -1243,7 +1243,7 @@ abstract class MysqlClientOperation {
 			while (rs.next()) {
 				data.add((T) getAction.getResult(rs, meta.labels));
 			}
-			page.setData(data);
+			page.setRows(data);
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -1253,8 +1253,8 @@ abstract class MysqlClientOperation {
 			}
 		}
 
-		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getData().size() < count)) {
-			page.setTotal(page.getData().size() + offset);
+		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getRows().size() < count)) {
+			page.setResults(page.getRows().size() + offset);
 		} else {
 			try {
 				pstmt = conn.prepareStatement(SqlMetaKit.modifyPsqlForPageTotal(meta));
@@ -1266,7 +1266,7 @@ abstract class MysqlClientOperation {
 				}
 				rs = pstmt.executeQuery();
 				if (rs.next()) {
-					page.setTotal(rs.getInt(1));
+					page.setResults(rs.getInt(1));
 				}
 			} finally {
 				if (rs != null) {
@@ -1440,7 +1440,8 @@ abstract class MysqlClientOperation {
 									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 								}
 								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-									throw new MysqlClientException("Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+									throw new MysqlClientException(
+											"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 								}
 							}
 						}
@@ -1467,7 +1468,8 @@ abstract class MysqlClientOperation {
 											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 										}
 										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-											throw new MysqlClientException("Duplicate @Table: " + classMetaInfo.tableName + ", please check class: " + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+											throw new MysqlClientException(
+													"Duplicate @Table: " + classMetaInfo.tableName + ", please check class: " + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 										}
 									}
 								}
