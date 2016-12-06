@@ -29,5 +29,5 @@ public @interface Column {
 
 	boolean unique() default false;
 
-	String defaultValue() default ""; // default value as string
+	String defaultValue() default "\0"; // default value as string. "": empty string; "\0": null
 }
