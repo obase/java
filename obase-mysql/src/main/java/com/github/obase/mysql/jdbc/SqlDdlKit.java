@@ -461,10 +461,10 @@ public class SqlDdlKit extends SqlKit {
 		if (Boolean.TRUE.equals(columnAnnotation.key)) {
 			cols.append(" PRIMARY KEY");
 		}
-		if (AsmKit.isNotEmpty(columnAnnotation.defaultValue)) {
+		if (!"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
 			cols.append(" DEFAULT ").append(formatDefaultValue(columnAnnotation.defaultValue, sqlType));
 		}
-		if(AsmKit.isNotEmpty(columnAnnotation.comment)){
+		if (AsmKit.isNotEmpty(columnAnnotation.comment)) {
 			cols.append(" COMMENT ").append('\'').append(columnAnnotation.comment).append('\'');
 		}
 
@@ -490,11 +490,15 @@ public class SqlDdlKit extends SqlKit {
 		default:
 			StringBuilder sb = new StringBuilder(defaultValue.length() + 4);
 			sb.append(defaultValue);
-			if (sb.charAt(0) != '\'') {
-				sb.insert(0, '\'');
-			}
-			if (sb.charAt(sb.length() - 1) != '\'') {
-				sb.append('\'');
+			if (sb.length() > 0) {
+				if (sb.charAt(0) != '\'') {
+					sb.insert(0, '\'');
+				}
+				if (sb.charAt(sb.length() - 1) != '\'') {
+					sb.append('\'');
+				}
+			} else {
+				sb.append("''");
 			}
 			return sb.toString();
 		}
