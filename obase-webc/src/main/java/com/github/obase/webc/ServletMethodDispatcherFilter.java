@@ -34,11 +34,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	ServletMethodProcessor processor;
 	AsyncListener listener;
 	long timeout;
-<<<<<<< HEAD
 	Map<String, ServletMethodObject> rulesMap; // key is servletPath
-=======
-	Map<String, ServletMethodRules> rulesMap; // key is servletPath
->>>>>>> branch 'master' of git@github.com:obase/java.git
 	DelegatedClassLoader delegateClassLoader; // using spring clsssLoader
 
 	@Override
@@ -59,11 +55,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		timeout = params.timeoutSecond * 1000;
 
 		// key is lookupPath
-<<<<<<< HEAD
 		Map<String, ServletMethodObject> map = new HashMap<String, ServletMethodObject>();
-=======
-		Map<String, ServletMethodRules> map = new HashMap<String, ServletMethodRules>();
->>>>>>> branch 'master' of git@github.com:obase/java.git
 		Map<String, Object> beans = applicationContext.getBeansWithAnnotation(Controller.class);
 		if (beans.size() > 0) {
 			Collection<ServletMethodFilter> servletFilters = applicationContext.getBeansOfType(ServletMethodFilter.class).values();
@@ -101,19 +93,12 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 						String methodName = method.getName();
 
 						String lookupPath = processor.lookup(controller, userClass, annotation, methodName);
-<<<<<<< HEAD
+
 						ServletMethodHandler obj = newServletMethodHandler(method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
 
 						ServletMethodObject rules = map.get(lookupPath);
 						if (rules == null) {
 							rules = new ServletMethodObject(annotation, lookupPath);
-=======
-						ServletMethodObject obj = newServletMethodObject(method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
-
-						ServletMethodRules rules = map.get(lookupPath);
-						if (rules == null) {
-							rules = new ServletMethodRules(lookupPath);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 							map.put(lookupPath, rules);
 						}
 
@@ -122,14 +107,8 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 							methods = HttpMethod.values(); // default all
 						}
 						for (HttpMethod m : methods) {
-<<<<<<< HEAD
 							if (rules.handlers[m.ordinal()] == null) {
 								rules.handlers[m.ordinal()] = obj;
-=======
-							if (rules.annotations[m.ordinal()] == null) {
-								rules.annotations[m.ordinal()] = annotation;
-								rules.objects[m.ordinal()] = obj;
->>>>>>> branch 'master' of git@github.com:obase/java.git
 							} else {
 								throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath);
 							}
@@ -139,17 +118,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			}
 		}
 		processor.setup(params, map);
-<<<<<<< HEAD
 		rulesMap = new HashMap<String, ServletMethodObject>(map.size());
-=======
-		rulesMap = new HashMap<String, ServletMethodRules>(map.size());
->>>>>>> branch 'master' of git@github.com:obase/java.git
 		// For performance: change lookupPath to servletPath and set to servletMethodHandlerMap
-<<<<<<< HEAD
 		for (Map.Entry<String, ServletMethodObject> entry : map.entrySet()) {
-=======
-		for (Map.Entry<String, ServletMethodRules> entry : map.entrySet()) {
->>>>>>> branch 'master' of git@github.com:obase/java.git
 			rulesMap.put(Kits.getServletPath(params.namespace, entry.getKey(), null), entry.getValue());
 			if (StringKit.isEmpty(entry.getKey())) {
 				rulesMap.put(Kits.getServletPath(params.namespace, "/", null), entry.getValue()); // FIXBUG: special for home page
@@ -165,25 +136,12 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 		final HttpServletRequest request = (HttpServletRequest) req;
 
-<<<<<<< HEAD
 		final ServletMethodObject object = rulesMap.get(request.getServletPath());
 		if (object != null) {
 			final HttpMethod method = HttpMethod.valueOf(request.getMethod());
 			final ServletMethodHandler handler = object.handlers[method.ordinal()];
 			if (handler != null) {
-=======
-		ServletMethodRules rules = rulesMap.get(request.getServletPath());
-		if (rules != null) {
-			final HttpMethod method = HttpMethod.valueOf(request.getMethod());
-			final ServletMethodObject object = rules.objects[method.ordinal()];
-			if (object != null) {
->>>>>>> branch 'master' of git@github.com:obase/java.git
-
-<<<<<<< HEAD
 				String lookupPath = object.lookupPath;
-=======
-				String lookupPath = rules.lookupPath;
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 				req.setAttribute(Webc.ATTR_HTTP_METHOD, method);
 				req.setAttribute(Webc.ATTR_LOOKUP_PATH, lookupPath);
@@ -205,15 +163,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 							HttpServletRequest prerequest = null;
 							try {
-<<<<<<< HEAD
 								prerequest = processor.process(request, response, object);
 								if (prerequest != null) {
 									handler.service(prerequest, response);
-=======
-								prerequest = processor.process(request, response);
-								if (prerequest != null) {
-									object.service(prerequest, response);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 								}
 							} catch (Throwable t) {
 								processor.error(request, response, t);
@@ -229,15 +181,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					final HttpServletResponse response = (HttpServletResponse) resp;
 					HttpServletRequest prerequest = null, processedRequest = null;
 					try {
-<<<<<<< HEAD
 						prerequest = processor.process(request, response, object);
 						if (prerequest != null) {
 							handler.service(processedRequest, response);
-=======
-						prerequest = processor.process(request, response);
-						if (prerequest != null) {
-							object.service(processedRequest, response);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 						}
 					} catch (Throwable t) {
 						processor.error(request, response, t);
@@ -246,7 +192,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 				return;
 			}
 		}
+
 		chain.doFilter(req, resp);
+
 	}
 
 	private ServletMethodFilter[] findServletFilter(Collection<ServletMethodFilter> servletFilters, String lookupPath, Class userClass, String methodName, ServletMethod annotation) {
@@ -266,11 +214,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		return ret.toArray(new ServletMethodFilter[ret.size()]);
 	}
 
-<<<<<<< HEAD
 	public ServletMethodHandler newServletMethodHandler(Method method, Object bean, ServletMethodFilter... filters) {
-=======
-	public ServletMethodObject newServletMethodObject(Method method, Object bean, ServletMethodFilter... filters) {
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 		String className = bean.getClass().getCanonicalName() + "__" + method.getName();
 		Class<?> c;
@@ -281,11 +225,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			c = delegateClassLoader.defineClass(className, data);
 		}
 		try {
-<<<<<<< HEAD
 			return ((ServletMethodHandler) c.newInstance()).bind(bean, filters);
-=======
-			return ((ServletMethodObject) c.newInstance()).bind(bean, filters);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 		} catch (Exception e) {
 			throw new WrappedException(e);
 		}

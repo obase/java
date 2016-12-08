@@ -38,9 +38,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.omg.CORBA.SystemException;
 
 import com.github.obase.MessageException;
+import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
@@ -87,10 +87,8 @@ public final class HiidoKit {
 		return rt;
 	}
 
-	public static Principal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey,
-			String token) {
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken",
-				Arrays.<Object>asList(token));
+	public static Principal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object>asList(token));
 		if (RpcKit.code(result) != 1) {
 			return null;
 		}
@@ -109,11 +107,9 @@ public final class HiidoKit {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static List<Principal> getMyAgentStaffInfo(String udbApi, String agentId, byte[] agentPwdBytes,
-			String publicKey) {
+	public static List<Principal> getMyAgentStaffInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey) {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo",
-				Arrays.<Object>asList(Collections.emptyList()));
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo", Arrays.<Object>asList(Collections.emptyList()));
 		if (RpcKit.code(result) != 1) {
 			throw new MessageException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
 		}
@@ -141,13 +137,11 @@ public final class HiidoKit {
 		return staffs;
 	}
 
-	public void validaMyStaffAgentInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey,
-			boolean valid, String... users) {
+	public void validaMyStaffAgentInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, boolean valid, String... users) {
 		if (users == null || users.length == 0) {
 			return;
 		}
-		List<Map<String, Map<String, Boolean>>> updUserMap = new ArrayList<Map<String, Map<String, Boolean>>>(
-				users.length);
+		List<Map<String, Map<String, Boolean>>> updUserMap = new ArrayList<Map<String, Map<String, Boolean>>>(users.length);
 		for (String user : users) {
 			updUserMap.add(as(user, valid ? VALID : INVALID));
 		}
@@ -163,41 +157,33 @@ public final class HiidoKit {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey,
-			String method, @SuppressWarnings("rawtypes") List params) throws SystemException {
+	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String method, @SuppressWarnings("rawtypes") List params) {
 		return jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, new JSONRPC2Request(method, params, null));
 	}
 
-	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey,
-			String method, Map<String, Object> params) throws SystemException {
+	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String method, Map<String, Object> params) {
 		return jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, new JSONRPC2Request(method, params, null));
 	}
 
-	public static String identityString(String timestamp, String agentId, byte[] agentPwdBytes, String publicKey)
-			throws GeneralSecurityException, IOException {
+	public static String identityString(String timestamp, String agentId, byte[] agentPwdBytes, String publicKey) throws GeneralSecurityException, IOException {
 		byte[] cipher = RSAUtils.encryptByPublicKey(agentPwdBytes, publicKey);// 公钥加密
 		String cipherText = Base64.encodeBase64String(cipher);
 		String md5Text = DigestUtils.md5Hex(agentId + timestamp + cipherText);
-		String identityStr = Base64
-				.encodeBase64String((agentId + ";" + timestamp + ";" + cipherText + ";" + md5Text).getBytes());
+		String identityStr = Base64.encodeBase64String((agentId + ";" + timestamp + ";" + cipherText + ";" + md5Text).getBytes());
 		return identityStr;
 	}
 
-	public static String identityString(String timestamp, String agentId, byte[] agentPwdBytes, String publicKey,
-			String dynamicKey) throws GeneralSecurityException, IOException {
+	public static String identityString(String timestamp, String agentId, byte[] agentPwdBytes, String publicKey, String dynamicKey) throws GeneralSecurityException, IOException {
 		byte[] cipher = RSAUtils.encryptByPublicKey(agentPwdBytes, publicKey);// 公钥加密
 		String cipherText = Base64.encodeBase64String(cipher);
 		String md5Text = DigestUtils.md5Hex(agentId + timestamp + cipherText + dynamicKey);
-		String identityStr = Base64.encodeBase64String(
-				(agentId + ";" + timestamp + ";" + cipherText + ";" + dynamicKey + ";" + md5Text).getBytes());
+		String identityStr = Base64.encodeBase64String((agentId + ";" + timestamp + ";" + cipherText + ";" + dynamicKey + ";" + md5Text).getBytes());
 		return identityStr;
 	}
 
-	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey,
-			JSONRPC2Request request) throws SystemException {
+	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, JSONRPC2Request request) {
 
 		try {
-
 			JSONRPC2Session session = new JSONRPC2Session(new URL(udbApi));
 
 			// 选项, 必须接受cookie
@@ -209,8 +195,7 @@ public final class HiidoKit {
 			long now = System.currentTimeMillis();
 
 			// 认证, 用户信息保存在cookie
-			JSONRPC2Request authReq = new JSONRPC2Request("authenticate",
-					Arrays.<Object>asList(identityString(String.valueOf(now), agentId, agentPwdBytes, publicKey)), 0); // id是int
+			JSONRPC2Request authReq = new JSONRPC2Request("authenticate", Arrays.<Object>asList(identityString(String.valueOf(now), agentId, agentPwdBytes, publicKey)), 0); // id是int
 			JSONRPC2Response authResp = session.send(authReq);
 			if (!authResp.indicatesSuccess()) {
 				JSONRPC2Error error = authResp.getError();
@@ -224,10 +209,9 @@ public final class HiidoKit {
 				throw new MessageException("hiido." + request.getMethod(), error.getCode(), error.getMessage());
 			}
 			return (JSONObject) response.getResult();
-		} catch (SystemException e) {
-			throw e;
+
 		} catch (Exception e) {
-			throw new MessageException("HiidoJsonrpc2Client.invoke", Webc.ERRNO_UNKNOWN_ERROR, e.getMessage(), e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -436,8 +420,7 @@ public final class HiidoKit {
 		 * @throws IllegalBlockSizeException
 		 * @throws Exception
 		 */
-		public static byte[] encryptByPublicKey(byte[] data, String publicKey)
-				throws GeneralSecurityException, IOException {
+		public static byte[] encryptByPublicKey(byte[] data, String publicKey) throws GeneralSecurityException, IOException {
 			byte[] keyBytes = Base64.decodeBase64(publicKey);
 			X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
 			KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
@@ -597,10 +580,8 @@ public final class HiidoKit {
 
 	public static interface Callback {
 
-		void postHiidoLogin(HttpServletRequest request, HttpServletResponse response)
-				throws ServletException, IOException;
+		void postHiidoLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
-		Principal validatePrincipal(HttpServletRequest request, HttpServletResponse response, Wsid wsid)
-				throws IOException;
+		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 	}
 }

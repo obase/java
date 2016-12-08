@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,9 +14,10 @@ import org.springframework.util.SerializationUtils;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodHandler;
+import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.annotation.ServletMethod;
+import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.hiido.HiidoKit.Callback;
 import com.github.obase.webc.support.security.Principal;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
@@ -70,7 +70,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	}
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodHandler[]> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
 
 		ServletMethodHandler postHiidoLoginObject = new ServletMethodHandler() {
 			@Override
@@ -79,15 +79,15 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 			}
 		};
 
-		ServletMethodHandler[] arr = new ServletMethodHandler[HttpMethod.values().length];
-		Arrays.fill(arr, postHiidoLoginObject);
-		rules.put(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, arr);
+		ServletMethodObject object = new ServletMethodObject(null, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN);
+		Arrays.fill(object.handlers, postHiidoLoginObject);
+		rules.put(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, object);
 
-		super.initMappingRules(filterConfig, rules);
+		super.setup(params, rules);
 	}
 
 	@Override
-	public final Principal validatePrincipal(HttpServletRequest request, HttpServletResponse response, Wsid wsid) {
+	public final Principal validateAndExtendPrincipal(Wsid wsid) {
 
 		byte[] data = null;
 		Jedis jedis = null;
@@ -95,7 +95,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 			jedis = jedisPool.getResource();
 			Transaction tx = jedis.multi();
 			Response<byte[]> resp = tx.get(wsid.id);
-			tx.expire(wsid.id, (int) (sessionTimeout / 1000));
+			tx.pexpire(wsid.id, timeoutMillis);
 			tx.exec();
 
 			data = resp.get();
@@ -124,20 +124,20 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 			return;
 		}
 
-		Wsid wsid = Wsid.valueOf(Webc.GLOBAL_ATTRIBUTE_PREFFIX + principal.getPassport()).resetToken(csrfSecretBytes); // csrf
+		Wsid wsid = Wsid.valueOf(Webc.GLOBAL_ATTRIBUTE_PREFFIX + principal.getPassport()).resetToken(wsidTokenBase); // csrf
 
 		byte[] data = SerializationUtils.serialize(principal);
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.setex(wsid.id, (int) (sessionTimeout / 1000), data);
+			jedis.psetex(wsid.id, timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
 			}
 		}
 
-		Kits.writeCookie(response, Wsid.COOKIE_NAME, wsid.toHexString(), Wsid.COOKIE_TEMPORY_EXPIRE);
+		Kits.writeCookie(response, Wsid.COOKIE_NAME, wsid.toHexs(), Wsid.COOKIE_TEMPORY_EXPIRE);
 		Kits.sendRedirect(response, Kits.getServletPath(request, StringKit.isNotEmpty(homepage) ? homepage : "/"));
 	}
 
@@ -155,17 +155,17 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	}
 
 	@Override
-	protected final Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected final Wsid tryOssLogin(HttpServletRequest request) throws ServletException, IOException {
 		return null;
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(Principal principal) {
-		return principal;
+	protected Principal validatePrincipal(Principal staffInfoByToken) {
+		return staffInfoByToken;
 	}
 
 	// for subclass override
-	protected boolean validatePermission(Principal principal, ServletMethod annotation, String lookupPath) {
+	protected boolean validatePermission(Principal principal, HttpMethod method, String lookupPath) {
 		return true;
 	}
 

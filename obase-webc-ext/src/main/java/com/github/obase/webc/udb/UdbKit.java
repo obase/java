@@ -1,7 +1,6 @@
 package com.github.obase.webc.udb;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.LinkedList;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.duowan.udb.auth.UserinfoForOauth;
 import com.duowan.udb.util.codec.AESHelper;
 import com.duowan.universal.login.BasicCredentials;
 import com.duowan.universal.login.Credentials;
@@ -51,8 +51,7 @@ public final class UdbKit {
 	public static final String PARAM_URL = "url";
 	public static final String PARAM_SSL = "ssl";
 
-	public static String getRealUrl(HttpServletRequest request, String protocol, String servletPathPrefix,
-			String lookupPath) {
+	public static String getRealUrl(HttpServletRequest request, String protocol, String servletPathPrefix, String lookupPath) {
 		StringBuilder sb = new StringBuilder(256);
 		if (protocol != null) {
 			sb.append(protocol);
@@ -70,8 +69,7 @@ public final class UdbKit {
 		return sb.toString();
 	}
 
-	public static void login(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix)
-			throws Exception {
+	public static void login(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix) throws Exception {
 
 		String url = Kits.readParam(request, PARAM_URL);
 
@@ -81,14 +79,10 @@ public final class UdbKit {
 		sb.append("<head>");
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 		sb.append("<title>YY统一验证中心</title>");
-		sb.append(
-				"<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
-		sb.append(
-				"<script type=\"text/javascript\" src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\"></script>");
+		sb.append("<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
+		sb.append("<script type=\"text/javascript\" src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\"></script>");
 		sb.append("<script type=\"text/javascript\">");
-		sb.append("function sdklogin(){ UDB.sdk.PCWeb.popupOpenLgn(document.location.protocol+'")
-				.append(getRealUrl(request, null, servletPathPrefix, LOOKUP_PATH_GEN_URL_TOKEN))
-				.append("?ssl='+(document.location.protocol=='https:')");
+		sb.append("function sdklogin(){ UDB.sdk.PCWeb.popupOpenLgn(document.location.protocol+'").append(getRealUrl(request, null, servletPathPrefix, LOOKUP_PATH_GEN_URL_TOKEN)).append("?ssl='+(document.location.protocol=='https:')");
 		if (url != null) {
 			sb.append("+'&url=").append(URLEncoder.encode(url, Webc.CHARSET_NAME)).append("'");
 		}
@@ -102,37 +96,29 @@ public final class UdbKit {
 		Kits.writeHtml(response, HttpsURLConnection.HTTP_OK, sb);
 	}
 
-	public static void genUrlToken(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix,
-			String appid, String appkey) throws IOException {
+	public static void genUrlToken(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix, String appid, String appkey) throws IOException {
 		try {
 			boolean pssl = Kits.readBooleanParam(request, PARAM_SSL, false);
 			String purl = Kits.readParam(request, PARAM_URL);
 
 			Credentials cc = new BasicCredentials(appid, appkey);
 			UniversalLoginClient duowan = new UniversalLoginClient(cc);
-			duowan.initialize(getRealUrl(request, pssl ? "https:" : "http:", servletPathPrefix,
-					LOOKUP_PATH_CALLBACK + (StringKit.isEmpty(purl) ? "" : "?url=" + purl)));
+			duowan.initialize(getRealUrl(request, pssl ? "https:" : "http:", servletPathPrefix, LOOKUP_PATH_CALLBACK + (StringKit.isEmpty(purl) ? "" : "?url=" + purl)));
 			String tmpTokensecret = duowan.getTokenSecret();
 			tmpTokensecret = AESHelper.encrypt(tmpTokensecret, appkey);
 			URL redirectURL = duowan.getAuthorizationURL();
-			String url = redirectURL.toExternalForm() + "&denyCallbackURL="
-					+ getRealUrl(request, pssl ? "https:" : "http:", servletPathPrefix, LOOKUP_PATH_DENY_CALLBACK)
-					+ "&UIStyle=qlogin&cssid=" + appid;
+			String url = redirectURL.toExternalForm() + "&denyCallbackURL=" + getRealUrl(request, pssl ? "https:" : "http:", servletPathPrefix, LOOKUP_PATH_DENY_CALLBACK) + "&UIStyle=qlogin&cssid=" + appid;
 
-			StringBuilder sb = new StringBuilder(256).append("{\"success\":\"1\",\"url\":").append("\"").append(url)
-					.append("\"").append(",\"ttokensec\":").append("\"").append(tmpTokensecret).append("\"")
-					.append("}");
+			StringBuilder sb = new StringBuilder(256).append("{\"success\":\"1\",\"url\":").append("\"").append(url).append("\"").append(",\"ttokensec\":").append("\"").append(tmpTokensecret).append("\"").append("}");
 
 			Kits.writeJson(response, HttpsURLConnection.HTTP_OK, sb);
 		} catch (Exception e) {
 			logger.error("udb产生认证url与token失败", e);
-			Kits.writeJson(response, HttpsURLConnection.HTTP_OK,
-					"{\"success\":\"0\",\"errMsg\":\"UDB统一登录失败,请与管理员联系\"}");
+			Kits.writeJson(response, HttpsURLConnection.HTTP_OK, "{\"success\":\"0\",\"errMsg\":\"UDB统一登录失败,请与管理员联系\"}");
 		}
 	}
 
-	public static void callback(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix,
-			String appid, String appkey, String homepage, Callback c) throws Exception {
+	public static void callback(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix, String appid, String appkey, String homepage, Callback c) throws Exception {
 
 		// 服务端返回的信息
 		final String oauthToken = Kits.readParam(request, OAuthHeaderNames.TOKEN_KEY, null);
@@ -190,16 +176,11 @@ public final class UdbKit {
 		String writeCookieURL = duowan.getWriteCookieURL(accessTokenInfo[0], yyuid, reqDomainList);
 
 		/* 获取登陆前的url,如无则使用默认LOGINED_SYS_URI */
-		String url = StringKit.isNotEmpty(homepage)
-				? ("document.location.protocol+'" + getRealUrl(request, null, servletPathPrefix, homepage) + "'")
-				: ("'" + Kits.readParam(request, PARAM_URL, "/") + "'");
-		StringBuilder sb = new StringBuilder(256)
-				.append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('"
-						+ writeCookieURL + "',function(){self.parent.document.location.href=" + url
-						+ ";});};udb_callback();</script>")
-				.append("</head><body>");
+		String url = StringKit.isNotEmpty(homepage) ? ("document.location.protocol+'" + getRealUrl(request, null, servletPathPrefix, homepage) + "'") : ("'" + Kits.readParam(request, PARAM_URL, "/") + "'");
+		StringBuilder sb = new StringBuilder(256).append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('" + writeCookieURL
+				+ "',function(){self.parent.document.location.href=" + url + ";});};udb_callback();</script>").append("</head><body>");
 
-		Kits.writeHtml(response, HttpURLConnection.HTTP_OK, sb);
+		Kits.writeHtml(response, Webc.HTTP_OK, sb);
 	}
 
 	public static void denyCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -209,19 +190,16 @@ public final class UdbKit {
 		out.append("<head>");
 		out.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 		out.append("<title>YY统一验证中心</title>");
-		out.append(
-				"<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
-		out.append(
-				"<script type=\"text/javascript\" src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\"></script>");
+		out.append("<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
+		out.append("<script type=\"text/javascript\" src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\"></script>");
 		out.append("<script language=\"JavaScript\" type=\"text/javascript\">");
 		out.append("self.parent.UDB.sdk.PCWeb.popupCloseLgn();");
 		out.append("</script>");
 		out.append("</head></html>");
-		Kits.writeHtml(response, HttpURLConnection.HTTP_OK, out);
+		Kits.writeHtml(response, Webc.HTTP_OK, out);
 	}
 
-	public static void logout(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix,
-			String appid, String appkey, String logoutpage, Callback c) throws IOException {
+	public static void logout(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix, String appid, String appkey, String logoutpage, Callback c) throws IOException {
 
 		/* 清除cookie信息 */
 		c.preUdbLogout(request, response);
@@ -230,16 +208,13 @@ public final class UdbKit {
 		StringBuilder sb = new StringBuilder(512);
 
 		/* 默认跳回home */
-		sb.append(
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
 		sb.append("<html>");
 		sb.append("<head>");
 		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 		sb.append("<title>YY统一验证中心</title>");
-		sb.append(
-				"<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
-		sb.append(
-				"<script src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\" type=\"text/javascript\"></script>");
+		sb.append("<script src=\"https://res.udb.duowan.com/js/jquery-1.4.2.min.js\" type=\"text/javascript\"></script>");
+		sb.append("<script src=\"https://res.udb.duowan.com/lgn/js/oauth/udbsdk/pcweb/udb.sdk.pcweb.popup.min.js\" type=\"text/javascript\"></script>");
 		sb.append("</head>");
 		sb.append("<script type=\"text/javascript\">");
 		sb.append("function logout(){ UDB.sdk.PCWeb.deleteCrossmainCookieWithCallBack(\"" + deleteCookieURL + "\" ,");
@@ -255,22 +230,32 @@ public final class UdbKit {
 		sb.append("</body>");
 		sb.append("</html>");
 
-		Kits.writeHtml(response, HttpURLConnection.HTTP_OK, sb);
+		Kits.writeHtml(response, Webc.HTTP_OK, sb);
 
+	}
+
+	/**
+	 * return [passport, yyuid] if success, null if fail
+	 */
+	public static String[] tryOssLogin(HttpServletRequest request, HttpServletResponse response, String appid, String appkey) throws IOException {
+		UserinfoForOauth userinfoForOauth = new UserinfoForOauth(request, response, appid, appkey);
+		if (userinfoForOauth.validate()) {
+			@SuppressWarnings("deprecation")
+			String username = userinfoForOauth.getUsername();
+			String yyuid = userinfoForOauth.getYyuid();
+
+			return new String[] { username, yyuid };
+		}
+		return null;
 	}
 
 	public static interface Callback {
 
-		Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response, String appid, String appkey)
-				throws IOException;
-
-		boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile)
-				throws IOException;
+		boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException;
 
 		void preUdbLogout(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
-		Principal validatePrincipal(HttpServletRequest request, HttpServletResponse response, Wsid wsid)
-				throws IOException;
+		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 
 		void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException;
 	}

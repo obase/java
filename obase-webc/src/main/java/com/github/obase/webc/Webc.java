@@ -74,10 +74,7 @@ public interface Webc {
 	String DEFAULT_CONTROL_PREFIX = "controller.";
 	String DEFAULT_CONTROL_SUFFIX = "Controller";
 	int DEFAULT_WSID_TOKEN_BASE = 49999;
-<<<<<<< HEAD
 	AuthType DEFAULT_AUTH_TYPE = AuthType.PERMISSION;
-=======
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 	String INVOKER_SERVICE_PREFIX = "HttpInvokerServiceExporter$";
 	String ATTR_HTTP_METHOD = "$_HTTP_METHOD";
@@ -155,12 +152,8 @@ public interface Webc {
 
 			ClassWriter cw = new ClassWriter(0);
 			MethodVisitor mv;
-
-<<<<<<< HEAD
 			cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null, Type.getInternalName(ServletMethodHandler.class), null);
-=======
-			cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null, Type.getInternalName(ServletMethodObject.class), null);
->>>>>>> branch 'master' of git@github.com:obase/java.git
+
 			{
 				mv = cw.visitMethod(ACC_PUBLIC, "<init>", Type.getMethodDescriptor(Type.getType(void.class)), null, null);
 				mv.visitCode();
@@ -168,11 +161,7 @@ public interface Webc {
 				mv.visitLabel(l0);
 				mv.visitLineNumber(2, l0);
 				mv.visitVarInsn(ALOAD, 0);
-<<<<<<< HEAD
 				mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(ServletMethodHandler.class), "<init>", Type.getMethodDescriptor(Type.getType(void.class)), false);
-=======
-				mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(ServletMethodObject.class), "<init>", Type.getMethodDescriptor(Type.getType(void.class)), false);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 				mv.visitInsn(RETURN);
 				Label l1 = new Label();
 				mv.visitLabel(l1);
