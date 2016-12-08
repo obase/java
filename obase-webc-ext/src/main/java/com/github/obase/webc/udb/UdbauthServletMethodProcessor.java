@@ -128,7 +128,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			return false;
 		}
 
-		Wsid wsid = Wsid.valueOf(Webc.GLOBAL_ATTRIBUTE_PREFFIX + principal.getPassport()).resetToken(wsidTokenBase); // csrf
+		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
 
 		byte[] data = SerialKit.serialize(principal);
 		Jedis jedis = null;
