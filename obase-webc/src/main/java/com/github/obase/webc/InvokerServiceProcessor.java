@@ -12,11 +12,7 @@ public interface InvokerServiceProcessor {
 
 	void setup(FilterInitParam params, Map<Class<?>, InvokerServiceObject> rules) throws ServletException;
 
-<<<<<<< HEAD
 	HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, InvokerServiceObject object) throws Throwable;
-=======
-	HttpServletRequest process(HttpServletRequest request, HttpServletResponse response) throws Throwable;
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 	void error(HttpServletRequest request, HttpServletResponse response, Throwable t);
 

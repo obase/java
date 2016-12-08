@@ -13,11 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.StringKit;
-<<<<<<< HEAD
 import com.github.obase.webc.AuthType;
-=======
-import com.github.obase.webc.Webc;
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 @JacksonXmlRootElement(localName = WebcConfig.ROOT)
 public class WebcConfig {
@@ -32,11 +28,8 @@ public class WebcConfig {
 	public static final String CONTROL_SUFFIX = "controlSuffix";
 	public static final String CONTROL_PROCESSOR = "controlProcessor";
 	public static final String WSID_TOKEN_BASE = "wsidTokenBase";
-<<<<<<< HEAD
 	public static final String DEFAULT_AUTH_TYPE = "defaultAuthType";
 	public static final String REFERER_DOMAIN = "refererDomain";
-=======
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 	public boolean withoutApplicationContext;
 	public boolean withoutServletContext;
@@ -58,17 +51,11 @@ public class WebcConfig {
 		public int timeoutSecond;
 		public boolean sendError;
 		public Class<?> controlProcessor;
-<<<<<<< HEAD
 		public String controlPrefix; // multi values by comma
 		public String controlSuffix;// multi values by comma
 		public int wsidTokenBase; // BKDRHash的base,默认为0
 		public AuthType defaultAuthType;
 		public String refererDomain; // multi values by comma
-=======
-		public String controlPrefix;
-		public String controlSuffix;
-		public int wsidTokenBase; // BKDRHash的base,默认为0
->>>>>>> branch 'master' of git@github.com:obase/java.git
 	}
 
 	public static void encodeContextInitParam(ServletContext servletContext, WebcConfig config) {
@@ -86,7 +73,6 @@ public class WebcConfig {
 		ret.namespace = getStringParam(filterConfig, NAMESPACE, null);
 		ret.contextConfigLocation = getStringParam(filterConfig, CONTEXT_CONFIG_LOCATION, null);
 		ret.asyncListener = getClassParam(filterConfig, ASYNC_LISTENER, null);
-<<<<<<< HEAD
 		ret.timeoutSecond = getIntParam(filterConfig, TIMEOUT_SECOND, 0);
 		ret.sendError = getBooleanParam(filterConfig, SEND_ERROR, false);
 		ret.controlProcessor = getClassParam(filterConfig, CONTROL_PROCESSOR, null);
@@ -98,14 +84,6 @@ public class WebcConfig {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
 		}
 		ret.refererDomain = getStringParam(filterConfig, REFERER_DOMAIN, null);
-=======
-		ret.timeoutSecond = getIntParam(filterConfig, TIMEOUT_SECOND, Webc.DEFAULT_TIMEOUT_SECOND);
-		ret.sendError = getBooleanParam(filterConfig, SEND_ERROR, false);
-		ret.controlProcessor = getClassParam(filterConfig, CONTROL_PROCESSOR, null);
-		ret.controlPrefix = getStringParam(filterConfig, CONTROL_PREFIX, null);
-		ret.controlSuffix = getStringParam(filterConfig, CONTROL_SUFFIX, null);
-		ret.wsidTokenBase = getIntParam(filterConfig, WSID_TOKEN_BASE, Webc.DEFAULT_WSID_TOKEN_BASE);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 
 		return ret;
 	}
@@ -118,8 +96,6 @@ public class WebcConfig {
 
 		if (StringKit.isNotEmpty(param.contextConfigLocation)) {
 			dynamic.setInitParameter(CONTEXT_CONFIG_LOCATION, param.contextConfigLocation);
-<<<<<<< HEAD
-=======
 		}
 
 		if (param.asyncListener != null) {
@@ -144,31 +120,10 @@ public class WebcConfig {
 
 		if (StringKit.isNotEmpty(param.controlSuffix)) {
 			dynamic.setInitParameter(CONTROL_PREFIX, param.controlSuffix);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 		}
 
-		if (param.asyncListener != null) {
-			dynamic.setInitParameter(ASYNC_LISTENER, param.asyncListener.getCanonicalName());
-		}
-
-		if (param.timeoutSecond != 0) {
-			dynamic.setInitParameter(TIMEOUT_SECOND, String.valueOf(param.timeoutSecond));
-		}
-
-		if (param.sendError) {
-			dynamic.setInitParameter(SEND_ERROR, String.valueOf(param.sendError));
-		}
-
-		if (param.controlProcessor != null) {
-			dynamic.setInitParameter(ASYNC_LISTENER, param.controlProcessor.getCanonicalName());
-		}
-
-		if (StringKit.isNotEmpty(param.controlPrefix)) {
-			dynamic.setInitParameter(CONTROL_PREFIX, param.controlPrefix);
-		}
-
-		if (StringKit.isNotEmpty(param.controlSuffix)) {
-			dynamic.setInitParameter(CONTROL_PREFIX, param.controlSuffix);
+		if (param.wsidTokenBase != 0) {
+			dynamic.setInitParameter(WSID_TOKEN_BASE, String.valueOf(param.wsidTokenBase));
 		}
 
 		if (param.defaultAuthType != null) {

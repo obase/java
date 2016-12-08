@@ -97,11 +97,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 
 						HttpServletRequest prerequest = null;
 						try {
-<<<<<<< HEAD
 							prerequest = processor.process(request, response, object);
-=======
-							prerequest = processor.process(request, response);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 							if (prerequest != null) {
 								object.handleRequest(prerequest, response);
 							}
@@ -119,11 +115,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				HttpServletRequest processedRequest = request;
 				HttpServletResponse response = (HttpServletResponse) resp;
 				try {
-<<<<<<< HEAD
 					request = processor.process(processedRequest, response, object);
-=======
-					request = processor.process(processedRequest, response);
->>>>>>> branch 'master' of git@github.com:obase/java.git
 					if (request != null) {
 						object.handleRequest(request, response);
 					}

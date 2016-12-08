@@ -102,11 +102,7 @@ public final class Wsid implements Serializable {
 			tk |= Hex.getDec(hexs.charAt(j));
 		}
 
-<<<<<<< HEAD
 		for (j = len - 24, n = j + 16; j < n; j++) {
-=======
-		for (j = len - 24, n = j + 8; j < n; j++) {
->>>>>>> branch 'master' of git@github.com:obase/java.git
 			ts <<= 4;
 			ts |= Hex.getDec(hexs.charAt(j));
 		}
@@ -124,34 +120,7 @@ public final class Wsid implements Serializable {
 		return wsid;
 	}
 
-<<<<<<< HEAD
 	public String toHexs() {
-=======
-	public Wsid resetToken(int base) {
-		ts = System.currentTimeMillis();
-		tk = BKDRHash(base);
-		return this;
-	}
-
-	private final int BKDRHash(int base) {
-		int tk = base;
-		for (int i = 0; i < id.length; i++) {
-			tk = 31 * tk + id[i];
-		}
-		tk = 31 * tk + (int) ((ts >>> 32) ^ ts);
-		return tk;
-	}
-
-	public boolean validate(int base, long timeoutMillis) {
-		if (Math.abs(System.currentTimeMillis() - ts) > timeoutMillis) {
-			return false;
-		}
-		long tk = BKDRHash(base);
-		return this.tk == tk;
-	}
-
-	public String toHexString() {
->>>>>>> branch 'master' of git@github.com:obase/java.git
 		int mark = id.length * 2;
 		char[] chars = new char[mark + 24];
 		int j = 0;
