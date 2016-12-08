@@ -15,8 +15,6 @@ import com.github.obase.kit.StringKit;
 import com.github.obase.webc.config.WebcConfig;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.config.WebcConfigParser;
-import com.github.obase.webc.support.BaseInvokerServiceProcessor;
-import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 public final class WebcServletContainerInitializer implements ServletContainerInitializer {
 
@@ -103,9 +101,6 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 		if (StringKit.isEmpty(params.contextConfigLocation)) {
 			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION2);
 		}
-		if (params.controlProcessor == null) {
-			params.controlProcessor = BaseServletMethodProcessor.class;
-		}
 		return params;
 	}
 
@@ -115,9 +110,6 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 		}
 		if (StringKit.isEmpty(params.contextConfigLocation)) {
 			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2);
-		}
-		if (params.controlProcessor == null) {
-			params.controlProcessor = BaseInvokerServiceProcessor.class;
 		}
 		return params;
 	}

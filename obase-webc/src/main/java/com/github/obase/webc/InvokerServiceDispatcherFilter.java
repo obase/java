@@ -23,6 +23,7 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import com.github.obase.kit.ArrayKit;
+import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.InvokerService;
 import com.github.obase.webc.support.BaseInvokerServiceProcessor;
 
@@ -43,7 +44,10 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 		if (params.controlProcessor != null) {
 			processor = (InvokerServiceProcessor) applicationContext.getBean(params.controlProcessor);
 		} else {
-			processor = new BaseInvokerServiceProcessor();
+			processor = Util.findBean(applicationContext, InvokerServiceProcessor.class, null);
+			if (processor == null) {
+				processor = new BaseInvokerServiceProcessor();
+			}
 		}
 
 		if (params.asyncListener != null) {
