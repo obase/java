@@ -7,12 +7,20 @@
 		<xsd:attribute name="id" type="xsd:string" />
 	</xsd:complexType>
 	<xsd:complexType name="filterConfigType">
-		<xsd:all>
-			<xsd:element name="namespace" type="xsd:string" minOccurs="0" maxOccurs="1" />
-			<xsd:element name="contextConfigLocation" type="xsd:string" minOccurs="0" maxOccurs="1" />
-			<xsd:element name="asyncTimeout" type="xsd:int" minOccurs="0" maxOccurs="1" />
-		</xsd:all>
-	</xsd:complexType>
+	<xsd:all>
+		<xsd:element name="namespace" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="contextConfigLocation" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="asyncListener" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="timeoutSecond" type="xsd:int" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="sendError" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="controlProcessor" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="controlPrefix" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="controlSuffix" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="wsidTokenBase" type="xsd:int" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="defaultAuthType" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		<xsd:element name="refererDomain" type="xsd:string" minOccurs="0" maxOccurs="1" />
+	</xsd:all>
+</xsd:complexType>
 	<xsd:element name="webc">
 		<xsd:complexType>
 			<xsd:sequence>
