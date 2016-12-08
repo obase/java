@@ -25,6 +25,7 @@ import org.springframework.util.ClassUtils;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.StringKit;
 import com.github.obase.loader.DelegatedClassLoader;
+import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
@@ -45,7 +46,10 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		if (params.controlProcessor != null) {
 			processor = (ServletMethodProcessor) applicationContext.getBean(params.controlProcessor);
 		} else {// using default if not set
-			processor = new BaseServletMethodProcessor();
+			processor = Util.findBean(applicationContext, ServletMethodProcessor.class, null);
+			if (processor == null) {
+				processor = new BaseServletMethodProcessor();
+			}
 		}
 
 		if (params.asyncListener != null) {
