@@ -2,6 +2,10 @@ package com.github.obase.webc.support;
 
 import java.util.Map;
 
+<<<<<<< HEAD
+=======
+import javax.servlet.ServletException;
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,7 +31,11 @@ public class BaseInvokerServiceProcessor implements InvokerServiceProcessor {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, InvokerServiceObject object) throws Throwable {
+=======
+	public HttpServletRequest process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 		return request;
 	}
 

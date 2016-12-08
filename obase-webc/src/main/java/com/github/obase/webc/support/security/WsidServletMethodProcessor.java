@@ -105,7 +105,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 
 		// step3: check session, if null forward to login page
-		Principal principal = validatePrincipal(wsid);
+		Principal principal = validateAndExtendPrincipal(wsid);
 		if (principal == null) {
 			redirectLoginPage(request, response);
 			return null;
@@ -131,7 +131,10 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		return null;
 	}
 
-	protected abstract Principal validatePrincipal(Wsid wsid) throws IOException;
+	/**
+	 * 验证并延长会话时间
+	 */
+	protected abstract Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 
 	protected abstract boolean validatePermission(Principal principal, HttpMethod method, String lookupPath) throws IOException;
 

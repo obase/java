@@ -21,8 +21,8 @@ import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.ServletMethodProcessor;
+import com.github.obase.webc.ServletMethodRules;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
@@ -38,7 +38,11 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	protected String[] controlSuffixArray;
 
 	@Override
+<<<<<<< HEAD
 	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+=======
+	public void setup(FilterInitParam params, Map<String, ServletMethodRules> rules) throws ServletException {
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 		this.params = params;
 		this.sendError = params.sendError;
 		if (params.controlPrefix != null) {
@@ -53,7 +57,11 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Throwable {
+=======
+	public HttpServletRequest process(HttpServletRequest request, HttpServletResponse response) throws Exception {
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 		return request;
 	}
 

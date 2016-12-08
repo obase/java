@@ -6,7 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 用于ASM加速的demo类
  */
+<<<<<<< HEAD
 public class DemoServletMethodObject extends ServletMethodHandler {
+=======
+public class DemoServletMethodObject extends ServletMethodObject {
+>>>>>>> branch 'master' of git@github.com:obase/java.git
 
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
