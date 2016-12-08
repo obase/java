@@ -15,12 +15,12 @@ import org.springframework.util.SerializationUtils;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SecurityServletMethodProcessor;
+import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.support.security.SimplePrincipal;
 import com.github.obase.webc.udb.UdbKit.Callback;
 
@@ -29,7 +29,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
-public class UdbauthServletMethodProcessor extends SecurityServletMethodProcessor implements Callback {
+public class UdbauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
 
 	protected String appid;
 	protected String appkey;
@@ -58,37 +58,37 @@ public class UdbauthServletMethodProcessor extends SecurityServletMethodProcesso
 	}
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException {
+	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodHandler[]> rules) throws ServletException {
 
-		ServletMethodObject loginObject = new ServletMethodObject() {
+		ServletMethodHandler loginObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				UdbKit.login(request, response, Kits.getNamespace(request));
 			}
 		};
 
-		ServletMethodObject genUrlTokenObject = new ServletMethodObject() {
+		ServletMethodHandler genUrlTokenObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				UdbKit.genUrlToken(request, response, Kits.getNamespace(request), appid, appkey);
 			}
 		};
 
-		ServletMethodObject callbackObject = new ServletMethodObject() {
+		ServletMethodHandler callbackObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				UdbKit.callback(request, response, Kits.getNamespace(request), appid, appkey, homepage, UdbauthServletMethodProcessor.this);
 			}
 		};
 
-		ServletMethodObject denyCallbackObject = new ServletMethodObject() {
+		ServletMethodHandler denyCallbackObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				UdbKit.denyCallback(request, response);
 			}
 		};
 
-		ServletMethodObject logoutObject = new ServletMethodObject() {
+		ServletMethodHandler logoutObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				UdbKit.logout(request, response, Kits.getNamespace(request), appid, appkey, logoutpage, UdbauthServletMethodProcessor.this);
@@ -104,8 +104,8 @@ public class UdbauthServletMethodProcessor extends SecurityServletMethodProcesso
 		super.initMappingRules(filterConfig, rules);
 	}
 
-	private ServletMethodObject[] fill(ServletMethodObject object) {
-		ServletMethodObject[] arr = new ServletMethodObject[HttpMethod.values().length];
+	private ServletMethodHandler[] fill(ServletMethodHandler object) {
+		ServletMethodHandler[] arr = new ServletMethodHandler[HttpMethod.values().length];
 		Arrays.fill(arr, object);
 		return arr;
 	}
@@ -191,7 +191,7 @@ public class UdbauthServletMethodProcessor extends SecurityServletMethodProcesso
 	}
 
 	@Override
-	protected void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		StringBuilder psb = new StringBuilder(256);
 		psb.append(request.getContextPath()).append(request.getServletPath());
 		String queryString = request.getQueryString();
@@ -206,10 +206,7 @@ public class UdbauthServletMethodProcessor extends SecurityServletMethodProcesso
 		Kits.sendRedirect(response, sb.toString());
 	}
 
-	@Override
-	protected final Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		return tryOssLogin(request, response, appid, appkey);
-	}
+
 
 	// for subclass override
 	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
@@ -225,10 +222,5 @@ public class UdbauthServletMethodProcessor extends SecurityServletMethodProcesso
 		return true;
 	}
 
-	// for subclass override
-	@Override
-	public Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response, String appid, String appkey) throws IOException {
-		return null;
-	}
 
 }

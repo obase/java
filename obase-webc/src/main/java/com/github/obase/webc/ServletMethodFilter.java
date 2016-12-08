@@ -1,6 +1,5 @@
 package com.github.obase.webc;
 
-import java.lang.reflect.Method;
 import java.util.Comparator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +11,7 @@ public interface ServletMethodFilter {
 
 	boolean process(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
-	boolean matches(String lookupPath, Class<?> targetClass, Method targetMethod, ServletMethod annotation);
+	boolean matches(String lookupPath, Class<?> targetClass, String methodName, ServletMethod annotation);
 
 	int getOrder();
 

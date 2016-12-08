@@ -44,12 +44,12 @@ public class WebcConfigParser {
 	}
 
 	private static boolean matches(String input) {
-		int pos = input.indexOf(WebcConfig.ROOT_ELEMENT);
+		int pos = input.indexOf(WebcConfig.ROOT);
 		if (pos <= 0 || pos >= input.length()) {
 			return false;
 		}
 		char ch1 = input.charAt(pos - 1);
-		char ch2 = input.charAt(pos + WebcConfig.ROOT_ELEMENT.length());
+		char ch2 = input.charAt(pos + WebcConfig.ROOT.length());
 		if (ch1 != '<' && ch1 != ':') {
 			return false;
 		}

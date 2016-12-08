@@ -25,7 +25,7 @@ public @interface ServletMethod {
 
 	boolean csrf() default true; // check csrf
 
-	boolean api() default false; // export the servlet method to api access
+	boolean export() default false; // export the servlet method to api access
 
 	String summary() default ""; // summary to the servlet method
 

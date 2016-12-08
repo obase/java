@@ -26,7 +26,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.util.HtmlUtils;
 
-import com.github.obase.data.Message;
+import com.github.obase.Message;
 import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.MapKit;
@@ -274,8 +274,16 @@ public abstract class Kits {
 		writeResponse(response, Webc.CONTENT_TYPE_PLAIN, sc, content);
 	}
 
+	public static void writePlain(HttpServletResponse response, CharSequence content) throws IOException {
+		writeResponse(response, Webc.CONTENT_TYPE_PLAIN, Webc.HTTP_OK, content);
+	}
+
 	public static void writeHtml(HttpServletResponse response, int sc, CharSequence content) throws IOException {
 		writeResponse(response, Webc.CONTENT_TYPE_HTML, sc, content);
+	}
+
+	public static void writeHtml(HttpServletResponse response, CharSequence content) throws IOException {
+		writeResponse(response, Webc.CONTENT_TYPE_HTML, Webc.HTTP_OK, content);
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, int sc, Object object) throws IOException {
@@ -284,12 +292,24 @@ public abstract class Kits {
 		Jsons.writeValue(response.getWriter(), object);
 	}
 
+	public static void writeJsonObject(HttpServletResponse response, Object object) throws IOException {
+		writeJsonObject(response, Webc.HTTP_OK, object);
+	}
+
 	public static void writeJson(HttpServletResponse response, int sc, CharSequence json) throws IOException {
 		writeResponse(response, Webc.CONTENT_TYPE_JSON, sc, json);
 	}
 
+	public static void writeJson(HttpServletResponse response, CharSequence json) throws IOException {
+		writeJson(response, Webc.HTTP_OK, json);
+	}
+
 	public static void writeXml(HttpServletResponse response, int code, CharSequence content) throws IOException {
 		writeResponse(response, Webc.CONTENT_TYPE_XML, code, content);
+	}
+
+	public static void writeXml(HttpServletResponse response, CharSequence content) throws IOException {
+		writeResponse(response, Webc.CONTENT_TYPE_XML, Webc.HTTP_OK, content);
 	}
 
 	public static <T> void writeMessage(HttpServletResponse response, int errno, String errmsg, T data) throws IOException {
@@ -679,14 +699,7 @@ public abstract class Kits {
 	}
 
 	public static String getLookupPath(HttpServletRequest request) {
-		String namespace = (String) request.getAttribute(Webc.ATTR_NAMESPACE);
-		String servletPath = request.getServletPath();
-		int pos;
-		if (StringKit.isEmpty(namespace) || (pos = servletPath.indexOf(namespace)) == -1) {
-			return servletPath;
-		} else {
-			return servletPath.substring(pos + namespace.length());
-		}
+		return (String) request.getAttribute(Webc.ATTR_LOOKUP_PATH);
 	}
 
 	public static String getServletPath(HttpServletRequest request) {

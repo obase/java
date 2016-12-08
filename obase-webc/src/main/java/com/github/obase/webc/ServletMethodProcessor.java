@@ -1,10 +1,7 @@
 package com.github.obase.webc;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
-import javax.servlet.AsyncListener;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,19 +9,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 
 import com.github.obase.webc.annotation.ServletMethod;
+import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 
 public interface ServletMethodProcessor {
 
-	void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException;
+	/**
+	 * register and add more if necessary
+	 */
+	void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException;
 
-	HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Exception;
+	/**
+	 * process and replace request if necessary
+	 */
+	HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Throwable;
 
-	void postprocess(HttpServletRequest request, HttpServletResponse response, Throwable t);
+	/**
+	 * process when error. It could not throw exception any more
+	 */
+	void error(HttpServletRequest request, HttpServletResponse response, Throwable t);
 
-	AsyncListener getAsyncListener();
-
-	long getSessionTimeout();
-
-	String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod, ServletMethod methodAnnotation);
+	/**
+	 * return the lookupPath for the servlet method
+	 */
+	String lookup(Controller classAnnotation, Class<?> clazz, ServletMethod methodAnnotation, String methodName);
 
 }

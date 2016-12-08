@@ -4,5 +4,5 @@ public enum AuthType {
 	DEFAULT, // adjust by application
 	NONE, // require nothing
 	LOGINED, // require login
-	PERMISSION, // require permission
+	PERMISSION // require permission
 }

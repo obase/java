@@ -1,32 +1,24 @@
 package com.github.obase.webc;
 
-import java.util.Arrays;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 
 import com.github.obase.webc.annotation.ServletMethod;
 
-public abstract class ServletMethodObject {
+/**
+ * 保存ServletMethod的关系规则
+ */
+public class ServletMethodObject {
 
-	public Object bean;
-	public String method;
-	public ServletMethod annotation;
-	public ServletMethodFilter[] filters;
+	public static final int HANDLES_LENGTH = HttpMethod.values().length;
 
-	protected final ServletMethodObject init(Object bean, String method, ServletMethod annotation, ServletMethodFilter... filters) {
-		this.bean = bean;
-		this.method = method;
+	public AuthType authType; // process default parsing
+	public final ServletMethod annotation;
+	public final String lookupPath;
+	public final ServletMethodHandler[] handlers = new ServletMethodHandler[HANDLES_LENGTH];
+
+	public ServletMethodObject(ServletMethod annotation, String lookupPath) {
 		this.annotation = annotation;
-		this.filters = filters;
-		return this;
-	}
-
-	public abstract void service(HttpServletRequest request, HttpServletResponse response) throws Exception;
-
-	public final String toString() {
-		return new StringBuilder(512).append("{bean=").append(bean == null ? null : bean.getClass().getCanonicalName()).append(",method=").append(method).append(",annotation=").append(annotation)
-				.append(",filters=").append(filters == null ? null : Arrays.toString(filters)).append("}").toString();
+		this.lookupPath = lookupPath;
 	}
 
 }

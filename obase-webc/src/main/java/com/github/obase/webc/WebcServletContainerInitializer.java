@@ -13,8 +13,10 @@ import org.springframework.core.io.Resource;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.config.WebcConfig;
-import com.github.obase.webc.config.WebcConfig.FilterConfig;
+import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.config.WebcConfigParser;
+import com.github.obase.webc.support.BaseInvokerServiceProcessor;
+import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 public final class WebcServletContainerInitializer implements ServletContainerInitializer {
 
@@ -25,19 +27,19 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 		if (configResource != null) {
 
 			WebcConfig config = WebcConfigParser.parse(configResource);
-			config = WebcConfig.mergeDefaultForApplication(config, servletContext, this.getClass());
 			if (!config.withoutApplicationContext) {
+				config = mergeInitParamForContext(servletContext, config);
 				if (StringKit.isNotEmpty(config.contextConfigLocation)) {
 					initWebkitFrameworkListener(servletContext, config);
 				}
 			}
 			if (!config.withoutServletContext) {
 				if (config.servlets.size() > 0) {
-					for (FilterConfig fc : config.servlets) {
-						initWebkitFrameworkFilter(ServletMethodDispatcherFilter.class, servletContext, WebcConfig.mergeDefaultForServlet(fc, servletContext, this.getClass()));
+					for (FilterInitParam fc : config.servlets) {
+						initWebkitFrameworkFilter(ServletMethodDispatcherFilter.class, servletContext, mergeInitParamForServlet(servletContext, fc));
 					}
 				} else {
-					FilterConfig fc = WebcConfig.mergeDefaultForServlet(new FilterConfig(), servletContext, this.getClass());
+					FilterInitParam fc = mergeInitParamForServlet(servletContext, new FilterInitParam());
 					if (StringKit.isNotEmpty(fc.contextConfigLocation)) {
 						initWebkitFrameworkFilter(ServletMethodDispatcherFilter.class, servletContext, fc);
 					}
@@ -45,11 +47,11 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 			}
 			if (!config.withoutServiceContext) {
 				if (config.services.size() > 0) {
-					for (FilterConfig fc : config.services) {
-						initWebkitFrameworkFilter(InvokerServiceDispatcherFilter.class, servletContext, WebcConfig.mergeDefaultForService(fc, servletContext, this.getClass()));
+					for (FilterInitParam fc : config.services) {
+						initWebkitFrameworkFilter(InvokerServiceDispatcherFilter.class, servletContext, mergeInitParamForService(servletContext, fc));
 					}
 				} else {
-					FilterConfig fc = WebcConfig.mergeDefaultForService(new FilterConfig(), servletContext, this.getClass());
+					FilterInitParam fc = mergeInitParamForService(servletContext, new FilterInitParam());
 					if (StringKit.isNotEmpty(fc.contextConfigLocation)) {
 						initWebkitFrameworkFilter(InvokerServiceDispatcherFilter.class, servletContext, fc);
 					}
@@ -67,7 +69,7 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 		servletContext.addListener(ApplicationContextLoaderListener.class);
 	}
 
-	private void initWebkitFrameworkFilter(Class<? extends WebcFrameworkFilter> filterClass, ServletContext servletContext, FilterConfig config) {
+	private void initWebkitFrameworkFilter(Class<? extends WebcFrameworkFilter> filterClass, ServletContext servletContext, FilterInitParam config) {
 		String filterName = filterClass.getSimpleName() + "$" + (config.namespace == null ? "" : replaceInvalidIdentifier(config.namespace)) + "$" + (config.hashCode() & 0xFFFFFFFFL);
 		FilterRegistration.Dynamic dynamic = servletContext.addFilter(filterName, filterClass);
 		dynamic.setAsyncSupported(true);
@@ -84,6 +86,40 @@ public final class WebcServletContainerInitializer implements ServletContainerIn
 			sb.setCharAt(i, '_');
 		}
 		return sb.toString();
+	}
+
+	private WebcConfig mergeInitParamForContext(ServletContext servletContext, WebcConfig config) {
+
+		if (StringKit.isEmpty(config.contextConfigLocation)) {
+			config.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_CONTEXT_CONFIG_LOCATION2);
+		}
+		return config;
+	}
+
+	private FilterInitParam mergeInitParamForServlet(ServletContext servletContext, FilterInitParam params) {
+		if (StringKit.isEmpty(params.namespace)) {
+			params.namespace = Webc.DEFAULT_NAMESPACE_FOR_SERVLET;
+		}
+		if (StringKit.isEmpty(params.contextConfigLocation)) {
+			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION2);
+		}
+		if (params.controlProcessor == null) {
+			params.controlProcessor = BaseServletMethodProcessor.class;
+		}
+		return params;
+	}
+
+	private FilterInitParam mergeInitParamForService(ServletContext servletContext, FilterInitParam params) {
+		if (StringKit.isEmpty(params.namespace)) {
+			params.namespace = Webc.DEFAULT_NAMESPACE_FOR_SERVICE;
+		}
+		if (StringKit.isEmpty(params.contextConfigLocation)) {
+			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2);
+		}
+		if (params.controlProcessor == null) {
+			params.controlProcessor = BaseInvokerServiceProcessor.class;
+		}
+		return params;
 	}
 
 }

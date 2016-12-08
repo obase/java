@@ -5,7 +5,8 @@ import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 import com.github.obase.webc.annotation.InvokerService;
 
 public final class InvokerServiceObject extends HttpInvokerServiceExporter {
-	private InvokerService annotation;
+
+	InvokerService annotation;
 
 	public InvokerService getAnnotation() {
 		return annotation;

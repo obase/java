@@ -21,7 +21,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.hiido.HiidoKit.Callback;
@@ -52,7 +52,7 @@ public class GenericHiidoauthFilter implements Filter {
 	String hiidoLoginUrl;
 
 	Callback callback;
-	final Map<String, ServletMethodObject> actions = new HashMap<>();
+	final Map<String, ServletMethodHandler> actions = new HashMap<>();
 
 	private String getStringParameter(FilterConfig filterConfig, String name, String def) {
 		String tmp = filterConfig.getInitParameter(name);
@@ -105,7 +105,7 @@ public class GenericHiidoauthFilter implements Filter {
 			logger.info("Use default HiidoKit.Callback to " + this.getClass().getSimpleName() + "$" + filterConfig.getFilterName());
 		}
 
-		actions.put(getRealPath(servletPathPrefix, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN), new ServletMethodObject() {
+		actions.put(getRealPath(servletPathPrefix, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN), new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				callback.postHiidoLogin(request, response);
@@ -123,7 +123,7 @@ public class GenericHiidoauthFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 
-		ServletMethodObject action = actions.get(request.getServletPath());
+		ServletMethodHandler action = actions.get(request.getServletPath());
 		if (action != null) {
 			try {
 				action.service(request, response);

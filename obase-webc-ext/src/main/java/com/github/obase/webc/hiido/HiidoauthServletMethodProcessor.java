@@ -14,20 +14,20 @@ import org.springframework.util.SerializationUtils;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.hiido.HiidoKit.Callback;
 import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SecurityServletMethodProcessor;
+import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
-public class HiidoauthServletMethodProcessor extends SecurityServletMethodProcessor implements Callback {
+public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
 
 	protected String udbApi;
 	protected String agentId;
@@ -70,16 +70,16 @@ public class HiidoauthServletMethodProcessor extends SecurityServletMethodProces
 	}
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException {
+	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodHandler[]> rules) throws ServletException {
 
-		ServletMethodObject postHiidoLoginObject = new ServletMethodObject() {
+		ServletMethodHandler postHiidoLoginObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
 				postHiidoLogin(request, response);
 			}
 		};
 
-		ServletMethodObject[] arr = new ServletMethodObject[HttpMethod.values().length];
+		ServletMethodHandler[] arr = new ServletMethodHandler[HttpMethod.values().length];
 		Arrays.fill(arr, postHiidoLoginObject);
 		rules.put(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, arr);
 
@@ -150,7 +150,7 @@ public class HiidoauthServletMethodProcessor extends SecurityServletMethodProces
 	}
 
 	@Override
-	protected void redirectToLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Kits.sendRedirect(response, StringKit.isNotEmpty(hiidoLoginUrl) ? hiidoLoginUrl : HiidoKit.HIIDO_LOGIN_URL);
 	}
 

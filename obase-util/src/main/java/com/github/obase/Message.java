@@ -1,4 +1,4 @@
-package com.github.obase.data;
+package com.github.obase;
 
 import java.io.Serializable;
 

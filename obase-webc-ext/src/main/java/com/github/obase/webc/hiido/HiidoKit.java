@@ -40,17 +40,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.SystemException;
 
+import com.github.obase.MessageException;
+import com.github.obase.kit.CollectKit;
+import com.github.obase.webc.Webc;
+import com.github.obase.webc.Wsid;
+import com.github.obase.webc.support.security.Principal;
+import com.github.obase.webc.support.security.SimplePrincipal;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2Session;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionOptions;
-import com.github.obase.kit.CollectKit;
-import com.github.obase.webc.ApplicationException;
-import com.github.obase.webc.Webc;
-import com.github.obase.webc.Wsid;
-import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SimplePrincipal;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -115,7 +115,7 @@ public final class HiidoKit {
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo",
 				Arrays.<Object>asList(Collections.emptyList()));
 		if (RpcKit.code(result) != 1) {
-			throw new ApplicationException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
+			throw new MessageException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
 		}
 
 		// 已注册用户
@@ -154,7 +154,7 @@ public final class HiidoKit {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", updUserMap);
 		if (RpcKit.code(result) != 1) {
-			throw new ApplicationException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
+			throw new MessageException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
 		}
 	}
 
@@ -214,20 +214,20 @@ public final class HiidoKit {
 			JSONRPC2Response authResp = session.send(authReq);
 			if (!authResp.indicatesSuccess()) {
 				JSONRPC2Error error = authResp.getError();
-				throw new ApplicationException("hiido.authenticate", error.getCode(), error.getMessage());
+				throw new MessageException("hiido.authenticate", error.getCode(), error.getMessage());
 			}
 
 			request.setID(1); // 统一
 			JSONRPC2Response response = session.send(request);
 			if (!response.indicatesSuccess()) {
 				JSONRPC2Error error = response.getError();
-				throw new ApplicationException("hiido." + request.getMethod(), error.getCode(), error.getMessage());
+				throw new MessageException("hiido." + request.getMethod(), error.getCode(), error.getMessage());
 			}
 			return (JSONObject) response.getResult();
 		} catch (SystemException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new ApplicationException("HiidoJsonrpc2Client.invoke", Webc.ERRNO_UNKNOWN_ERROR, e.getMessage(), e);
+			throw new MessageException("HiidoJsonrpc2Client.invoke", Webc.ERRNO_UNKNOWN_ERROR, e.getMessage(), e);
 		}
 	}
 
