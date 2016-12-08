@@ -22,11 +22,9 @@ import com.github.obase.kit.StringKit;
 /**
  * Security base implementation
  */
-public abstract class SecurityServletMethodProcessor extends BaseServletMethodProcessor {
+public abstract class WsidServletMethodProcessor extends BaseServletMethodProcessor {
 
-	protected final Set<String> csrfRefererDomain = new HashSet<String>();
-	protected byte[] csrfSecretBytes = Webc.DEFAULT_CSRF_SECRET_BYTES;
-	protected AuthType defaultAuthType = AuthType.PERMISSION;
+
 
 	public final void setCsrfRefererDomain(String csrfRefererDomain) {
 		this.csrfRefererDomain.clear();

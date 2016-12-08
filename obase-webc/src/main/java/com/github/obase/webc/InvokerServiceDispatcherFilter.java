@@ -10,7 +10,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,18 +22,16 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
+import com.github.obase.kit.ArrayKit;
 import com.github.obase.webc.annotation.InvokerService;
 import com.github.obase.webc.support.BaseInvokerServiceProcessor;
-import com.github.obase.kit.ArrayKit;
 
-@WebFilter(asyncSupported = true)
 public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 
 	InvokerServiceProcessor processor;
-	Map<String, InvokerServiceObject> invokerServiceExporterMap;
-
 	AsyncListener listener;
 	long timeout;
+	Map<String, InvokerServiceObject> rulesMap;
 
 	protected final void postProcessWebApplicationContext(ConfigurableWebApplicationContext wac) {
 		wac.addBeanFactoryPostProcessor(new InvokerServiceExporterBeanFactoryPostProcessor());
@@ -42,35 +39,38 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 
 	@Override
 	protected void initFrameworkFilter() throws ServletException {
-		super.initFrameworkFilter();
 
-		processor = Webc.Util.findBean(webApplicationContext, InvokerServiceProcessor.class, null);
-		if (processor == null) {
+		if (params.controlProcessor != null) {
+			processor = (InvokerServiceProcessor) applicationContext.getBean(params.controlProcessor);
+		} else {
 			processor = new BaseInvokerServiceProcessor();
 		}
-		listener = processor.getAsyncListener();
-		timeout = processor.getSessionTimeout();
 
-		Map<String, InvokerServiceObject> rules = new HashMap<String, InvokerServiceObject>();
-		Map<String, InvokerServiceObject> beans = webApplicationContext.getBeansOfType(InvokerServiceObject.class);
+		if (params.asyncListener != null) {
+			listener = (AsyncListener) applicationContext.getBean(params.asyncListener);
+		}
+
+		timeout = params.timeoutSecond * 1000;
+
+		Map<Class<?>, InvokerServiceObject> map = new HashMap<Class<?>, InvokerServiceObject>();
+		Map<String, InvokerServiceObject> beans = applicationContext.getBeansOfType(InvokerServiceObject.class);
 		if (beans.size() > 0) {
 			for (Map.Entry<String, InvokerServiceObject> entry : beans.entrySet()) {
 				if (entry.getKey().startsWith(Webc.INVOKER_SERVICE_PREFIX)) {
 					InvokerServiceObject exporter = entry.getValue();
-					String lookupPath = '/' + exporter.getServiceInterface().getCanonicalName();
-					if (rules.put(lookupPath, exporter) != null) {
-						throw new IllegalStateException("Duplicate invoker service lookup path : " + lookupPath);
+					if (map.put(exporter.getServiceInterface(), exporter) != null) {
+						throw new IllegalStateException("Duplicate invoker service : " + exporter.getServiceInterface());
 					}
 				}
 			}
 		}
 
-		processor.initMappingRules(filterConfig, rules);
+		processor.setup(params, map);
 
 		// For performance: change lookupPath to servletPath and set to servletMethodHandlerMap
-		invokerServiceExporterMap = new HashMap<String, InvokerServiceObject>(rules.size());
-		for (Map.Entry<String, InvokerServiceObject> entry : rules.entrySet()) {
-			invokerServiceExporterMap.put(Kits.getServletPath(config.namespace, entry.getKey(), null), entry.getValue());
+		rulesMap = new HashMap<String, InvokerServiceObject>(map.size());
+		for (Map.Entry<Class<?>, InvokerServiceObject> entry : map.entrySet()) {
+			rulesMap.put(Kits.getServletPath(params.namespace, '/' + entry.getKey().getCanonicalName().replace('.', '/'), null), entry.getValue());
 		}
 	}
 
@@ -78,7 +78,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest request = (HttpServletRequest) req;
-		final InvokerServiceObject object = invokerServiceExporterMap.get(request.getServletPath());
+		final InvokerServiceObject object = rulesMap.get(request.getServletPath());
 
 		if (object != null) {
 
@@ -88,24 +88,23 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				if (listener != null) {
 					actx.addListener(listener);
 				}
-				actx.setTimeout(timeout);
+				actx.setTimeout(timeout); // millis
 				actx.start(new Runnable() {
 					@Override
 					public void run() {
-						HttpServletRequest request = (HttpServletRequest) actx.getRequest();
-						HttpServletResponse response = (HttpServletResponse) actx.getResponse();
+						final HttpServletRequest request = (HttpServletRequest) actx.getRequest();
+						final HttpServletResponse response = (HttpServletResponse) actx.getResponse();
 
-						HttpServletRequest processedRequest = request;
+						HttpServletRequest prerequest = null;
 						try {
-							request = processor.preprocess(processedRequest, response, object);
-							if (request != null) {
-								object.handleRequest(request, response);
-								processor.postprocess(request, response, null);
+							prerequest = processor.process(request, response);
+							if (prerequest != null) {
+								object.handleRequest(prerequest, response);
 							}
 						} catch (Throwable t) {
-							processor.postprocess(request != null ? request : processedRequest, response, t);
+							processor.error(request, response, t);
 						} finally {
-							if (processedRequest.isAsyncStarted()) {
+							if (request.isAsyncStarted()) {
 								actx.complete();
 							}
 						}
@@ -116,13 +115,12 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				HttpServletRequest processedRequest = request;
 				HttpServletResponse response = (HttpServletResponse) resp;
 				try {
-					request = processor.preprocess(processedRequest, response, object);
+					request = processor.process(processedRequest, response);
 					if (request != null) {
 						object.handleRequest(request, response);
-						processor.postprocess(request, response, null);
 					}
 				} catch (Throwable t) {
-					processor.postprocess(request != null ? request : processedRequest, response, t);
+					processor.error(request, response, t);
 				}
 			}
 			return;

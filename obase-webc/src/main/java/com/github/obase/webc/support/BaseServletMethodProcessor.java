@@ -1,13 +1,9 @@
 package com.github.obase.webc.support;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.AsyncListener;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,56 +14,61 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 
-import com.github.obase.data.Message;
+import com.github.obase.Message;
+import com.github.obase.MessageException;
+import com.github.obase.WrappedException;
 import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.StringKit;
-import com.github.obase.webc.ApplicationException;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.ServletMethodProcessor;
+import com.github.obase.webc.ServletMethodRules;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.annotation.ServletMethod;
+import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 
 public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	protected AsyncListener asyncListener;
-	protected long sessionTimeout = Webc.DEFAULT_SESSION_TIMEOUT;// seconds
+	protected FilterInitParam params;
+
 	protected boolean sendError;
-	protected String[] packagePrefix;
-	protected String[] classSuffix;
+	protected String[] controlPrefixArray;
+	protected String[] controlSuffixArray;
 
 	@Override
-	public void initMappingRules(FilterConfig filterConfig, Map<String, ServletMethodObject[]> rules) throws ServletException {
-
-		if (logger.isDebugEnabled()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(filterConfig.getFilterName()).append(" load lookup rules as follows :\n");
-			for (Map.Entry<String, ServletMethodObject[]> entry : rules.entrySet()) {
-				sb.append(entry.getKey()).append(": ").append(Arrays.toString(entry.getValue())).append('\n');
-			}
-			sb.deleteCharAt(sb.length() - 1);
-			logger.debug(sb.toString());
+	public void setup(FilterInitParam params, Map<String, ServletMethodRules> rules) throws ServletException {
+		this.params = params;
+		this.sendError = params.sendError;
+		if (params.controlPrefix != null) {
+			this.controlPrefixArray = StringKit.split(params.controlPrefix, Webc.COMMA, true);
+		}
+		if (params.controlSuffix != null) {
+			this.controlSuffixArray = StringKit.split(params.controlSuffix, Webc.COMMA, true);
+		}
+		if (logger.isInfoEnabled()) {
+			logger.info("Load lookupPath:" + rules.keySet());
 		}
 	}
 
 	@Override
-	public HttpServletRequest preprocess(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Exception {
+	public HttpServletRequest process(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return request;
 	}
 
 	@Override
-	public void postprocess(HttpServletRequest request, HttpServletResponse response, Throwable t) {
+	public void error(HttpServletRequest request, HttpServletResponse response, Throwable t) {
 		if (t != null) {
 
-			logger.error("Postprocess error for " + Kits.getServletPath(request), t);
+			while (t instanceof WrappedException) {
+				t = t.getCause();
+			}
 
 			int sc = 0, errno = 0;
 			String errmsg = null;
-			if (t instanceof ApplicationException) {
-				ApplicationException ae = (ApplicationException) t;
+			if (t instanceof MessageException) {
+				MessageException ae = (MessageException) t;
 				sc = ae.getErrno() > 0 ? ae.getErrno() : HttpURLConnection.HTTP_INTERNAL_ERROR;
 				errno = sc;
 				errmsg = ae.getErrmsg();
@@ -86,6 +87,10 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				sc = HttpURLConnection.HTTP_INTERNAL_ERROR;
 				errno = Webc.ERRNO_UNKNOWN_ERROR;
 				errmsg = "Unknown Error: " + t.getMessage();
+
+				if (logger.isErrorEnabled()) {
+					logger.error(errmsg, t);
+				}
 			}
 
 			try {
@@ -105,49 +110,11 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 		// for subclass
 	}
 
+	/**
+	 * uniform lookup path rule
+	 */
 	@Override
-	public AsyncListener getAsyncListener() {
-		return this.asyncListener;
-	}
-
-	public void setAsyncListener(AsyncListener asyncListener) {
-		this.asyncListener = asyncListener;
-	}
-
-	public void setSessionTimeout(long sessionTimeout) {
-		this.sessionTimeout = sessionTimeout;
-	}
-
-	public long getSessionTimeout() {
-		return sessionTimeout;
-	}
-
-	public void setPackagePrefix(String[] packagePrefix) {
-		this.packagePrefix = packagePrefix;
-	}
-
-	public void setPackagePrefix(String packagePrefix) {
-		if (StringKit.isNotEmpty(packagePrefix)) {
-			this.packagePrefix = StringKit.split(packagePrefix, Webc.COMMA, true);
-		}
-	}
-
-	public void setClassSuffix(String[] classSuffix) {
-		this.classSuffix = classSuffix;
-	}
-
-	public void setClassSuffix(String classSuffix) {
-		if (StringKit.isNotEmpty(classSuffix)) {
-			this.packagePrefix = StringKit.split(classSuffix, Webc.COMMA, true);
-		}
-	}
-
-	public void setSendError(boolean sendError) {
-		this.sendError = sendError;
-	}
-
-	@Override
-	public String parseLookupPath(Class<?> targetClass, Controller classAnnotation, Method targetMethod, ServletMethod methodAnnotation) {
+	public final String lookup(Controller classAnnotation, Class<?> targetClass, ServletMethod methodAnnotation, String methodName) {
 
 		StringBuilder sb = new StringBuilder(512);
 		if (!Webc.$.equals(classAnnotation.value())) {
@@ -156,29 +123,29 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				String className = targetClass.getCanonicalName();
 				sb.append(className);
 
-				if (ArrayKit.isNotEmpty(packagePrefix)) {
-					for (String p : packagePrefix) {
+				if (ArrayKit.isNotEmpty(controlPrefixArray)) {
+					for (String p : controlPrefixArray) {
 						if (className.startsWith(p)) {
 							sb.delete(0, p.length());
 							break;
 						}
 					}
 				} else {
-					int pos = className.indexOf(Webc.DEFAULT_CONTROLLER_PREFIX);
+					int pos = className.indexOf(Webc.DEFAULT_CONTROL_PREFIX);
 					if (pos == 0 || (pos > 0 && className.charAt(pos - 1) == '.')) {
-						sb.delete(0, pos + Webc.DEFAULT_CONTROLLER_PREFIX.length());
+						sb.delete(0, pos + Webc.DEFAULT_CONTROL_PREFIX.length());
 					}
 				}
 
-				if (ArrayKit.isNotEmpty(classSuffix)) {
-					for (String s : classSuffix) {
+				if (ArrayKit.isNotEmpty(controlSuffixArray)) {
+					for (String s : controlSuffixArray) {
 						if (className.endsWith(s)) {
 							sb.delete(sb.length() - s.length(), sb.length());
 						}
 					}
 				} else {
-					if (className.endsWith(Webc.DEFAULT_CONTROLLER_SUFFIX)) {
-						sb.delete(sb.length() - Webc.DEFAULT_CONTROLLER_SUFFIX.length(), sb.length());
+					if (className.endsWith(Webc.DEFAULT_CONTROL_SUFFIX)) {
+						sb.delete(sb.length() - Webc.DEFAULT_CONTROL_SUFFIX.length(), sb.length());
 					}
 				}
 
@@ -204,7 +171,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 		if (!Webc.$.equals(methodAnnotation.value())) {
 			if (StringKit.isEmpty(methodAnnotation.value())) {
-				sb.append('.').append(targetMethod.getName());
+				sb.append('.').append(methodName);
 			} else {
 				sb.append('.').append(methodAnnotation.value());
 			}

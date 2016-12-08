@@ -37,6 +37,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.support.ServletContextResource;
 
+import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
 
 /**
@@ -68,21 +69,25 @@ public interface Webc {
 	String DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2 = "/META-INF/serviceContext.xml";
 	String DEFAULT_NAMESPACE_FOR_SERVLET = null;
 	String DEFAULT_NAMESPACE_FOR_SERVICE = "service";
-	int DEFAULT_ASYNC_TIMEOUT = 60 * 60 * 1000; // default 1 hour timeout
-	int DEFAULT_SESSION_TIMEOUT = 30 * 60 * 1000;
+	int DEFAULT_TIMEOUT_SECOND = 30 * 60; // default 1 hour timeout
 
-	String DEFAULT_CONTROLLER_PREFIX = "controller.";
-	String DEFAULT_CONTROLLER_SUFFIX = "Controller";
-	byte[] DEFAULT_CSRF_SECRET_BYTES = "zaqx!@#".getBytes();
+	String DEFAULT_CONTROL_PREFIX = "controller.";
+	String DEFAULT_CONTROL_SUFFIX = "Controller";
+	int DEFAULT_WSID_TOKEN_BASE = 49999;
 
 	String INVOKER_SERVICE_PREFIX = "HttpInvokerServiceExporter$";
 	String ATTR_HTTP_METHOD = "$_HTTP_METHOD";
 	String ATTR_WSID = "$_WSID";
 	String ATTR_PRINCIPAL = "$_PRINCIPAL";
 	String ATTR_NAMESPACE = "$_NAMESPACE";
+	String ATTR_LOOKUP_PATH = "$_LOOKUP_PATH";
 	String GLOBAL_ATTRIBUTE_PREFFIX = "$_";
 
-	int ERRNO_UNKNOWN_ERROR = -1;
+	int ERRNO_UNKNOWN_ERROR = MessageException.ERRNO_UNKNOWN_ERROR;
+
+	int HTTP_OK = 200;
+	int HTTP_SERVER_ERROR = 500;
+
 	int ERRNO_PERMISSION_DENIED = 602;
 	int ERRNO_CSRF_ERROR = 603;
 	int ERRNO_SESSION_TIMEOUT = 604;
@@ -115,8 +120,7 @@ public interface Webc {
 			return null;
 		}
 
-		public static Resource getDefaultConfigResource(ServletContext servletContext, String servletpath,
-				Class<?> clazz, String classpath) {
+		public static Resource getDefaultConfigResource(ServletContext servletContext, String servletpath, Class<?> clazz, String classpath) {
 			ServletContextResource scr = new ServletContextResource(servletContext, servletpath);
 			if (scr.exists()) {
 				return scr;
@@ -128,8 +132,7 @@ public interface Webc {
 			return null;
 		}
 
-		public static String getDefaultConfigLocation(ServletContext servletContext, String servletpath, Class<?> clazz,
-				String classpath) {
+		public static String getDefaultConfigLocation(ServletContext servletContext, String servletpath, Class<?> clazz, String classpath) {
 			ServletContextResource scr = new ServletContextResource(servletContext, servletpath);
 			if (scr.exists()) {
 				return servletpath;
@@ -149,18 +152,15 @@ public interface Webc {
 			ClassWriter cw = new ClassWriter(0);
 			MethodVisitor mv;
 
-			cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null,
-					Type.getInternalName(ServletMethodObject.class), null);
+			cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null, Type.getInternalName(ServletMethodObject.class), null);
 			{
-				mv = cw.visitMethod(ACC_PUBLIC, "<init>", Type.getMethodDescriptor(Type.getType(void.class)), null,
-						null);
+				mv = cw.visitMethod(ACC_PUBLIC, "<init>", Type.getMethodDescriptor(Type.getType(void.class)), null, null);
 				mv.visitCode();
 				Label l0 = new Label();
 				mv.visitLabel(l0);
 				mv.visitLineNumber(2, l0);
 				mv.visitVarInsn(ALOAD, 0);
-				mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(ServletMethodObject.class), "<init>",
-						Type.getMethodDescriptor(Type.getType(void.class)), false);
+				mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(ServletMethodObject.class), "<init>", Type.getMethodDescriptor(Type.getType(void.class)), false);
 				mv.visitInsn(RETURN);
 				Label l1 = new Label();
 				mv.visitLabel(l1);
@@ -169,10 +169,8 @@ public interface Webc {
 				mv.visitEnd();
 			}
 			{
-				mv = cw.visitMethod(ACC_PUBLIC, "service",
-						Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class),
-								Type.getType(HttpServletResponse.class)),
-						null, new String[] { Type.getInternalName(Exception.class) });
+				mv = cw.visitMethod(ACC_PUBLIC, "service", Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), null,
+						new String[] { Type.getInternalName(Exception.class) });
 				mv.visitCode();
 				Label l0 = new Label();
 				mv.visitLabel(l0);
@@ -192,9 +190,7 @@ public interface Webc {
 				mv.visitInsn(AALOAD);
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 2);
-				mv.visitMethodInsn(INVOKEINTERFACE, Type.getInternalName(ServletMethodFilter.class), "process",
-						Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(HttpServletRequest.class),
-								Type.getType(HttpServletResponse.class)),
+				mv.visitMethodInsn(INVOKEINTERFACE, Type.getInternalName(ServletMethodFilter.class), "process", Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)),
 						true);
 				Label l4 = new Label();
 				mv.visitJumpInsn(IFNE, l4);
@@ -217,8 +213,7 @@ public interface Webc {
 				mv.visitTypeInsn(CHECKCAST, Type.getInternalName(targetClass));
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 2);
-				mv.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(targetClass), targetMethod.getName(),
-						Type.getMethodDescriptor(targetMethod), false);
+				mv.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(targetClass), targetMethod.getName(), Type.getMethodDescriptor(targetMethod), false);
 				Label l6 = new Label();
 				mv.visitLabel(l6);
 				mv.visitLineNumber(6, l6);

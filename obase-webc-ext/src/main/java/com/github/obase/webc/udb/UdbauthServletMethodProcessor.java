@@ -20,7 +20,7 @@ import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SecurityServletMethodProcessor;
+import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.support.security.SimplePrincipal;
 import com.github.obase.webc.udb.UdbKit.Callback;
 
@@ -29,7 +29,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
-public class UdbauthServletMethodProcessor extends SecurityServletMethodProcessor implements Callback {
+public class UdbauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
 
 	protected String appid;
 	protected String appkey;
