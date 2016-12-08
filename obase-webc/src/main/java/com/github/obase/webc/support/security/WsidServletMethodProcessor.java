@@ -55,9 +55,13 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 
 		// set object authType
 		for (ServletMethodObject object : rules.values()) {
-			object.authType = object.annotation.auth();
-			if (object.authType == AuthType.DEFAULT) {
-				object.authType = defaultAuthType;
+			if (object.annotation != null) {
+				object.authType = object.annotation.auth();
+				if (object.authType == AuthType.DEFAULT) {
+					object.authType = defaultAuthType;
+				}
+			} else {
+				object.authType = AuthType.NONE;
 			}
 		}
 	}
