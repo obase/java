@@ -224,7 +224,7 @@ public interface Webc {
 				mv.visitTypeInsn(CHECKCAST, Type.getInternalName(targetClass));
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 2);
-				mv.visitMethodInsn(INVOKEVIRTUAL, internalName, targetMethod.getName(), Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), false);
+				mv.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(targetClass), targetMethod.getName(), Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), false);
 				Label l7 = new Label();
 				mv.visitLabel(l7);
 				mv.visitLineNumber(13, l7);
