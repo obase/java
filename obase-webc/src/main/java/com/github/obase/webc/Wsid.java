@@ -13,6 +13,7 @@ public final class Wsid implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String COOKIE_NAME = "wsid";
 	public static final int COOKIE_TEMPORY_EXPIRE = -1;
+	public static final byte KEY_SEP = (byte) '\001';
 
 	public final byte[] id; // 16bytes for uuid or other
 	public long ts; // 8bytes for timestamp
@@ -33,7 +34,8 @@ public final class Wsid implements Serializable {
 		int len = data.length;
 		data = Arrays.copyOf(data, len + 8);
 
-		for (int i = len + 7; i >= len; i--) {
+		data[len] = KEY_SEP;
+		for (int i = len + 7; i > len; i--) {
 			data[i] = (byte) (sid & 0xFF);
 			sid >>>= 8;
 		}
@@ -49,12 +51,13 @@ public final class Wsid implements Serializable {
 		byte[] data = new byte[16];
 		long sid = System.nanoTime(); // using nanotime as session id
 
-		for (int i = 7; i >= 0; i--) {
+		for (int i = 7; i > 0; i--) {
 			data[i] = (byte) (uid & 0xFF);
 			sid >>>= 8;
 		}
 
-		for (int i = 15; i >= 8; i--) {
+		data[8] = KEY_SEP;
+		for (int i = 15; i > 8; i--) {
 			data[i] = (byte) (sid & 0xFF);
 			sid >>>= 8;
 		}
