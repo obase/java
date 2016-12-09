@@ -145,7 +145,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		if (sendError) {
 			Kits.sendError(resp, errno, errmsg);
 		} else {
-			Kits.writeErrorMessage(resp, Webc.HTTP_OK_EVEN_ERROR, errno, errmsg);
+			Kits.writeErrorMessage(resp, errno, errmsg);
 		}
 	}
 

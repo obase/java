@@ -122,7 +122,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				if (sendError) {
 					Kits.sendError(response, Webc.ERRNO_PERMISSION_DENIED, "Permission denied!");
 				} else {
-					Kits.writeErrorMessage(response, Webc.HTTP_OK_EVEN_ERROR, Webc.ERRNO_PERMISSION_DENIED, "Permission denied!");
+					Kits.writeErrorMessage(response, Webc.ERRNO_PERMISSION_DENIED, "Permission denied!");
 				}
 				return null;
 			}

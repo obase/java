@@ -108,8 +108,8 @@ public final class Kit extends Kits {
 		Kits.writeXml(response, Webc.HTTP_OK, content);
 	}
 
-	public <T> void writeMessage(int errno, String errmsg, T data) throws IOException {
-		Kits.writeMessage(response, errno, errmsg, data);
+	public <T> void writeMessage(int sc, String src, int errno, String errmsg, T data) throws IOException {
+		Kits.writeMessage(response, sc, src, errno, errmsg, data);
 	}
 
 	public <T> void writeSuccessMessage(T data) throws IOException {
@@ -120,24 +120,12 @@ public final class Kit extends Kits {
 		Kits.writeErrorMessage(response, errno, errmsg);
 	}
 
-	public void writeErrorMessage(int sc, int errno, String errmsg) throws IOException {
-		Kits.writeErrorMessage(response, sc, errno, errmsg);
-	}
-
-	public <T> void writeMessage(String src, int errno, String errmsg, T data) throws IOException {
-		Kits.writeMessage(response, src, errno, errmsg, data);
-	}
-
 	public <T> void writeSuccessMessage(String src, T data) throws IOException {
 		Kits.writeSuccessMessage(response, src, data);
 	}
 
 	public void writeErrorMessage(String src, int errno, String errmsg) throws IOException {
 		Kits.writeErrorMessage(response, src, errno, errmsg);
-	}
-
-	public void writeErrorMessage(int sc, String src, int errno, String errmsg) throws IOException {
-		Kits.writeErrorMessage(response, sc, src, errno, errmsg);
 	}
 
 	public String readParam(String name) {
