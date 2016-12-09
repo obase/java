@@ -32,7 +32,7 @@ import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.MapKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.kit.TimeKit;
-import com.github.obase.webc.support.security.Principal;
+import com.github.obase.webc.security.Principal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

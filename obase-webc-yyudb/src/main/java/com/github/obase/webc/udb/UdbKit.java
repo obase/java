@@ -26,7 +26,7 @@ import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.support.security.Principal;
+import com.github.obase.webc.security.Principal;
 
 public final class UdbKit {
 

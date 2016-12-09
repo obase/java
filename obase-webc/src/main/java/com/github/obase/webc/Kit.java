@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
-import com.github.obase.webc.support.security.Principal;
+import com.github.obase.webc.security.Principal;
 
 import redis.clients.jedis.JedisPool;
 

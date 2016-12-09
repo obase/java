@@ -1,4 +1,4 @@
-package com.github.obase.webc.support.security;
+package com.github.obase.webc.security;
 
 public class SimplePrincipal implements Principal {
 

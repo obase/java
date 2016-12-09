@@ -21,6 +21,7 @@ import com.github.obase.webc.Webc;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
+import com.github.obase.webc.security.Principal;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 /**

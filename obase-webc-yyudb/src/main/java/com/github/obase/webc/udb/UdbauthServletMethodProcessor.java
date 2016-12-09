@@ -19,8 +19,8 @@ import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SimplePrincipal;
+import com.github.obase.webc.security.Principal;
+import com.github.obase.webc.security.SimplePrincipal;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.udb.UdbKit.Callback;
 
