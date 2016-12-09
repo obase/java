@@ -42,10 +42,10 @@ import org.apache.commons.logging.LogFactory;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
+import com.github.obase.webc.Principal;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SimplePrincipal;
+import com.github.obase.webc.yy.UserPrincipal;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
@@ -87,14 +87,14 @@ public final class HiidoKit {
 		return rt;
 	}
 
-	public static Principal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
+	public static UserPrincipal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object>asList(token));
 		if (RpcKit.code(result) != 1) {
 			return null;
 		}
 		Map<String, Object> data = RpcKit.dataObject(result);
 		if (data.containsKey("passport")) {
-			SimplePrincipal principal = new SimplePrincipal();
+			UserPrincipal principal = new UserPrincipal();
 			principal.setJobCode(RpcKit._String(data, "job_code", null));
 			principal.setPassport(RpcKit._String(data, "passport", null));
 			principal.setEmail(RpcKit._String(data, "email", null));
@@ -121,7 +121,7 @@ public final class HiidoKit {
 			for (Object item : list) {
 				Map<String, Object> data = (Map<String, Object>) item;
 				if (data.containsKey("passport")) {
-					SimplePrincipal principal = new SimplePrincipal();
+					UserPrincipal principal = new UserPrincipal();
 					principal.setJobCode(RpcKit._String(data, "job_code", null));
 					principal.setPassport(RpcKit._String(data, "passport", null));
 					principal.setEmail(RpcKit._String(data, "email", null));

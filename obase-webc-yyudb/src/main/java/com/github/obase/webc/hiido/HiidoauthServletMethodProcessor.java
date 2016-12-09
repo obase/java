@@ -13,14 +13,15 @@ import org.springframework.util.SerializationUtils;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
+import com.github.obase.webc.Principal;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.hiido.HiidoKit.Callback;
-import com.github.obase.webc.support.security.Principal;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
+import com.github.obase.webc.yy.UserPrincipal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -87,7 +88,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	}
 
 	@Override
-	public final Principal validateAndExtendPrincipal(Wsid wsid) {
+	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
 		byte[] data = null;
 		Jedis jedis = null;
@@ -118,7 +119,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 			Kits.sendError(response, Webc.ERRNO_INVALID_ACCOUNT, "Invalid account!");
 			return;
 		}
-		Principal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(udbApi, agentId, agentPwd, publicKey, token));
+		UserPrincipal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(udbApi, agentId, agentPwd, publicKey, token));
 		if (principal == null) {
 			Kits.sendError(response, Webc.ERRNO_INVALID_ACCOUNT, "Invalid account!");
 			return;
@@ -155,16 +156,17 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	}
 
 	@Override
-	protected final Wsid tryOssLogin(HttpServletRequest request) throws ServletException, IOException {
+	protected Wsid tryOssLogin(HttpServletRequest request) throws ServletException, IOException {
 		return null;
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(Principal staffInfoByToken) {
+	protected UserPrincipal validatePrincipal(UserPrincipal staffInfoByToken) {
 		return staffInfoByToken;
 	}
 
 	// for subclass override
+	@Override
 	protected boolean validatePermission(Principal principal, HttpMethod method, String lookupPath) {
 		return true;
 	}

@@ -32,7 +32,6 @@ import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.MapKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.kit.TimeKit;
-import com.github.obase.webc.support.security.Principal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -695,8 +694,9 @@ public abstract class Kits {
 		return (Wsid) request.getAttribute(Webc.ATTR_WSID);
 	}
 
-	public static Principal getPrincipal(ServletRequest request) {
-		return (Principal) request.getAttribute(Webc.ATTR_PRINCIPAL);
+	@SuppressWarnings("unchecked")
+	public static <T extends Principal> T getPrincipal(ServletRequest request) {
+		return (T) request.getAttribute(Webc.ATTR_PRINCIPAL);
 	}
 
 	public static String getNamespace(ServletRequest request) {

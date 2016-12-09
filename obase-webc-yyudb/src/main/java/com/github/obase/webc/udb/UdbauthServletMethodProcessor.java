@@ -14,15 +14,15 @@ import org.springframework.http.HttpMethod;
 import com.github.obase.kit.SerialKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
+import com.github.obase.webc.Principal;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.webc.support.security.Principal;
-import com.github.obase.webc.support.security.SimplePrincipal;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.udb.UdbKit.Callback;
+import com.github.obase.webc.yy.UserPrincipal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -42,7 +42,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	protected abstract JedisPool getJedisPool();
 
 	@Override
-	public final void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
 
 		ServletMethodHandler loginObject = new ServletMethodHandler() {
 			@Override
@@ -95,7 +95,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	public final Principal validateAndExtendPrincipal(Wsid wsid) {
+	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
 		byte[] data = null;
 		Jedis jedis = null;
@@ -120,9 +120,9 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	public final boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException {
+	public boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException {
 
-		Principal principal = validatePrincipal(yyuid, uProfile);
+		UserPrincipal principal = validatePrincipal(yyuid, uProfile);
 		if (principal == null) {
 			sendBadParameterError(response, Webc.ERRNO_INVALID_ACCOUNT, "Invalid account!");
 			return false;
@@ -147,7 +147,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	public final void preUdbLogout(HttpServletRequest request, HttpServletResponse response) {
+	public void preUdbLogout(HttpServletRequest request, HttpServletResponse response) {
 
 		Wsid wsid = Kits.getWsid(request);
 		if (wsid == null) {
@@ -166,7 +166,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	public final void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException {
+	public void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException {
 		if (sendError) {
 			Kits.sendError(resp, errno, errmsg);
 		} else {
@@ -175,7 +175,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	protected final void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		StringBuilder psb = new StringBuilder(256);
 		psb.append(request.getContextPath()).append(request.getServletPath());
@@ -192,8 +192,8 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
-		SimplePrincipal principal = new SimplePrincipal();
+	protected UserPrincipal validatePrincipal(String yyuid, String[] uProfile) {
+		UserPrincipal principal = new UserPrincipal();
 		principal.setYyuid(yyuid);
 		principal.setPassport(uProfile[0]);
 		principal.setRealname(uProfile[0]);

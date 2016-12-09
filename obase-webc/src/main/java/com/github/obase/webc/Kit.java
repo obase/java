@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
-import com.github.obase.webc.support.security.Principal;
-
 import redis.clients.jedis.JedisPool;
 
 public final class Kit extends Kits {
@@ -311,7 +309,7 @@ public final class Kit extends Kits {
 		return Kits.getWsid(request);
 	}
 
-	public Principal getPrincipal() {
+	public <T extends Principal> T getPrincipal() {
 		return Kits.getPrincipal(request);
 	}
 

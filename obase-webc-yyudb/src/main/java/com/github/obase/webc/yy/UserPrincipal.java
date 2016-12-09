@@ -1,6 +1,8 @@
-package com.github.obase.webc.support.security;
+package com.github.obase.webc.yy;
 
-public class SimplePrincipal implements Principal {
+import com.github.obase.webc.Principal;
+
+public class UserPrincipal implements Principal {
 
 	private static final long serialVersionUID = 1L;
 

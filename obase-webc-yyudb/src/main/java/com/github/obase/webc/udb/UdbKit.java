@@ -24,9 +24,9 @@ import com.duowan.universal.login.client.UniversalLoginClient.CookieDomainEnum;
 import com.duowan.universal.login.client.YYSecCenterOpenWSInvoker;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
+import com.github.obase.webc.Principal;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.support.security.Principal;
 
 public final class UdbKit {
 
@@ -177,8 +177,7 @@ public final class UdbKit {
 
 		/* 获取登陆前的url,如无则使用默认LOGINED_SYS_URI */
 		String url = StringKit.isNotEmpty(homepage) ? ("document.location.protocol+'" + getRealUrl(request, null, servletPathPrefix, homepage) + "'") : ("'" + Kits.readParam(request, PARAM_URL, "/") + "'");
-		StringBuilder sb = new StringBuilder(256).append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('" + writeCookieURL
-				+ "',function(){self.parent.document.location.href=" + url + ";});};udb_callback();</script>").append("</head><body>");
+		StringBuilder sb = new StringBuilder(256).append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('" + writeCookieURL + "',function(){self.parent.document.location.href=" + url + ";});};udb_callback();</script>").append("</head><body>");
 
 		Kits.writeHtml(response, Webc.SC_OK, sb);
 	}
