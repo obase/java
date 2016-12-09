@@ -89,6 +89,7 @@ public interface Webc {
 	int ERRNO_UNKNOWN_ERROR = MessageException.ERRNO_UNKNOWN_ERROR;
 
 	int HTTP_OK = 200;
+	int HTTP_OK_EVEN_ERROR = 204;
 	int HTTP_SERVER_ERROR = 500;
 
 	int ERRNO_PERMISSION_DENIED = 602;

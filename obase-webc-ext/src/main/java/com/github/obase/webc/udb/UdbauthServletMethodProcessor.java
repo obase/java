@@ -170,7 +170,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		if (sendError) {
 			Kits.sendError(resp, errno, errmsg);
 		} else {
-			Kits.writeErrorMessage(resp, errno, errno, errmsg);
+			Kits.writeErrorMessage(resp, Webc.HTTP_OK_EVEN_ERROR, errno, errmsg);
 		}
 	}
 

@@ -97,7 +97,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				if (sendError) {
 					Kits.sendError(response, sc, Jsons.writeAsString(new Message<>(errno, errmsg)));
 				} else {
-					Kits.writeErrorMessage(response, sc, errno, errmsg);
+					Kits.writeErrorMessage(response, Webc.HTTP_OK_EVEN_ERROR, errno, errmsg);
 				}
 				postprocessThroable(sc, errmsg, t);
 			} catch (IOException e) {
