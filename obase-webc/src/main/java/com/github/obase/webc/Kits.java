@@ -289,7 +289,7 @@ public abstract class Kits {
 	public static void writeJsonObject(HttpServletResponse response, int sc, Object object) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
-		Jsons.writeValue(response.getOutputStream(), object);
+		Jsons.writeValue(response.getWriter(), object);
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, Object object) throws IOException {
@@ -316,8 +316,7 @@ public abstract class Kits {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
 		Message<T> sm = new Message<T>(src, errno, errmsg, data);
-		// Jsons.writeValue(response.getOutputStream(), sm);
-		response.getWriter().write(Jsons.writeAsString(sm));
+		Jsons.writeValue(response.getWriter(), sm);
 	}
 
 	public static <T> void writeSuccessMessage(HttpServletResponse response, T data) throws IOException {
