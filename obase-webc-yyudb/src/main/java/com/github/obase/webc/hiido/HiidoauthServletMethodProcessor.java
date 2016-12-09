@@ -12,8 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.SerializationUtils;
 
 import com.github.obase.kit.StringKit;
+import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.Principal;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;

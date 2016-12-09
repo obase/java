@@ -1,4 +1,4 @@
-package com.github.obase.webc;
+package com.github.obase.security;
 
 import java.io.Serializable;
 

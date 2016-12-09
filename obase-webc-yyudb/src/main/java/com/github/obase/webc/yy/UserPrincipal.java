@@ -1,6 +1,6 @@
 package com.github.obase.webc.yy;
 
-import com.github.obase.webc.Principal;
+import com.github.obase.security.Principal;
 
 public class UserPrincipal implements Principal {
 

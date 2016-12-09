@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
-import com.github.obase.webc.Principal;
+import com.github.obase.security.Principal;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.yy.UserPrincipal;
