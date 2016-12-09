@@ -77,7 +77,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 					MaxUploadSizeExceededException me = (MaxUploadSizeExceededException) t;
 					sc = Webc.ERRNO_UPLOAD_SIZE_EXCEEDED;
 					errno = Webc.ERRNO_UPLOAD_SIZE_EXCEEDED;
-					errmsg = "Upload size exceeded " + me.getMaxUploadSize();
+					errmsg = "Upload size exceeded: " + me.getMaxUploadSize();
 				} else {
 					sc = Webc.ERRNO_FILE_UPLOAD_FAILED;
 					errno = Webc.ERRNO_FILE_UPLOAD_FAILED;
@@ -86,7 +86,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			} else {
 				sc = HttpURLConnection.HTTP_INTERNAL_ERROR;
 				errno = Webc.ERRNO_UNKNOWN_ERROR;
-				errmsg = "Unknown Error: " + t.getMessage();
+				errmsg = t.getMessage();
 
 				if (logger.isErrorEnabled()) {
 					logger.error(errmsg, t);
