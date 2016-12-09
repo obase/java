@@ -17,7 +17,8 @@ import org.springframework.asm.ClassReader;
 import org.springframework.asm.Type;
 import org.springframework.core.io.Resource;
 
-import com.github.obase.mysql.MysqlClientException;
+import com.github.obase.MessageException;
+import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.annotation.Column;
 import com.github.obase.mysql.annotation.ForeignKey;
 import com.github.obase.mysql.annotation.Indexes;
@@ -131,7 +132,7 @@ public final class AsmKit {
 		if (classMetaInfo.tableAnnotation != null) {
 			gatherTableMetaData(classMetaInfo);
 			if (classMetaInfo.keys == null || classMetaInfo.keys.size() == 0) {
-				throw new MysqlClientException("Undefine primary key for table:" + classMetaInfo.internalName);
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.CLASS_META_INFO_ERROR, "Undefine primary key for table:" + classMetaInfo.internalName);
 			}
 		}
 		changeGetterOrSetterToColumnName(classMetaInfo.getters, classMetaInfo.fields);

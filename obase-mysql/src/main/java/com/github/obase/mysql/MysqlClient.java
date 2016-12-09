@@ -3,6 +3,8 @@ package com.github.obase.mysql;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.github.obase.Page;
+
 /**
  * Spring-mysqlclient core interface, which provides CRUD its bulk form @Table class.
  * 

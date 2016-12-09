@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * @author hezhaowu
  * @since 0.9.1
  */
-public interface MysqlClientExt extends MysqlClient {
+public interface MysqlClientTxn extends MysqlClient {
 
 	/**
 	 * Begin a new transaction

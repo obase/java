@@ -1,19 +1,14 @@
 package com.github.obase;
 
-/**
- * @author Administrator
- *
- */
 public final class MessageException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int ERRNO_UNKNOWN_ERROR = -1;
 	private final String src;
 	private final int errno;
 
 	public MessageException(String errmsg) {
-		this(null, ERRNO_UNKNOWN_ERROR, errmsg);
+		this(null, Message.ERRNO_UNDEFINED, errmsg);
 	}
 
 	public MessageException(int errno, String errmsg) {
@@ -38,4 +33,8 @@ public final class MessageException extends RuntimeException {
 		return src;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public Message toMessage() {
+		return new Message(src, errno, super.getMessage());
+	}
 }
