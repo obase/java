@@ -116,12 +116,12 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				});
 			} else {
 
-				HttpServletRequest processedRequest = request;
-				HttpServletResponse response = (HttpServletResponse) resp;
+				final HttpServletResponse response = (HttpServletResponse) resp;
+				HttpServletRequest prerequest = null;
 				try {
-					request = processor.process(processedRequest, response, object);
-					if (request != null) {
-						object.handleRequest(request, response);
+					prerequest = processor.process(request, response, object);
+					if (prerequest != null) {
+						object.handleRequest(prerequest, response);
 					}
 				} catch (Throwable t) {
 					processor.error(request, response, t);

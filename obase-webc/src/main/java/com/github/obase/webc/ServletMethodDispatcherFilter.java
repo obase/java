@@ -183,11 +183,11 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 				} else {
 
 					final HttpServletResponse response = (HttpServletResponse) resp;
-					HttpServletRequest prerequest = null, processedRequest = null;
+					HttpServletRequest prerequest = null;
 					try {
 						prerequest = processor.process(request, response, object);
 						if (prerequest != null) {
-							handler.service(processedRequest, response);
+							handler.service(prerequest, response);
 						}
 					} catch (Throwable t) {
 						processor.error(request, response, t);
