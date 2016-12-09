@@ -268,6 +268,7 @@ public abstract class Kits {
 		response.setContentType(contentType);
 		response.setStatus(sc);
 		response.getWriter().write(content.toString());
+		response.getWriter().flush();
 	}
 
 	public static void writePlain(HttpServletResponse response, int sc, CharSequence content) throws IOException {
@@ -290,6 +291,7 @@ public abstract class Kits {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
 		Jsons.writeValue(response.getWriter(), object);
+		response.getWriter().flush();
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, Object object) throws IOException {
@@ -316,18 +318,21 @@ public abstract class Kits {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<T> sm = new Message<T>(errno, errmsg, data);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static <T> void writeSuccessMessage(HttpServletResponse response, T data) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<T> sm = new Message<T>(data);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, int errno, String errmsg) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<Object> sm = new Message<Object>(errno, errmsg);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
@@ -335,24 +340,28 @@ public abstract class Kits {
 		response.setStatus(sc);
 		Message<Object> sm = new Message<Object>(errno, errmsg);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static <T> void writeMessage(HttpServletResponse response, String src, int errno, String errmsg, T data) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<T> sm = new Message<T>(src, errno, errmsg, data);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static <T> void writeSuccessMessage(HttpServletResponse response, String src, T data) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<T> sm = new Message<T>(src, data);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, String src, int errno, String errmsg) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		Message<Object> sm = new Message<Object>(src, errno, errmsg);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, int sc, String src, int errno, String errmsg) throws IOException {
@@ -360,6 +369,7 @@ public abstract class Kits {
 		response.setStatus(sc);
 		Message<Object> sm = new Message<Object>(src, errno, errmsg);
 		Jsons.writeValue(response.getWriter(), sm);
+		response.getWriter().flush();
 	}
 
 	public static String readParam(HttpServletRequest request, String name) {
