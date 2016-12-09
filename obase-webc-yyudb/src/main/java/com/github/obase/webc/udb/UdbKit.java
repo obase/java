@@ -23,8 +23,8 @@ import com.duowan.universal.login.client.UniversalLoginClient;
 import com.duowan.universal.login.client.UniversalLoginClient.CookieDomainEnum;
 import com.duowan.universal.login.client.YYSecCenterOpenWSInvoker;
 import com.github.obase.kit.StringKit;
+import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.Principal;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 

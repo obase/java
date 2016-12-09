@@ -16,12 +16,12 @@ import com.github.obase.json.Jsons;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.Principal;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
+import com.github.obase.security.Principal;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 /**

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
+import com.github.obase.security.Principal;
+
 import redis.clients.jedis.JedisPool;
 
 public final class Kit extends Kits {
