@@ -111,7 +111,7 @@ public class WebcConfig {
 		}
 
 		if (param.controlProcessor != null) {
-			dynamic.setInitParameter(ASYNC_LISTENER, param.controlProcessor.getCanonicalName());
+			dynamic.setInitParameter(CONTROL_PROCESSOR, param.controlProcessor.getCanonicalName());
 		}
 
 		if (StringKit.isNotEmpty(param.controlPrefix)) {
