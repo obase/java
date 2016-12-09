@@ -180,7 +180,7 @@ public final class UdbKit {
 		StringBuilder sb = new StringBuilder(256).append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('" + writeCookieURL
 				+ "',function(){self.parent.document.location.href=" + url + ";});};udb_callback();</script>").append("</head><body>");
 
-		Kits.writeHtml(response, Webc.HTTP_OK, sb);
+		Kits.writeHtml(response, Webc.SC_OK, sb);
 	}
 
 	public static void denyCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -196,7 +196,7 @@ public final class UdbKit {
 		out.append("self.parent.UDB.sdk.PCWeb.popupCloseLgn();");
 		out.append("</script>");
 		out.append("</head></html>");
-		Kits.writeHtml(response, Webc.HTTP_OK, out);
+		Kits.writeHtml(response, Webc.SC_OK, out);
 	}
 
 	public static void logout(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix, String appid, String appkey, String logoutpage, Callback c) throws IOException {
@@ -230,7 +230,7 @@ public final class UdbKit {
 		sb.append("</body>");
 		sb.append("</html>");
 
-		Kits.writeHtml(response, Webc.HTTP_OK, sb);
+		Kits.writeHtml(response, Webc.SC_OK, sb);
 
 	}
 

@@ -275,7 +275,7 @@ public abstract class Kits {
 	}
 
 	public static void writePlain(HttpServletResponse response, CharSequence content) throws IOException {
-		writeResponse(response, Webc.CONTENT_TYPE_PLAIN, Webc.HTTP_OK, content);
+		writeResponse(response, Webc.CONTENT_TYPE_PLAIN, Webc.SC_OK, content);
 	}
 
 	public static void writeHtml(HttpServletResponse response, int sc, CharSequence content) throws IOException {
@@ -283,7 +283,7 @@ public abstract class Kits {
 	}
 
 	public static void writeHtml(HttpServletResponse response, CharSequence content) throws IOException {
-		writeResponse(response, Webc.CONTENT_TYPE_HTML, Webc.HTTP_OK, content);
+		writeResponse(response, Webc.CONTENT_TYPE_HTML, Webc.SC_OK, content);
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, int sc, Object object) throws IOException {
@@ -293,7 +293,7 @@ public abstract class Kits {
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, Object object) throws IOException {
-		writeJsonObject(response, Webc.HTTP_OK, object);
+		writeJsonObject(response, Webc.SC_OK, object);
 	}
 
 	public static void writeJson(HttpServletResponse response, int sc, CharSequence json) throws IOException {
@@ -301,7 +301,7 @@ public abstract class Kits {
 	}
 
 	public static void writeJson(HttpServletResponse response, CharSequence json) throws IOException {
-		writeJson(response, Webc.HTTP_OK, json);
+		writeJson(response, Webc.SC_OK, json);
 	}
 
 	public static void writeXml(HttpServletResponse response, int code, CharSequence content) throws IOException {
@@ -309,30 +309,31 @@ public abstract class Kits {
 	}
 
 	public static void writeXml(HttpServletResponse response, CharSequence content) throws IOException {
-		writeResponse(response, Webc.CONTENT_TYPE_XML, Webc.HTTP_OK, content);
+		writeResponse(response, Webc.CONTENT_TYPE_XML, Webc.SC_OK, content);
 	}
 
 	public static <T> void writeMessage(HttpServletResponse response, int sc, String src, int errno, String errmsg, T data) throws IOException {
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
 		Message<T> sm = new Message<T>(src, errno, errmsg, data);
-		Jsons.writeValue(response.getOutputStream(), sm);
+		// Jsons.writeValue(response.getOutputStream(), sm);
+		response.getWriter().write(Jsons.writeAsString(sm));
 	}
 
 	public static <T> void writeSuccessMessage(HttpServletResponse response, T data) throws IOException {
-		writeMessage(response, Webc.HTTP_OK, null, 0, null, data);
+		writeMessage(response, Webc.SC_OK, null, 0, null, data);
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, int errno, String errmsg) throws IOException {
-		writeMessage(response, Webc.HTTP_OK_EVEN_ERROR, null, errno, errmsg, null);
+		writeMessage(response, Webc.SC_OK_EVEN_ERROR, null, errno, errmsg, null);
 	}
 
 	public static <T> void writeSuccessMessage(HttpServletResponse response, String src, T data) throws IOException {
-		writeMessage(response, Webc.HTTP_OK, src, 0, null, data);
+		writeMessage(response, Webc.SC_OK, src, 0, null, data);
 	}
 
 	public static void writeErrorMessage(HttpServletResponse response, String src, int errno, String errmsg) throws IOException {
-		writeMessage(response, Webc.HTTP_OK_EVEN_ERROR, src, errno, errmsg, null);
+		writeMessage(response, Webc.SC_OK_EVEN_ERROR, src, errno, errmsg, null);
 	}
 
 	public static String readParam(HttpServletRequest request, String name) {

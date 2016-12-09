@@ -88,9 +88,9 @@ public interface Webc {
 
 	int ERRNO_UNKNOWN_ERROR = MessageException.ERRNO_UNKNOWN_ERROR;
 
-	int HTTP_OK = 200;
-	int HTTP_OK_EVEN_ERROR = 204;
-	int HTTP_SERVER_ERROR = 500;
+	int SC_OK = 200;
+	int SC_OK_EVEN_ERROR = 210; // FIXBUG: don use 200~209, which RFC take
+	int SC_SERVER_ERROR = 500;
 
 	int ERRNO_PERMISSION_DENIED = 602;
 	int ERRNO_CSRF_ERROR = 603;

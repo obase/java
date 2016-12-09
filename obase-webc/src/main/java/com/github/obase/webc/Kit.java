@@ -73,7 +73,7 @@ public final class Kit extends Kits {
 	}
 
 	public void writePlain(CharSequence content) throws IOException {
-		Kits.writePlain(response, Webc.HTTP_OK, content);
+		Kits.writePlain(response, Webc.SC_OK, content);
 	}
 
 	public void writeHtml(int sc, CharSequence content) throws IOException {
@@ -81,7 +81,7 @@ public final class Kit extends Kits {
 	}
 
 	public void writeHtml(CharSequence content) throws IOException {
-		Kits.writeHtml(response, Webc.HTTP_OK, content);
+		Kits.writeHtml(response, Webc.SC_OK, content);
 	}
 
 	public void writeJsonObject(int sc, Object object) throws IOException {
@@ -89,7 +89,7 @@ public final class Kit extends Kits {
 	}
 
 	public void writeJsonObject(Object object) throws IOException {
-		Kits.writeJsonObject(response, Webc.HTTP_OK, object);
+		Kits.writeJsonObject(response, Webc.SC_OK, object);
 	}
 
 	public void writeJson(int sc, CharSequence json) throws IOException {
@@ -97,7 +97,7 @@ public final class Kit extends Kits {
 	}
 
 	public void writeJson(CharSequence json) throws IOException {
-		Kits.writeJson(response, Webc.HTTP_OK, json);
+		Kits.writeJson(response, Webc.SC_OK, json);
 	}
 
 	public void writeXml(int sc, CharSequence content) throws IOException {
@@ -105,7 +105,7 @@ public final class Kit extends Kits {
 	}
 
 	public void writeXml(CharSequence content) throws IOException {
-		Kits.writeXml(response, Webc.HTTP_OK, content);
+		Kits.writeXml(response, Webc.SC_OK, content);
 	}
 
 	public <T> void writeMessage(int sc, String src, int errno, String errmsg, T data) throws IOException {
