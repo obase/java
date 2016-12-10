@@ -1,5 +1,7 @@
 package com.github.obase.mysql.asm;
 
+import static com.github.obase.kit.ClassKit.DefinedClassLoader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +20,7 @@ import org.springframework.asm.Type;
 import org.springframework.core.io.Resource;
 
 import com.github.obase.MessageException;
+import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.annotation.Column;
 import com.github.obase.mysql.annotation.ForeignKey;
@@ -30,8 +33,6 @@ import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.data.FieldMetaInfo;
 import com.github.obase.mysql.data.MethodMetaInfo;
 import com.github.obase.mysql.jdbc.JdbcAction;
-
-import static com.github.obase.kit.ClassKit.DefinedClassLoader;
 
 public final class AsmKit {
 
@@ -142,7 +143,7 @@ public final class AsmKit {
 			sb.append(method).delete(0, 3).setCharAt(0, (char) (sb.charAt(0) - CAP_DIF));
 			name = sb.toString();
 			field = fields.get(name);
-			if (field != null && field.columnAnnotation != null && isNotEmpty(field.columnAnnotation.name)) {
+			if (field != null && field.columnAnnotation != null && StringKit.isNotEmpty(field.columnAnnotation.name)) {
 				name = field.columnAnnotation.name;
 			}
 			methods.put(name, methods.remove(method));
@@ -168,7 +169,7 @@ public final class AsmKit {
 		String tableName = null;
 		if (classMetaInfo.tableAnnotation != null) {
 			tableName = classMetaInfo.tableAnnotation.name;
-			if (isEmpty(tableName)) {
+			if (StringKit.isEmpty(tableName)) {
 				int pos = classMetaInfo.internalName.lastIndexOf('/');
 				tableName = (pos != -1) ? classMetaInfo.internalName.substring(pos + 1) : classMetaInfo.internalName;
 			}
@@ -187,7 +188,7 @@ public final class AsmKit {
 		for (FieldMetaInfo field : fields) {
 			if (field.columnAnnotation != null) {
 				String name = field.columnAnnotation.name;
-				if (AsmKit.isEmpty(name)) {
+				if (StringKit.isEmpty(name)) {
 					name = field.name;
 				}
 				cols.add(name);
@@ -205,14 +206,6 @@ public final class AsmKit {
 		classMetaInfo.keys = keys;
 		classMetaInfo.columns = cols;
 
-	}
-
-	public static boolean isNotEmpty(String value) {
-		return value != null && value.length() > 0;
-	}
-
-	public static boolean isEmpty(String value) {
-		return value == null || value.length() == 0;
 	}
 
 	public static String readResourceContent(String classpath) throws IOException {

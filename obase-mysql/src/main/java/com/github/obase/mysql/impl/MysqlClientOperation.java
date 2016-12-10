@@ -1,6 +1,6 @@
 package com.github.obase.mysql.impl;
 
-import static com.github.obase.mysql.asm.AsmKit.isNotEmpty;
+import static com.github.obase.kit.StringKit.isNotEmpty;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -1488,7 +1488,7 @@ abstract class MysqlClientOperation {
 						for (Map.Entry<String, String> entry : configMetaInfo.sqls.entrySet()) {
 							// key = namespace + . + id
 							sb.setLength(0);
-							if (AsmKit.isNotEmpty(configMetaInfo.namespace)) {
+							if (isNotEmpty(configMetaInfo.namespace)) {
 								// ignore if not setting namespace
 								sb.append(configMetaInfo.namespace).append('.');
 							}

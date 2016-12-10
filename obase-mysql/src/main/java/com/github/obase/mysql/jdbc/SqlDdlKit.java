@@ -16,9 +16,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.JavaType;
 import com.github.obase.mysql.annotation.SqlType;
-import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.data.ColumnAnnotation;
 import com.github.obase.mysql.data.FieldMetaInfo;
@@ -156,7 +156,7 @@ public class SqlDdlKit extends SqlKit {
 
 	private static final String getColumnName(FieldMetaInfo fieldMetaInfo, ColumnAnnotation columnAnnotation) {
 		String name = columnAnnotation.name;
-		if (AsmKit.isEmpty(name)) {
+		if (StringKit.isEmpty(name)) {
 			name = fieldMetaInfo.name;
 		}
 		return name;
@@ -366,14 +366,14 @@ public class SqlDdlKit extends SqlKit {
 			sb.append("\nENGINE=").append(tableAnnotation.engine.sqlValue);
 		}
 
-		if (AsmKit.isNotEmpty(tableAnnotation.characterSet)) {
+		if (StringKit.isNotEmpty(tableAnnotation.characterSet)) {
 			sb.append("\nDEFAULT CHARACTER SET=").append(tableAnnotation.characterSet);
 		}
 
-		if (AsmKit.isNotEmpty(tableAnnotation.collate)) {
+		if (StringKit.isNotEmpty(tableAnnotation.collate)) {
 			sb.append("\nCOLLATE=").append(tableAnnotation.collate);
 		}
-		if (AsmKit.isNotEmpty(tableAnnotation.comment)) {
+		if (StringKit.isNotEmpty(tableAnnotation.comment)) {
 			sb.append("\nCOMMENT=").append('\'').append(tableAnnotation.comment).append('\'');
 		}
 
@@ -463,7 +463,7 @@ public class SqlDdlKit extends SqlKit {
 		if (columnAnnotation.defaultValue != null && !"\0".equals(columnAnnotation.defaultValue)) { // FIXBUG: default value may be ''
 			cols.append(" DEFAULT ").append(formatDefaultValue(columnAnnotation.defaultValue, sqlType));
 		}
-		if (AsmKit.isNotEmpty(columnAnnotation.comment)) {
+		if (StringKit.isNotEmpty(columnAnnotation.comment)) {
 			cols.append(" COMMENT ").append('\'').append(columnAnnotation.comment).append('\'');
 		}
 
