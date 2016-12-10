@@ -1,17 +1,11 @@
 package com.github.obase.mysql.config;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.springframework.core.io.Resource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.github.obase.kit.SAXKit;
 
 public class ConfigSAXParser extends DefaultHandler {
 
@@ -58,33 +52,11 @@ public class ConfigSAXParser extends DefaultHandler {
 		}
 	}
 
-	static WeakReference<SAXParser> Ref = null;
-
-	static synchronized SAXParser getSAXParser() throws ParserConfigurationException, SAXException {
-		if (Ref == null || Ref.get() == null) {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			factory.setValidating(false);
-			SAXParser parser = factory.newSAXParser();
-
-			Ref = new WeakReference<SAXParser>(parser);
-		}
-		return Ref.get();
-	}
-
 	public static ConfigMetaInfo parse(Resource rs) throws Exception {
-		SAXParser parser = getSAXParser();
 		ConfigSAXParser handler = new ConfigSAXParser();
-		InputStream in = null;
-		try {
-			in = rs.getInputStream();
-			parser.parse(new BufferedInputStream(in), handler);
+		if (SAXKit.parse(rs.getInputStream(), handler)) {
 			return handler.config;
-		} finally {
-			if (in != null) {
-				in.close();
-			}
 		}
-
+		return null;
 	}
 }
