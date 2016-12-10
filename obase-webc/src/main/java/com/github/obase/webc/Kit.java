@@ -333,7 +333,7 @@ public final class Kit extends Kits {
 		return Kits.readJsonBody2(request, parametrized, parameterClasses);
 	}
 
-	public Map<String, String> readQueryParam() throws IOException {
+	public Map<String, Object> readQueryParam() throws IOException {
 		return Kits.readQueryParam(request);
 	}
 

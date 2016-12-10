@@ -734,13 +734,13 @@ public abstract class Kits {
 		return Jsons.readGeneric(json, parametrized, parameterClasses);
 	}
 
-	public static Map<String, String> readQueryParam(HttpServletRequest request) throws IOException {
+	public static Map<String, Object> readQueryParam(HttpServletRequest request) throws IOException {
 		return readQueryParam(request.getQueryString(), request.getCharacterEncoding());
 	}
 
-	public static Map<String, String> readQueryParam(String queryString, String charset) throws IOException {
+	public static Map<String, Object> readQueryParam(String queryString, String charset) throws IOException {
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, Object> params = new HashMap<String, Object>();
 		if (StringKit.isNotEmpty(queryString)) {
 			int vlen = queryString.length(), mark = 0, pos = 0;
 			while (pos < vlen && (pos = queryString.indexOf(Webc.LAND, mark)) != -1) {
@@ -756,7 +756,7 @@ public abstract class Kits {
 		return params;
 	}
 
-	private static void splitQueryParam(Map<String, String> params, String pair, String charset) throws UnsupportedEncodingException {
+	private static void splitQueryParam(Map<String, Object> params, String pair, String charset) throws UnsupportedEncodingException {
 		int pos = pair.indexOf(Webc.EQUA);
 		if (pos == -1) {
 			params.put(pair, null);
