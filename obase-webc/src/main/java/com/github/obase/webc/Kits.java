@@ -798,19 +798,20 @@ public abstract class Kits {
 		return pos2 == -1 ? (pos1 == 0 ? servletPath : servletPath.substring(pos1)) : servletPath.substring(pos1, pos2);
 	}
 
-	public static final String PAGE_PARAM_START = "_start";
-	public static final String PAGE_PARAM_LIMIT = "_limit";
-	public static final String PAGE_PARAM_FIELD = "_field";
-	public static final String PAGE_PARAM_DIRECTION = "_direction";
+	public static final String[] PAGE_PARAMS = { "start", "limit", "field", "direction" };
 
 	/**
 	 * page params: _start, _limit, _field, _direction
 	 */
 	public static <T> Page<T> readPage(HttpServletRequest request, Class<T> type) {
-		int _start = readIntParam(request, PAGE_PARAM_START, 0);
-		int _limit = readIntParam(request, PAGE_PARAM_LIMIT, 0);
-		String _field = readParam(request, PAGE_PARAM_FIELD);
-		String _direction = readParam(request, PAGE_PARAM_DIRECTION);
+		return readPage(request, type, PAGE_PARAMS);
+	}
+
+	public static <T> Page<T> readPage(HttpServletRequest request, Class<T> type, String[] pageParams) {
+		int _start = readIntParam(request, pageParams[0], 0);
+		int _limit = readIntParam(request, pageParams[1], 0);
+		String _field = readParam(request, pageParams[2]);
+		String _direction = readParam(request, pageParams[3]);
 		return new Page<>(_start, _limit, _field, _direction);
 	}
 

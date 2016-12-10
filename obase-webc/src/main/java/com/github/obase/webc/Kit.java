@@ -340,4 +340,8 @@ public final class Kit extends Kits {
 	public <T> Page<T> readPage(Class<T> type) {
 		return Kits.readPage(request, type);
 	}
+
+	public <T> Page<T> readPage(Class<T> type, String[] pageParams) {
+		return Kits.readPage(request, type, pageParams);
+	}
 }
