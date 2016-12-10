@@ -7,9 +7,6 @@ import java.util.List;
  */
 public class Page<T> {
 
-	public static final String DIRECTION_ASC = "ASC"; // default value
-	public static final String DIRECTION_DESC = "DESC";
-
 	public final int start; // param _start
 	public final int limit; // param _limit
 
@@ -31,7 +28,7 @@ public class Page<T> {
 		this.start = start;
 		this.limit = limit;
 		this.field = field;
-		this.direction = DIRECTION_DESC.equals(direction) ? DIRECTION_DESC : DIRECTION_ASC;
+		this.direction = direction;
 	}
 
 	public int getResults() {

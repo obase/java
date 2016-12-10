@@ -116,12 +116,12 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	public void postHiidoLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String token = Kits.readParam(request, HiidoKit.PARAM_TOKEN);
 		if (StringKit.isEmpty(token)) {
-			Kits.sendError(response, Webc.ERRNO_INVALID_ACCOUNT, "Invalid account!");
+			Kits.sendError(response, Webc.SC_INVALID_ACCOUNT, "Invalid account!");
 			return;
 		}
 		UserPrincipal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(udbApi, agentId, agentPwd, publicKey, token));
 		if (principal == null) {
-			Kits.sendError(response, Webc.ERRNO_INVALID_ACCOUNT, "Invalid account!");
+			Kits.sendError(response, Webc.SC_INVALID_ACCOUNT, "Invalid account!");
 			return;
 		}
 

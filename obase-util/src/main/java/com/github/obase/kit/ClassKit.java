@@ -5,7 +5,7 @@ public final class ClassKit {
 	private ClassKit() {
 	}
 
-	public static final DelegateClassLoader DefaultClassLoader = new DelegateClassLoader(ClassKit.class.getClassLoader());
+	public static final DelegateClassLoader DefinedClassLoader = new DelegateClassLoader(ClassKit.class.getClassLoader());
 
 	public static class DelegateClassLoader extends ClassLoader {
 

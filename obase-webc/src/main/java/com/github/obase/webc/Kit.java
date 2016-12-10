@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
+import com.github.obase.Page;
 import com.github.obase.security.Principal;
 
 import redis.clients.jedis.JedisPool;
@@ -336,4 +337,7 @@ public final class Kit extends Kits {
 		return Kits.readQueryParam(request);
 	}
 
+	public <T> Page<T> readPage(Class<T> type) {
+		return Kits.readPage(request, type);
+	}
 }

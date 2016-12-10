@@ -1,5 +1,12 @@
 package com.github.obase.webc.udb;
 
+import static com.github.obase.webc.Webc.CHARSET_NAME;
+import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
+import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
+import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
+import static com.github.obase.webc.Webc.SC_OK;
+import static com.github.obase.webc.Webc.SC_SESSION_TIMEOUT;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -25,12 +32,11 @@ import com.duowan.universal.login.client.YYSecCenterOpenWSInvoker;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 
 public final class UdbKit {
 
-	static Log logger = LogFactory.getLog(UdbKit.class);
+	private static Log logger = LogFactory.getLog(UdbKit.class);
 
 	private UdbKit() {
 	}
@@ -40,13 +46,6 @@ public final class UdbKit {
 	public static final String LOOKUP_PATH_GEN_URL_TOKEN = "/genUrlToken";
 	public static final String LOOKUP_PATH_CALLBACK = "/callback";
 	public static final String LOOKUP_PATH_DENY_CALLBACK = "/denyCallback";
-
-	public static final int ERRNO_PERMISSION_DENIED = Webc.ERRNO_PERMISSION_DENIED;
-	public static final int ERRNO_CSRF_ERROR = Webc.ERRNO_CSRF_ERROR;
-	public static final int ERRNO_SESSION_TIMEOUT = Webc.ERRNO_SESSION_TIMEOUT;
-	public static final int ERRNO_MISSING_TOKEN = Webc.ERRNO_MISSING_TOKEN;
-	public static final int ERRNO_MISSING_VERIFIER = Webc.ERRNO_MISSING_VERIFIER;
-	public static final int ERRNO_INVALID_ACCOUNT = Webc.ERRNO_INVALID_ACCOUNT;
 
 	public static final String PARAM_URL = "url";
 	public static final String PARAM_SSL = "ssl";
@@ -84,7 +83,7 @@ public final class UdbKit {
 		sb.append("<script type=\"text/javascript\">");
 		sb.append("function sdklogin(){ UDB.sdk.PCWeb.popupOpenLgn(document.location.protocol+'").append(getRealUrl(request, null, servletPathPrefix, LOOKUP_PATH_GEN_URL_TOKEN)).append("?ssl='+(document.location.protocol=='https:')");
 		if (url != null) {
-			sb.append("+'&url=").append(URLEncoder.encode(url, Webc.CHARSET_NAME)).append("'");
+			sb.append("+'&url=").append(URLEncoder.encode(url, CHARSET_NAME)).append("'");
 		}
 		sb.append(",'','');}");
 		sb.append("</script>");
@@ -138,18 +137,18 @@ public final class UdbKit {
 		}
 		// 校验下
 		if (tokenSecret == null) {
-			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(ERRNO_SESSION_TIMEOUT));
-			c.sendBadParameterError(response, ERRNO_SESSION_TIMEOUT, "Timeout for udb session, please try again!");
+			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_SESSION_TIMEOUT));
+			c.sendBadParameterError(response, SC_SESSION_TIMEOUT, "Timeout for udb session, please try again!");
 			return;
 		}
 		if (StringKit.isEmpty(oauthToken)) {
-			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(ERRNO_MISSING_TOKEN));
-			c.sendBadParameterError(response, ERRNO_MISSING_TOKEN, "Missing udb param oauthToken");
+			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_TOKEN));
+			c.sendBadParameterError(response, SC_MISSING_TOKEN, "Missing udb param oauthToken");
 			return;
 		}
 		if (StringKit.isEmpty(oauthVerfier)) {
-			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(ERRNO_MISSING_TOKEN));
-			c.sendBadParameterError(response, ERRNO_MISSING_VERIFIER, "Missing udb param oauthVerfier");
+			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_TOKEN));
+			c.sendBadParameterError(response, SC_MISSING_VERIFIER, "Missing udb param oauthVerfier");
 			return;
 		}
 		// 用返回的requestToken以及veriferCode，同udb通信
@@ -163,8 +162,8 @@ public final class UdbKit {
 		@SuppressWarnings("deprecation")
 		String[] uProfile = duowan.getUserProfile(accessTokenInfo[0]); // passport
 		if (!c.postUdbLogin(request, response, yyuid, uProfile)) {
-			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(ERRNO_INVALID_ACCOUNT));
-			c.sendBadParameterError(response, ERRNO_INVALID_ACCOUNT, "Invalid account!");
+			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_INVALID_ACCOUNT));
+			c.sendBadParameterError(response, SC_INVALID_ACCOUNT, "Invalid account!");
 			return;
 		}
 
@@ -179,7 +178,7 @@ public final class UdbKit {
 		String url = StringKit.isNotEmpty(homepage) ? ("document.location.protocol+'" + getRealUrl(request, null, servletPathPrefix, homepage) + "'") : ("'" + Kits.readParam(request, PARAM_URL, "/") + "'");
 		StringBuilder sb = new StringBuilder(256).append("<script language=\"JavaScript\" type=\"text/javascript\">function udb_callback(){self.parent.UDB.sdk.PCWeb.writeCrossmainCookieWithCallBack('" + writeCookieURL + "',function(){self.parent.document.location.href=" + url + ";});};udb_callback();</script>").append("</head><body>");
 
-		Kits.writeHtml(response, Webc.SC_OK, sb);
+		Kits.writeHtml(response, SC_OK, sb);
 	}
 
 	public static void denyCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -195,7 +194,7 @@ public final class UdbKit {
 		out.append("self.parent.UDB.sdk.PCWeb.popupCloseLgn();");
 		out.append("</script>");
 		out.append("</head></html>");
-		Kits.writeHtml(response, Webc.SC_OK, out);
+		Kits.writeHtml(response, SC_OK, out);
 	}
 
 	public static void logout(HttpServletRequest request, HttpServletResponse response, String servletPathPrefix, String appid, String appkey, String logoutpage, Callback c) throws IOException {
@@ -229,7 +228,7 @@ public final class UdbKit {
 		sb.append("</body>");
 		sb.append("</html>");
 
-		Kits.writeHtml(response, Webc.SC_OK, sb);
+		Kits.writeHtml(response, SC_OK, sb);
 
 	}
 

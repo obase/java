@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.core.env.AbstractPropertyResolver;
 import org.springframework.util.ClassUtils;
 
+import com.github.obase.WrappedException;
+
 @SuppressWarnings({ "unchecked", "rawtypes" })
 final class SimplePropertyResolver extends AbstractPropertyResolver {
 
@@ -54,8 +56,7 @@ final class SimplePropertyResolver extends AbstractPropertyResolver {
 			value = resolveNestedPlaceholders(value);
 
 			if (!this.conversionService.canConvert(String.class, targetType)) {
-				throw new IllegalArgumentException(
-						String.format("Cannot convert value [%s] from source type [%s] to target type [%s]", value, String.class.getSimpleName(), targetType.getSimpleName()));
+				throw new IllegalArgumentException(String.format("Cannot convert value [%s] from source type [%s] to target type [%s]", value, String.class.getSimpleName(), targetType.getSimpleName()));
 			}
 			return this.conversionService.convert(value, targetType);
 		}
@@ -71,7 +72,7 @@ final class SimplePropertyResolver extends AbstractPropertyResolver {
 			try {
 				clazz = ClassUtils.forName((String) value, null);
 			} catch (Exception ex) {
-				throw new ConfigurationException(ex);
+				throw new WrappedException(ex);
 			}
 			return targetType.isAssignableFrom(clazz) ? (Class<T>) clazz : null;
 		}

@@ -43,8 +43,8 @@ import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
 import com.github.obase.security.Principal;
-import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
+import com.github.obase.webc.YyudbErrno;
 import com.github.obase.webc.yy.UserPrincipal;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
@@ -111,7 +111,7 @@ public final class HiidoKit {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo", Arrays.<Object>asList(Collections.emptyList()));
 		if (RpcKit.code(result) != 1) {
-			throw new MessageException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
+			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
 		}
 
 		// 已注册用户
@@ -148,7 +148,7 @@ public final class HiidoKit {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", updUserMap);
 		if (RpcKit.code(result) != 1) {
-			throw new MessageException(Webc.ERRNO_UNKNOWN_ERROR, result.toJSONString());
+			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
 		}
 	}
 

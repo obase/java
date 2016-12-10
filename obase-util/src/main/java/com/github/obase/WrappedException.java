@@ -8,4 +8,8 @@ public class WrappedException extends RuntimeException {
 		super(t);
 	}
 
+	public WrappedException(String msg, Throwable t) {
+		super(msg, t);
+	}
+
 }

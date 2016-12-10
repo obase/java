@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.github.obase.mysql.JavaType;
-import com.github.obase.mysql.MysqlClientException;
 import com.github.obase.mysql.annotation.SqlType;
 import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.data.ClassMetaInfo;
@@ -143,7 +142,7 @@ public class SqlDdlKit extends SqlKit {
 						stmt = conn.createStatement();
 						stmt.executeUpdate(sql);
 					} catch (SQLException e) {
-						throw new MysqlClientException("Add column failed for: " + classMetaInfo.tableName, e);
+						throw new SQLException("Add column failed for: " + classMetaInfo.tableName, e);
 					} finally {
 						if (stmt != null) {
 							stmt.close();
@@ -227,7 +226,7 @@ public class SqlDdlKit extends SqlKit {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sb.toString());
 				} catch (SQLException e) {
-					throw new MysqlClientException("Add primary key failed for: " + classMetaInfo.tableName, e);
+					throw new SQLException("Add primary key failed for: " + classMetaInfo.tableName, e);
 				} finally {
 					if (stmt != null) {
 						stmt.close();
@@ -276,7 +275,7 @@ public class SqlDdlKit extends SqlKit {
 						stmt = conn.createStatement();
 						stmt.executeUpdate(sb.toString());
 					} catch (SQLException e) {
-						throw new MysqlClientException("Craate foreign key failed for: " + classMetaInfo.tableName, e);
+						throw new SQLException("Craate foreign key failed for: " + classMetaInfo.tableName, e);
 					} finally {
 						if (stmt != null) {
 							stmt.close();
@@ -315,7 +314,7 @@ public class SqlDdlKit extends SqlKit {
 						stmt = conn.createStatement();
 						stmt.executeUpdate(sb.toString());
 					} catch (SQLException e) {
-						throw new MysqlClientException("Add index failed for: " + classMetaInfo.tableName, e);
+						throw new SQLException("Add index failed for: " + classMetaInfo.tableName, e);
 					} finally {
 						if (stmt != null) {
 							stmt.close();
@@ -326,7 +325,7 @@ public class SqlDdlKit extends SqlKit {
 		}
 	}
 
-	public static String genTableDdl(ClassMetaInfo classMetaInfo) {
+	public static String genTableDdl(ClassMetaInfo classMetaInfo) throws SQLException {
 
 		StringBuilder cols = new StringBuilder(128);
 		for (FieldMetaInfo fieldMetaInfo : classMetaInfo.fields.values()) {
@@ -429,14 +428,14 @@ public class SqlDdlKit extends SqlKit {
 		return cols.toString();
 	}
 
-	private static String genColumnDdl(FieldMetaInfo fieldMetaInfo, ColumnAnnotation columnAnnotation) {
+	private static String genColumnDdl(FieldMetaInfo fieldMetaInfo, ColumnAnnotation columnAnnotation) throws SQLException {
 		StringBuilder cols = new StringBuilder(128);
 
 		String name = getColumnName(fieldMetaInfo, columnAnnotation);
 		JavaType javaType = JavaType.match(fieldMetaInfo.descriptor);
 		SqlType sqlType = getColumnSqlType(columnAnnotation, javaType);
 		if (sqlType == null) {
-			throw new MysqlClientException("Not specify sqlType for field: " + fieldMetaInfo.name);
+			throw new SQLException("Not specify sqlType for field: " + fieldMetaInfo.name);
 		}
 		cols.append(identifier(name)).append(" ").append(sqlType.sqlValue);
 

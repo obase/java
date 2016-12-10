@@ -31,6 +31,8 @@ import com.github.obase.mysql.data.FieldMetaInfo;
 import com.github.obase.mysql.data.MethodMetaInfo;
 import com.github.obase.mysql.jdbc.JdbcAction;
 
+import static com.github.obase.kit.ClassKit.DefinedClassLoader;
+
 public final class AsmKit {
 
 	static final String JdbcActionSuffix = "__JdbcAction";
@@ -48,19 +50,6 @@ public final class AsmKit {
 
 	static final int CLASS_READER_ACCEPT_FLAGS = ClassReader.SKIP_DEBUG | ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES;
 
-	static class DelegatedClassLoader extends ClassLoader {
-
-		public DelegatedClassLoader(ClassLoader delegate) {
-			super(delegate);
-		}
-
-		public Class<?> defineClass(String name, byte[] data) {
-			return super.defineClass(name, data, 0, data.length);
-		}
-	};
-
-	static DelegatedClassLoader Loader = new DelegatedClassLoader(AsmKit.class.getClassLoader());
-
 	public static String getClassNameFromInternalName(String internalName) {
 		return internalName.replace('/', '.');
 	}
@@ -75,10 +64,10 @@ public final class AsmKit {
 
 		Class<?> c = null;
 		try {
-			c = Loader.loadClass(className);
+			c = DefinedClassLoader.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			byte[] data = JdbcActionClassWriter.dump(internalName, classMetaInfo);
-			c = Loader.defineClass(className, data);
+			c = DefinedClassLoader.defineClass(className, data);
 		}
 		return (JdbcAction) c.newInstance();
 	}
@@ -87,12 +76,12 @@ public final class AsmKit {
 		String className = targetClassName + JdbcActionSuffix;
 		Class<?> c = null;
 		try {
-			c = Loader.loadClass(className);
+			c = DefinedClassLoader.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			ClassMetaInfo classMetaInfo = getClassMetaInfo(targetClassName);
 			String internalName = className.replace('.', '/');
 			byte[] data = JdbcActionClassWriter.dump(internalName, classMetaInfo);
-			c = Loader.defineClass(className, data);
+			c = DefinedClassLoader.defineClass(className, data);
 		}
 		return (JdbcAction) c.newInstance();
 	}
@@ -132,7 +121,7 @@ public final class AsmKit {
 		if (classMetaInfo.tableAnnotation != null) {
 			gatherTableMetaData(classMetaInfo);
 			if (classMetaInfo.keys == null || classMetaInfo.keys.size() == 0) {
-				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.CLASS_META_INFO_ERROR, "Undefine primary key for table:" + classMetaInfo.internalName);
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_EXT_FAILED, "Undefine primary key for table:" + classMetaInfo.internalName);
 			}
 		}
 		changeGetterOrSetterToColumnName(classMetaInfo.getters, classMetaInfo.fields);

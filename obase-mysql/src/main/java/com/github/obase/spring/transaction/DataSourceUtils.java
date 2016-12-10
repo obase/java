@@ -13,19 +13,17 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 
-import com.github.obase.mysql.MysqlClientException;
-
 public abstract class DataSourceUtils {
 
 	public static final int CONNECTION_SYNCHRONIZATION_ORDER = 1000;
 
 	private static final Log logger = LogFactory.getLog(DataSourceUtils.class);
 
-	public static Connection getConnection(DataSource dataSource) throws MysqlClientException {
+	public static Connection getConnection(DataSource dataSource) throws SQLException {
 		try {
 			return doGetConnection(dataSource);
 		} catch (SQLException ex) {
-			throw new MysqlClientException("Could not get JDBC Connection", ex);
+			throw new SQLException("Could not get JDBC Connection", ex);
 		}
 	}
 

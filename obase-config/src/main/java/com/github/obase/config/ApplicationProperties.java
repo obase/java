@@ -46,6 +46,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
 import com.github.obase.env.Envs;
+import com.github.obase.MessageException;
+import com.github.obase.WrappedException;
 import com.github.obase.crypto.AES;
 
 import redis.clients.jedis.Jedis;
@@ -132,8 +134,8 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 	private static final Log logger = LogFactory.getLog(ApplicationProperties.class);
 
-	public static final String DEFAULT_QUERY = "SELECT * FROM `app.properties`";
-	public static final String DEFAULT_HASH = "app.properties";
+	public static final String DEFAULT_QUERY = "SELECT * FROM `app_properties`";
+	public static final String DEFAULT_HASH = "app_properties";
 	public static final String DEFAULT_ABSOLUTE_CONFIG_APP_PROPERTIES = Envs.APP_PROPERTIES_PATH;
 	public static final String DEFAULT_RELATIVE_CONFIG_APP_PROPERTIES = "../config/" + Envs.DWENV + "/app.properties";
 
@@ -285,7 +287,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				checkRules = RulesSAXParser.parse(rs);
 			} catch (Exception e) {
 				if (fatalIfError) {
-					throw new ConfigurationException(e);
+					throw new WrappedException("[ApplicationProperties] parse check rules failed: " + rules, e);
 				} else {
 					logger.error("[ApplicationProperties] parse check rules failed: " + rules + ", error: " + e.getMessage());
 				}
@@ -335,7 +337,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			}
 		} catch (IOException e) {
 			if (fatalIfError) {
-				throw new ConfigurationException(e);
+				throw new WrappedException("[ApplicationProperties] load statics configuration failed: " + locations, e);
 			} else {
 				logger.error("[ApplicationProperties] load statics configuration failed: " + locations + ", error: " + e.getMessage());
 			}
@@ -354,7 +356,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 						statics.put(rule.name, val = AES.decrypt(rule.passwd, val));
 					} catch (Exception e) {
 						if (fatalIfError) {
-							throw new ConfigurationException(e);
+							throw new WrappedException("[ApplicationProperties] decrpty property failed: " + rule.name, e);
 						} else {
 							logger.error("[ApplicationProperties] decrpty property failed: " + rule.name + ", error: " + e.getMessage());
 						}
@@ -438,7 +440,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 					String val = coalesceNotDynamic(rule.name);
 					if (rule.required && StringUtils.isEmpty(val)) {
 						if (fatalIfError) {
-							throw new ConfigurationException("[ApplicationProperties] application property required: " + rule.name);
+							throw new MessageException(ConfigErrno.SOURCE, ConfigErrno.PROPERTY_REQUIRED, "[ApplicationProperties] application property required: " + rule.name);
 						} else {
 							logger.error("[ApplicationProperties] application property required: " + rule.name);
 						}
@@ -503,7 +505,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 						_dynamic.put(rule.name, val = AES.decrypt(rule.passwd, val));
 					} catch (Exception e) {
 						if (fatalIfError) {
-							throw new ConfigurationException(e);
+							throw new WrappedException("[ApplicationProperties] decrpty property failed: " + rule.name, e);
 						} else {
 							logger.error("[ApplicationProperties] decrpty property failed: " + rule.name + ", error: " + e.getMessage());
 						}
@@ -511,7 +513,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				}
 				if (rule.required && StringUtils.isEmpty(val)) {
 					if (fatalIfError) {
-						throw new ConfigurationException("[ApplicationProperties] application property required: " + rule.name);
+						throw new MessageException(ConfigErrno.SOURCE, ConfigErrno.PROPERTY_REQUIRED, "[ApplicationProperties] application property required: " + rule.name);
 					} else {
 						logger.error("[ApplicationProperties] application property required: " + rule.name);
 					}

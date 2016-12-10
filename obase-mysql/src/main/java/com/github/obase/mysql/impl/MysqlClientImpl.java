@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.github.obase.mysql.ConnectionCallback;
 import com.github.obase.mysql.MysqlClient;
-import com.github.obase.mysql.Page;
+import com.github.obase.Page;
 import com.github.obase.spring.transaction.DataSourceUtils;
 
-public class MysqlClientPlatformTransactionImpl extends MysqlClientOperation implements MysqlClient {
+public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient {
 
 	@Override
 	public <T> T callback(ConnectionCallback<T> action) throws SQLException {

@@ -39,7 +39,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.support.ServletContextResource;
 
-import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
 
 /**
@@ -86,21 +85,19 @@ public interface Webc {
 	String ATTR_LOOKUP_PATH = "$_LOOKUP_PATH";
 	String GLOBAL_ATTRIBUTE_PREFFIX = "$_";
 
-	int ERRNO_UNKNOWN_ERROR = MessageException.ERRNO_UNKNOWN_ERROR;
-
 	int SC_OK = 200;
 	int SC_OK_EVEN_ERROR = 210; // FIXBUG: don use 200~209, which RFC take
 	int SC_SERVER_ERROR = 500;
 
-	int ERRNO_PERMISSION_DENIED = 602;
-	int ERRNO_CSRF_ERROR = 603;
-	int ERRNO_SESSION_TIMEOUT = 604;
-	int ERRNO_MISSING_TOKEN = 605;
-	int ERRNO_MISSING_VERIFIER = 606;
-	int ERRNO_INVALID_ACCOUNT = 607;
+	int SC_PERMISSION_DENIED = 602;
+	int SC_CSRF_ERROR = 603;
+	int SC_SESSION_TIMEOUT = 604;
+	int SC_MISSING_TOKEN = 605;
+	int SC_MISSING_VERIFIER = 606;
+	int SC_INVALID_ACCOUNT = 607;
 
-	int ERRNO_FILE_UPLOAD_FAILED = 620;
-	int ERRNO_UPLOAD_SIZE_EXCEEDED = 621;
+	int SC_FILE_UPLOAD_FAILED = 620;
+	int SC_UPLOAD_SIZE_EXCEEDED = 621;
 
 	class Util {
 

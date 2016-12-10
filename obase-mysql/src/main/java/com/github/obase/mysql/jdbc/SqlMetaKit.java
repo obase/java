@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.github.obase.mysql.MysqlClientException;
 import com.github.obase.mysql.data.ClassMetaInfo;
 
 public final class SqlMetaKit extends SqlKit {
@@ -97,7 +96,7 @@ public final class SqlMetaKit extends SqlKit {
 
 			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parseLimitIndexIfExist(psql));
 		} else {
-			meta = new SqlMeta(sql, Collections.<String, int[]> emptyMap(), parseLimitIndexIfExist(sql));
+			meta = new SqlMeta(sql, Collections.<String, int[]>emptyMap(), parseLimitIndexIfExist(sql));
 		}
 
 		return meta;
@@ -417,7 +416,7 @@ public final class SqlMetaKit extends SqlKit {
 		return -1;
 	}
 
-	static ParamHolder[] parseParamHolderList(String id, String sql) throws MysqlClientException {
+	static ParamHolder[] parseParamHolderList(String id, String sql) {
 
 		char[] chars = sql.toCharArray();
 

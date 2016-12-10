@@ -1,18 +1,14 @@
 package com.github.obase.config;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
+
+import com.github.obase.kit.SAXKit;
 
 class RulesSAXParser extends DefaultHandler2 {
 
@@ -46,37 +42,12 @@ class RulesSAXParser extends DefaultHandler2 {
 		}
 	}
 
-	static WeakReference<SAXParser> Ref = null;
-
-	static synchronized SAXParser getSAXParser() throws ParserConfigurationException, SAXException {
-		if (Ref == null || Ref.get() == null) {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			factory.setValidating(false);
-			SAXParser parser = factory.newSAXParser();
-
-			Ref = new WeakReference<SAXParser>(parser);
-		}
-		return Ref.get();
-	}
-
-	public static Rules parse(Resource rs) throws Exception {
-		if (rs == null || !rs.exists()) {
-			return null;
-		}
-		SAXParser parser = getSAXParser();
+	public static Rules parse(Resource rs) throws IOException {
 		RulesSAXParser handler = new RulesSAXParser();
-		InputStream in = null;
-		try {
-			in = rs.getInputStream();
-			parser.parse(new BufferedInputStream(in), handler);
+		if (SAXKit.parse(rs.getInputStream(), handler)) {
 			return handler.result;
-		} finally {
-			if (in != null) {
-				in.close();
-			}
 		}
-
+		return null;
 	}
 
 }
