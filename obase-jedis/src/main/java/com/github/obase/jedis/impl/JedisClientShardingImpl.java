@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.github.obase.MessageException;
 import com.github.obase.jedis.JedisClient;
-import com.github.obase.jedis.JedisClientException;
 import com.github.obase.jedis.JedisClientSharding;
+import com.github.obase.jedis.JedisErrno;
 import com.github.obase.jedis.ShardInfo;
 
 public class JedisClientShardingImpl implements JedisClientSharding {
@@ -18,19 +19,19 @@ public class JedisClientShardingImpl implements JedisClientSharding {
 	final List<ShardInfo> shards;
 	final TreeMap<Long, JedisClient> clients = new TreeMap<Long, JedisClient>();
 
-	public JedisClientShardingImpl(List<ShardInfo> shards) throws JedisClientException {
+	public JedisClientShardingImpl(List<ShardInfo> shards) {
 		this.shards = shards;
 
 		if (shards != null) {
 			for (ShardInfo info : shards) {
 				if (info.getHash() == null) {
 					if (info.getRate() < 0 || info.getRate() > 100) {
-						throw new JedisClientException("Invalid shard rate: " + info.getRate());
+						throw new MessageException(JedisErrno.SOURCE, JedisErrno.INVALID_SHARD_RATE, "Invalid shard rate: " + info.getRate());
 					}
 					info.setHash(convRateToLong(info.getRate()));
 				}
 				if (clients.put(info.getHash(), new JedisClientImpl(info.getJedisPool())) != null) {
-					throw new JedisClientException("Duplicate shard hash: " + info.getHash());
+					throw new MessageException(JedisErrno.SOURCE, JedisErrno.DUPLICATE_SHARD_HASH, "Duplicate shard hash: " + info.getHash());
 				}
 			}
 		}

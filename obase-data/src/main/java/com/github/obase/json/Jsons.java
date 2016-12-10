@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.github.obase.WrappedException;
 
 public final class Jsons {
 	private Jsons() {
@@ -39,7 +40,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -47,7 +48,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -55,7 +56,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -63,7 +64,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -71,7 +72,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -79,7 +80,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -87,7 +88,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -95,7 +96,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -103,7 +104,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -111,7 +112,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -119,7 +120,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -127,7 +128,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -135,7 +136,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -143,7 +144,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -151,7 +152,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -159,7 +160,7 @@ public final class Jsons {
 		try {
 			return OM.writeValueAsString(value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -167,7 +168,7 @@ public final class Jsons {
 		try {
 			return OM.writeValueAsBytes(value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -175,7 +176,7 @@ public final class Jsons {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -183,7 +184,7 @@ public final class Jsons {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 

@@ -5,22 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXException;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.github.obase.WrappedException;
 
 public final class Xmls {
 	private Xmls() {
@@ -47,7 +41,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -55,7 +49,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -63,7 +57,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -71,7 +65,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -79,7 +73,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -87,7 +81,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -95,7 +89,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -103,7 +97,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(xml, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -111,7 +105,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(url, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -119,7 +113,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(url, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -127,7 +121,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(url, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -135,7 +129,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(url, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -143,7 +137,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, Object);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -151,7 +145,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -159,7 +153,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -167,7 +161,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -175,7 +169,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -183,7 +177,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -191,7 +185,7 @@ public final class Xmls {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -199,7 +193,7 @@ public final class Xmls {
 		try {
 			return OM.writeValueAsString(value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -207,7 +201,7 @@ public final class Xmls {
 		try {
 			return OM.writeValueAsBytes(value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -215,7 +209,7 @@ public final class Xmls {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
 	}
 
@@ -223,22 +217,8 @@ public final class Xmls {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new WrappedException(e);
 		}
-	}
-
-	static WeakReference<SAXParser> Ref = null;
-
-	public static synchronized SAXParser getSAXParser() throws ParserConfigurationException, SAXException {
-		if (Ref == null || Ref.get() == null) {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			factory.setValidating(false);
-			SAXParser parser = factory.newSAXParser();
-
-			Ref = new WeakReference<SAXParser>(parser);
-		}
-		return Ref.get();
 	}
 
 }
