@@ -27,6 +27,7 @@ import org.springframework.util.SerializationUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import com.github.obase.Message;
+import com.github.obase.Page;
 import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.MapKit;
@@ -795,6 +796,22 @@ public abstract class Kits {
 		int pos2 = servletPath.indexOf('?');
 
 		return pos2 == -1 ? (pos1 == 0 ? servletPath : servletPath.substring(pos1)) : servletPath.substring(pos1, pos2);
+	}
+
+	public static final String PAGE_PARAM_START = "_start";
+	public static final String PAGE_PARAM_LIMIT = "_limit";
+	public static final String PAGE_PARAM_FIELD = "_field";
+	public static final String PAGE_PARAM_DIRECTION = "_direction";
+
+	/**
+	 * page params: _start, _limit, _field, _direction
+	 */
+	public static <T> Page<T> readPage(HttpServletRequest request, Class<T> type) {
+		int _start = readIntParam(request, PAGE_PARAM_START, 0);
+		int _limit = readIntParam(request, PAGE_PARAM_LIMIT, 0);
+		String _field = readParam(request, PAGE_PARAM_FIELD);
+		String _direction = readParam(request, PAGE_PARAM_DIRECTION);
+		return new Page<>(_start, _limit, _field, _direction);
 	}
 
 }

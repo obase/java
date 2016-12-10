@@ -75,17 +75,15 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			} else if (t instanceof MultipartException) {
 				if (t instanceof MaxUploadSizeExceededException) {
 					MaxUploadSizeExceededException me = (MaxUploadSizeExceededException) t;
-					sc = Webc.ERRNO_UPLOAD_SIZE_EXCEEDED;
-					errno = Webc.ERRNO_UPLOAD_SIZE_EXCEEDED;
+					errno = sc = Webc.SC_UPLOAD_SIZE_EXCEEDED;
 					errmsg = "Upload size exceeded: " + me.getMaxUploadSize();
 				} else {
-					sc = Webc.ERRNO_FILE_UPLOAD_FAILED;
-					errno = Webc.ERRNO_FILE_UPLOAD_FAILED;
+					errno = sc = Webc.SC_FILE_UPLOAD_FAILED;
 					errmsg = "File Upload Size Failed: " + t.getMessage();
 				}
 			} else {
-				sc = HttpURLConnection.HTTP_INTERNAL_ERROR;
-				errno = Webc.ERRNO_UNKNOWN_ERROR;
+				sc = Webc.SC_SERVER_ERROR;
+				errno = Message.ERRNO_UNDEFINED;
 				errmsg = t.getMessage();
 
 				if (logger.isErrorEnabled()) {
@@ -99,14 +97,14 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				} else {
 					Kits.writeErrorMessage(response, errno, errmsg);
 				}
-				postprocessThroable(sc, errmsg, t);
+				posterror(sc, errmsg, t);
 			} catch (IOException e) {
 				logger.error("Write error message failed", e);
 			}
 		}
 	}
 
-	protected void postprocessThroable(int errno, String errmsg, Throwable t) {
+	protected void posterror(int errno, String errmsg, Throwable t) {
 		// for subclass
 	}
 

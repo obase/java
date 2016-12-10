@@ -23,8 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 
 import com.github.obase.WrappedException;
+import com.github.obase.kit.ClassKit.DelegateClassLoader;
 import com.github.obase.kit.StringKit;
-import com.github.obase.loader.DelegatedClassLoader;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
@@ -36,12 +36,12 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	AsyncListener listener;
 	long timeout;
 	Map<String, ServletMethodObject> rulesMap; // key is servletPath
-	DelegatedClassLoader delegateClassLoader; // using spring clsssLoader
+	DelegateClassLoader delegateClassLoader; // using spring clsssLoader
 
 	@Override
 	protected final void initFrameworkFilter() throws ServletException {
 
-		delegateClassLoader = new DelegatedClassLoader(applicationContext.getClassLoader());
+		delegateClassLoader = new DelegateClassLoader(applicationContext.getClassLoader());
 
 		if (params.controlProcessor != null) {
 			processor = (ServletMethodProcessor) applicationContext.getBean(params.controlProcessor);

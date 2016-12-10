@@ -6,7 +6,7 @@ import java.sql.Savepoint;
 import java.util.List;
 
 import com.github.obase.mysql.ConnectionCallback;
-import com.github.obase.mysql.Page;
+import com.github.obase.Page;
 import com.github.obase.mysql.Transaction;
 
 final class TransactionImpl implements Transaction {
