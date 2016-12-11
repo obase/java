@@ -12,11 +12,11 @@ import com.github.obase.spring.transaction.DataSourceUtils;
 public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient {
 
 	@Override
-	public <T> T callback(ConnectionCallback<T> action) throws SQLException {
+	public <T> T callback(ConnectionCallback<T> action, Object... params) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return action.doInConnection(conn);
+			return action.doInConnection(conn, params);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -29,11 +29,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int insert(T tableObject) throws SQLException {
+	public <T> int insert(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return insert(conn, tableObject);
+			return insert(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -46,11 +46,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int insertIgnore(T tableObject) throws SQLException {
+	public <T> int insertIgnore(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return insertIgnore(conn, tableObject);
+			return insertIgnore(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -63,11 +63,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R insert(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R insert(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return insert(conn, tableObject, generatedKeyType);
+			return insert(conn, tableType, tableObject, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -80,11 +80,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R insertIgnore(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R insertIgnore(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return insertIgnore(conn, tableObject, generatedKeyType);
+			return insertIgnore(conn, tableType, tableObject, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -97,11 +97,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int update(T tableObject) throws SQLException {
+	public <T> int update(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return update(conn, tableObject);
+			return update(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -114,11 +114,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int replace(T tableObject) throws SQLException {
+	public <T> int replace(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return replace(conn, tableObject);
+			return replace(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -131,11 +131,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R replace(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R replace(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return replace(conn, tableObject, generatedKeyType);
+			return replace(conn, tableType, tableObject, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -148,11 +148,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int merge(T tableObject) throws SQLException {
+	public <T> int merge(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return merge(conn, tableObject);
+			return merge(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -165,11 +165,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R merge(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R merge(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return merge(conn, tableObject, generatedKeyType);
+			return merge(conn, tableType, tableObject, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -182,11 +182,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int delete(T tableObject) throws SQLException {
+	public <T> int delete(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return delete(conn, tableObject);
+			return delete(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -215,11 +215,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> T select(T tableObject) throws SQLException {
+	public <T> T select(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return select(conn, tableObject);
+			return select(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -232,11 +232,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> T select2(T tableObject) throws SQLException {
+	public <T> T select2(Class<?> tableType, T tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return select2(conn, tableObject);
+			return select2(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -334,14 +334,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchInsert(T[] tableObject) throws SQLException {
+	public <T> int[] batchInsert(Class<?> tableType, T[] tableObject) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchInsert(conn, tableObject);
+			return batchInsert(conn, tableType, tableObject);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -354,14 +354,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchInsertIgnore(T[] tableObject) throws SQLException {
+	public <T> int[] batchInsertIgnore(Class<?> tableType, T[] tableObjects) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchInsertIgnore(conn, tableObject);
+			return batchInsertIgnore(conn, tableType, tableObjects);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -374,14 +374,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R[] batchInsert(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchInsert(Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchInsert(conn, tableObject, generatedKeyType);
+			return batchInsert(conn, tableType, tableObjects, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -394,14 +394,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R[] batchInsertIgnore(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchInsertIgnore(Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchInsertIgnore(conn, tableObject, generatedKeyType);
+			return batchInsertIgnore(conn, tableType, tableObjects, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -414,14 +414,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchUpdate(T[] tableObject) throws SQLException {
+	public <T> int[] batchUpdate(Class<?> tableType, T[] tableObjects) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchUpdate(conn, tableObject);
+			return batchUpdate(conn, tableType, tableObjects);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -434,14 +434,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchReplace(T[] tableObject) throws SQLException {
+	public <T> int[] batchReplace(Class<?> tableType, T[] tableObjects) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchReplace(conn, tableObject);
+			return batchReplace(conn, tableType, tableObjects);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -454,14 +454,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R[] batchReplace(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchReplace(Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchReplace(conn, tableObject, generatedKeyType);
+			return batchReplace(conn, tableType, tableObjects, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -474,14 +474,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchMerge(T[] tableObject) throws SQLException {
+	public <T> int[] batchMerge(Class<?> tableType, T[] tableObjects) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchMerge(conn, tableObject);
+			return batchMerge(conn, tableType, tableObjects);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -494,14 +494,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T, R> R[] batchMerge(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchMerge(Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchMerge(conn, tableObject, generatedKeyType);
+			return batchMerge(conn, tableType, tableObjects, generatedKeyType);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -514,14 +514,14 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
+	public <T> int[] batchDelete(Class<?> tableType, T[] tableObjects) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
 			if (conn.getAutoCommit()) {
 				conn.setAutoCommit(false);
 			}
-			return batchDelete(conn, tableObjects);
+			return batchDelete(conn, tableType, tableObjects);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -707,6 +707,116 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 		} finally {
 			DataSourceUtils.releaseConnection(conn, dataSource);
 		}
+	}
+
+	@Override
+	public <T> int insert(T tableObject) throws SQLException {
+		return insert(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int insertIgnore(T tableObject) throws SQLException {
+		return insertIgnore(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R insert(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return insert(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R insertIgnore(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return insertIgnore(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int update(T tableObject) throws SQLException {
+		return update(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int replace(T tableObject) throws SQLException {
+		return replace(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R replace(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return replace(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int merge(T tableObject) throws SQLException {
+		return merge(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R merge(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return merge(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int delete(T tableObject) throws SQLException {
+		return delete(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> T select(T tableObject) throws SQLException {
+		return select(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> T select2(T tableObject) throws SQLException {
+		return select2(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int[] batchInsert(T[] tableObjects) throws SQLException {
+		return batchInsert(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> int[] batchInsertIgnore(T[] tableObjects) throws SQLException {
+		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchInsert(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsert(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchInsertIgnore(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchUpdate(T[] tableObjects) throws SQLException {
+		return batchUpdate(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> int[] batchReplace(T[] tableObjects) throws SQLException {
+		return batchReplace(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchReplace(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchReplace(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchMerge(T[] tableObjects) throws SQLException {
+		return batchMerge(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchMerge(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchMerge(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
+		return batchDelete(tableObjects[0].getClass(), tableObjects);
 	}
 
 }

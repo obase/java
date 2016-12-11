@@ -39,7 +39,7 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
-	<T> T callback(ConnectionCallback<T> callback) throws SQLException;
+	<T> T callback(ConnectionCallback<T> callback, Object... params) throws SQLException;
 
 	/**
 	 * Insert an object using INSERT INTO ... Syntax
@@ -55,6 +55,8 @@ public interface MysqlClient {
 	 */
 	<T> int insert(T tableObject) throws SQLException;
 
+	<T> int insert(Class<?> tableType, T tableObject) throws SQLException;
+
 	/**
 	 * Insert an object using INSERT IGNORE INTO ... Syntax
 	 * 
@@ -68,6 +70,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int insertIgnore(T tableObject) throws SQLException;
+
+	<T> int insertIgnore(Class<?> tableType, T tableObject) throws SQLException;
 
 	/**
 	 * Insert an object using INSERT INTO ... Syntax, and return the generated key value.
@@ -83,6 +87,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R insert(T tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R insert(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * Insert an object using INSERT IGNORE INTO ... Syntax, and return the generated key value.
 	 * 
@@ -96,6 +102,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T, R> R insertIgnore(T tableObject, Class<R> generatedKeyType) throws SQLException;
+
+	<T, R> R insertIgnore(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
 
 	/**
 	 * Update an object using UPDATE ... SET Syntax
@@ -111,6 +119,8 @@ public interface MysqlClient {
 	 */
 	<T> int update(T tableObject) throws SQLException;
 
+	<T> int update(Class<?> tableType, T tableObject) throws SQLException;
+
 	/**
 	 * Update an object using REPLACE INTO ... Syntax
 	 * 
@@ -124,6 +134,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int replace(T tableObject) throws SQLException;
+
+	<T> int replace(Class<?> tableType, T tableObject) throws SQLException;
 
 	/**
 	 * Update an object using REPLACE INTO ... Syntax, and return the generated key value.
@@ -139,6 +151,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R replace(T tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R replace(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * Insert or Update an object using INSERT INTO ... ON DUPLICATE KEY UPDATE column=IFNULL(?,column) Syntax,
 	 * 
@@ -152,6 +166,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int merge(T tableObject) throws SQLException;
+
+	<T> int merge(Class<?> tableType, T tableObject) throws SQLException;
 
 	/**
 	 * Insert or Update an object using INSERT INTO ... ON DUPLICATE KEY UPDATE column=IFNULL(?,column) Syntax, and return the generated key value.
@@ -167,6 +183,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R merge(T tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R merge(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * Delete an object using DELETE FROM ... Syntax
 	 * 
@@ -180,6 +198,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int delete(T tableObject) throws SQLException;
+
+	<T> int delete(Class<?> tableType, T tableObject) throws SQLException;
 
 	/**
 	 * Delete an object by keys using DELETE FROM ... Syntax, with the same order of declaration.
@@ -211,6 +231,8 @@ public interface MysqlClient {
 	 */
 	<T> T select(T tableObject) throws SQLException;
 
+	<T> T select(Class<?> tableType, T tableObject) throws SQLException;
+
 	/**
 	 * Select an object using SELECT ... FROM Syntax, it will reuse the parameter object but not create a new one;
 	 * 
@@ -224,6 +246,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> T select2(T tableObject) throws SQLException;
+
+	<T> T select2(Class<?> tableType, T tableObject) throws SQLException;
 
 	/**
 	 * Select an object by keys using SELECT ... FROM Syntax, with the same order of declaration.
@@ -311,6 +335,8 @@ public interface MysqlClient {
 	 */
 	<T> int[] batchInsert(T[] tableObject) throws SQLException;
 
+	<T> int[] batchInsert(Class<?> tableType, T[] tableObject) throws SQLException;
+
 	/**
 	 * The batch operation form of insertIgnore method.
 	 * 
@@ -324,6 +350,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int[] batchInsertIgnore(T[] tableObject) throws SQLException;
+
+	<T> int[] batchInsertIgnore(Class<?> tableType, T[] tableObject) throws SQLException;
 
 	/**
 	 * The batch operation form of insert method.
@@ -341,6 +369,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R[] batchInsert(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R[] batchInsert(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * The batch operation form of insertIgnore method.
 	 * 
@@ -357,6 +387,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R[] batchInsertIgnore(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R[] batchInsertIgnore(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * The batch operation form of update method.
 	 * 
@@ -371,6 +403,8 @@ public interface MysqlClient {
 	 */
 	<T> int[] batchUpdate(T[] tableObject) throws SQLException;
 
+	<T> int[] batchUpdate(Class<?> tableType, T[] tableObject) throws SQLException;
+
 	/**
 	 * The batch operation form of replace method.
 	 * 
@@ -384,6 +418,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int[] batchReplace(T[] tableObject) throws SQLException;
+
+	<T> int[] batchReplace(Class<?> tableType, T[] tableObject) throws SQLException;
 
 	/**
 	 * The batch operation form of replace method.
@@ -401,6 +437,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R[] batchReplace(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R[] batchReplace(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * The batch operation form of merge method.
 	 * 
@@ -414,6 +452,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int[] batchMerge(T[] tableObject) throws SQLException;
+
+	<T> int[] batchMerge(Class<?> tableType, T[] tableObject) throws SQLException;
 
 	/**
 	 * The batch operation form of merge method.
@@ -431,6 +471,8 @@ public interface MysqlClient {
 	 */
 	<T, R> R[] batchMerge(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
+	<T, R> R[] batchMerge(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	/**
 	 * The batch operation form of delete method.
 	 * 
@@ -444,6 +486,8 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T> int[] batchDelete(T[] tableObjects) throws SQLException;
+
+	<T> int[] batchDelete(Class<?> tableType, T[] tableObjects) throws SQLException;
 
 	/**
 	 * The batch operation form of deleteByKey method.

@@ -11,6 +11,6 @@ import java.sql.SQLException;
  */
 public interface ConnectionCallback<T> {
 
-	T doInConnection(Connection conn) throws SQLException;
+	T doInConnection(Connection conn, Object... params) throws SQLException;
 
 }

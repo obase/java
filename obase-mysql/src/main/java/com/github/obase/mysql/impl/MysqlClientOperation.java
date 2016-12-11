@@ -101,9 +101,8 @@ abstract class MysqlClientOperation {
 		return callback.doInConnection(conn);
 	}
 
-	protected <T> int insert(Connection conn, T tableObject) throws SQLException {
+	protected <T> int insert(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -125,9 +124,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int insertIgnore(Connection conn, T tableObject) throws SQLException {
+	protected <T> int insertIgnore(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -152,9 +150,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R insert(Connection conn, T tableObject, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R insert(Connection conn, Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -185,9 +182,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R insertIgnore(Connection conn, T tableObject, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R insertIgnore(Connection conn, Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -220,9 +216,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int update(Connection conn, T tableObject) throws SQLException {
+	protected <T> int update(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = updateSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -244,9 +239,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int replace(Connection conn, T tableObject) throws SQLException {
+	protected <T> int replace(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -268,9 +262,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R replace(Connection conn, T tableObject, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R replace(Connection conn, Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -301,9 +294,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int merge(Connection conn, T tableObject) throws SQLException {
+	protected <T> int merge(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -325,9 +317,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R merge(Connection conn, T tableObject, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R merge(Connection conn, Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -358,9 +349,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int delete(Connection conn, T tableObject) throws SQLException {
+	protected <T> int delete(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = deleteSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -406,9 +396,8 @@ abstract class MysqlClientOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> T select(Connection conn, T tableObject) throws SQLException {
+	protected <T> T select(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = selectSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -443,9 +432,8 @@ abstract class MysqlClientOperation {
 
 	}
 
-	protected <T> T select2(Connection conn, T tableObject) throws SQLException {
+	protected <T> T select2(Connection conn, Class<?> tableType, T tableObject) throws SQLException {
 
-		Class<?> tableType = tableObject.getClass();
 		SqlMeta meta = selectSqlMetaCache.get(tableType);
 
 		if (meta == null) {
@@ -695,9 +683,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchInsert(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchInsert(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -725,9 +712,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchInsertIgnore(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchInsertIgnore(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -758,9 +744,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchInsert(Connection conn, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchInsert(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -802,9 +787,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchInsertIgnore(Connection conn, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchInsertIgnore(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -849,9 +833,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchUpdate(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchUpdate(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = updateSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -879,9 +862,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchReplace(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchReplace(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -909,9 +891,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchReplace(Connection conn, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchReplace(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -953,9 +934,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchMerge(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchMerge(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -983,9 +963,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchMerge(Connection conn, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchMerge(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
@@ -1026,9 +1005,8 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchDelete(Connection conn, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchDelete(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
 
-		Class<?> tableType = tableObjects[0].getClass();
 		SqlMeta meta = deleteSqlMetaCache.get(tableType);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);

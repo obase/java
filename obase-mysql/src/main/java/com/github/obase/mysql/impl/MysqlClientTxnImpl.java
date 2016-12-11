@@ -28,7 +28,7 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> T callback(ConnectionCallback<T> callback) throws SQLException {
+	public <T> T callback(ConnectionCallback<T> callback, Object... params) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
@@ -50,11 +50,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int insert(T tableObject) throws SQLException {
+	public <T> int insert(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return insert(conn, tableObject);
+			return insert(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -63,11 +63,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int insertIgnore(T tableObject) throws SQLException {
+	public <T> int insertIgnore(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return insertIgnore(conn, tableObject);
+			return insertIgnore(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -76,11 +76,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R insert(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R insert(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return insert(conn, tableObject, generatedKeyType);
+			return insert(conn, tableType, tableObject, generatedKeyType);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -89,11 +89,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R insertIgnore(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R insertIgnore(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return insertIgnore(conn, tableObject, generatedKeyType);
+			return insertIgnore(conn, tableType, tableObject, generatedKeyType);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -102,11 +102,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int update(T tableObject) throws SQLException {
+	public <T> int update(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return update(conn, tableObject);
+			return update(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -115,11 +115,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int replace(T tableObject) throws SQLException {
+	public <T> int replace(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return replace(conn, tableObject);
+			return replace(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -128,11 +128,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R replace(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R replace(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return replace(conn, tableObject, generatedKeyType);
+			return replace(conn, tableType, tableObject, generatedKeyType);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -141,11 +141,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int merge(T tableObject) throws SQLException {
+	public <T> int merge(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return merge(conn, tableObject);
+			return merge(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -154,11 +154,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R merge(T tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R merge(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return merge(conn, tableObject, generatedKeyType);
+			return merge(conn, tableType, tableObject, generatedKeyType);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -167,11 +167,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int delete(T tableObject) throws SQLException {
+	public <T> int delete(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return delete(conn, tableObject);
+			return delete(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -193,11 +193,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> T select(T tableObject) throws SQLException {
+	public <T> T select(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return select(conn, tableObject);
+			return select(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -206,11 +206,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> T select2(T tableObject) throws SQLException {
+	public <T> T select2(Class<?> tableType, T tableObject) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return select2(conn, tableObject);
+			return select2(conn, tableType, tableObject);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -284,13 +284,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchInsert(T[] tableObject) throws SQLException {
+	public <T> int[] batchInsert(Class<?> tableType, T[] tableObject) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchInsert(conn, tableObject);
+			int[] result = batchInsert(conn, tableType, tableObject);
 			done = true;
 			return result;
 		} finally {
@@ -306,13 +306,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchInsertIgnore(T[] tableObject) throws SQLException {
+	public <T> int[] batchInsertIgnore(Class<?> tableType, T[] tableObject) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchInsertIgnore(conn, tableObject);
+			int[] result = batchInsertIgnore(conn, tableType, tableObject);
 			done = true;
 			return result;
 		} finally {
@@ -328,13 +328,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R[] batchInsert(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchInsert(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			R[] result = batchInsert(conn, tableObject, generatedKeyType);
+			R[] result = batchInsert(conn, tableType, tableObject, generatedKeyType);
 			done = true;
 			return result;
 		} finally {
@@ -350,13 +350,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R[] batchInsertIgnore(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchInsertIgnore(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			R[] result = batchInsertIgnore(conn, tableObject, generatedKeyType);
+			R[] result = batchInsertIgnore(conn, tableType, tableObject, generatedKeyType);
 			done = true;
 			return result;
 		} finally {
@@ -372,13 +372,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchUpdate(T[] tableObject) throws SQLException {
+	public <T> int[] batchUpdate(Class<?> tableType, T[] tableObject) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchUpdate(conn, tableObject);
+			int[] result = batchUpdate(conn, tableType, tableObject);
 			done = true;
 			return result;
 		} finally {
@@ -394,13 +394,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchReplace(T[] tableObject) throws SQLException {
+	public <T> int[] batchReplace(Class<?> tableType, T[] tableObject) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchReplace(conn, tableObject);
+			int[] result = batchReplace(conn, tableType, tableObject);
 			done = true;
 			return result;
 		} finally {
@@ -416,13 +416,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R[] batchReplace(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchReplace(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			R[] result = batchReplace(conn, tableObject, generatedKeyType);
+			R[] result = batchReplace(conn, tableType, tableObject, generatedKeyType);
 			done = true;
 			return result;
 		} finally {
@@ -438,13 +438,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchMerge(T[] tableObject) throws SQLException {
+	public <T> int[] batchMerge(Class<?> tableType, T[] tableObject) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchMerge(conn, tableObject);
+			int[] result = batchMerge(conn, tableType, tableObject);
 			done = true;
 			return result;
 		} finally {
@@ -460,13 +460,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T, R> R[] batchMerge(T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+	public <T, R> R[] batchMerge(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			R[] result = batchMerge(conn, tableObject, generatedKeyType);
+			R[] result = batchMerge(conn, tableType, tableObject, generatedKeyType);
 			done = true;
 			return result;
 		} finally {
@@ -482,13 +482,13 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
+	public <T> int[] batchDelete(Class<?> tableType, T[] tableObjects) throws SQLException {
 		Connection conn = null;
 		boolean done = false;
 		try {
 			conn = dataSource.getConnection();
 			conn.setAutoCommit(false);
-			int[] result = batchDelete(conn, tableObjects);
+			int[] result = batchDelete(conn, tableType, tableObjects);
 			done = true;
 			return result;
 		} finally {
@@ -665,6 +665,116 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 				conn.close();
 			}
 		}
+	}
+
+	@Override
+	public <T> int insert(T tableObject) throws SQLException {
+		return insert(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int insertIgnore(T tableObject) throws SQLException {
+		return insertIgnore(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R insert(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return insert(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R insertIgnore(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return insertIgnore(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int update(T tableObject) throws SQLException {
+		return update(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int replace(T tableObject) throws SQLException {
+		return replace(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R replace(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return replace(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int merge(T tableObject) throws SQLException {
+		return merge(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T, R> R merge(T tableObject, Class<R> generatedKeyType) throws SQLException {
+		return merge(tableObject.getClass(), tableObject, generatedKeyType);
+	}
+
+	@Override
+	public <T> int delete(T tableObject) throws SQLException {
+		return delete(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> T select(T tableObject) throws SQLException {
+		return select(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> T select2(T tableObject) throws SQLException {
+		return select2(tableObject.getClass(), tableObject);
+	}
+
+	@Override
+	public <T> int[] batchInsert(T[] tableObjects) throws SQLException {
+		return batchInsert(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> int[] batchInsertIgnore(T[] tableObjects) throws SQLException {
+		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchInsert(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsert(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchInsertIgnore(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchUpdate(T[] tableObjects) throws SQLException {
+		return batchUpdate(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> int[] batchReplace(T[] tableObjects) throws SQLException {
+		return batchReplace(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchReplace(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchReplace(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchMerge(T[] tableObjects) throws SQLException {
+		return batchMerge(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T, R> R[] batchMerge(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchMerge(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
+		return batchDelete(tableObjects[0].getClass(), tableObjects);
 	}
 
 }
