@@ -64,13 +64,13 @@ public class ConfigSAXParser extends DefaultHandler {
 		int len = sb.length();
 		int l = 0, h = len - 1;
 		char ch = 0;
-		while (l < h && Character.isWhitespace(sb.charAt(l))) {
+		while (l <= h && Character.isWhitespace(sb.charAt(l))) {
 			l++;
 		}
-		while (h > l && Character.isWhitespace(sb.charAt(h))) {
+		while (h >= l && Character.isWhitespace(sb.charAt(h))) {
 			h--;
 		}
-		for (int i = l; i < h; i++) {
+		for (int i = l; i <= h; i++) {
 			ch = sb.charAt(i);
 			if (ch == '\r' || ch == '\n') {
 				sb.setCharAt(i, '\u0020');
@@ -85,11 +85,11 @@ public class ConfigSAXParser extends DefaultHandler {
 
 		char[] ret = new char[h - l + 1];
 		len = 0;
-		while (l < h) {
+		while (l <= h) {
 			if ((ch = sb.charAt(l++)) != '\0') {
 				ret[len++] = ch;
 			}
 		}
-		return new String(ret, 0, len);
+		return len == 0 ? "" : new String(ret, 0, len);
 	}
 }
