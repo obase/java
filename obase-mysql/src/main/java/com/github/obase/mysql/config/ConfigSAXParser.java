@@ -47,7 +47,7 @@ public class ConfigSAXParser extends DefaultHandler {
 			config.metas.add(content.toString().trim());
 			content.setLength(0);
 		} else if (ELEM_SQL.equals(localName)) {
-			config.sqls.put(id, content.toString().trim());
+			config.sqls.put(id, filterWhiteSpaces(content));
 			content.setLength(0);
 		}
 	}
@@ -58,5 +58,37 @@ public class ConfigSAXParser extends DefaultHandler {
 			return handler.config;
 		}
 		return null;
+	}
+
+	static String filterWhiteSpaces(StringBuilder sb) {
+		int len = sb.length();
+		int l = 0, h = len - 1;
+		char ch = 0;
+		while (l < h && Character.isWhitespace(sb.charAt(l))) {
+			l++;
+		}
+		while (h > l && Character.isWhitespace(sb.charAt(h))) {
+			h--;
+		}
+		for (int i = l; i < h; i++) {
+			ch = sb.charAt(i);
+			if (ch == '\r' || ch == '\n') {
+				sb.setCharAt(i, '\u0020');
+				for (int j = i - 1; j > l && Character.isWhitespace(sb.charAt(j)); j--) {
+					sb.setCharAt(j, '\0');
+				}
+				while ((++i) < h && Character.isWhitespace(sb.charAt(i))) {
+					sb.setCharAt(i, '\0');
+				}
+			}
+		}
+
+		StringBuilder ret = new StringBuilder(h - l + 1);
+		for (int i = l; i < h; i++) {
+			if ((ch = sb.charAt(i)) != '\0') {
+				ret.append(ch);
+			}
+		}
+		return ret.toString();
 	}
 }
