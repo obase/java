@@ -735,35 +735,44 @@ public abstract class Kits {
 	}
 
 	public static Map<String, Object> readQueryParam(HttpServletRequest request) throws IOException {
-		return readQueryParam(request.getQueryString(), request.getCharacterEncoding());
+		return readQueryParam(request.getQueryString(), true, request.getCharacterEncoding());
 	}
 
-	public static Map<String, Object> readQueryParam(String queryString, String charset) throws IOException {
+	public static Map<String, Object> readQueryParam(String queryString, boolean nullIfEmpty, String charset) throws IOException {
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (StringKit.isNotEmpty(queryString)) {
 			int vlen = queryString.length(), mark = 0, pos = 0;
 			while (pos < vlen && (pos = queryString.indexOf(Webc.LAND, mark)) != -1) {
 				if (mark < pos) {
-					splitQueryParam(params, queryString.substring(mark, pos), charset);
+					splitQueryParam(params, queryString.substring(mark, pos), true, charset);
 				}
 				pos = mark = pos + 1;
 			}
 			if (mark < vlen) {
-				splitQueryParam(params, queryString.substring(mark), charset);
+				splitQueryParam(params, queryString.substring(mark), true, charset);
 			}
 		}
 		return params;
 	}
 
-	private static void splitQueryParam(Map<String, Object> params, String pair, String charset) throws UnsupportedEncodingException {
+	private static void splitQueryParam(Map<String, Object> params, String pair, boolean nullIfEmpty, String charset) throws UnsupportedEncodingException {
 		int pos = pair.indexOf(Webc.EQUA);
 		if (pos == -1) {
-			params.put(pair, null);
+			params.put(pair.trim(), null);
 		} else if (pos == 0) {
-			params.put(null, pair);
+			pair = pair.trim();
+			if (pair.length() == 0 && nullIfEmpty) {
+				pair = null;
+			}
+			params.put(null, URLDecoder.decode(pair, charset));
 		} else {
-			params.put(pair.substring(0, pos), URLDecoder.decode(pair.substring(pos + 1), charset));
+			String key = pair.substring(0, pos).trim();
+			pair = pair.substring(pos + 1).trim();
+			if (pair.length() == 0 && nullIfEmpty) {
+				pair = null;
+			}
+			params.put(key, URLDecoder.decode(pair, charset));
 		}
 	}
 
