@@ -111,7 +111,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for insert: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -137,7 +137,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for insertIgnore: " + meta.toString(psql));
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(psql);
@@ -160,7 +160,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for insert: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -194,7 +194,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for insertIgnore: " + meta.toString(psql));
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -226,7 +226,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for update: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -249,7 +249,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for replace: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -272,7 +272,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for replace: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -304,7 +304,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for merge: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -327,7 +327,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for merge: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -359,7 +359,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for delete: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -406,7 +406,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for select: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -442,7 +442,7 @@ abstract class MysqlClientOperation {
 			logger.info("Sql for select2: " + meta);
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObject.getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -696,7 +696,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsert");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -728,7 +728,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsertIgnore");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(psql);
@@ -757,7 +757,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsert");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -803,7 +803,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsertIgnore");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -846,7 +846,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchUpdate");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -875,7 +875,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchReplace");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -904,7 +904,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchReplace");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -947,7 +947,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchMerge");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -976,7 +976,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchMerge");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -1018,7 +1018,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchDelete");
 		}
 
-		JdbcAction action = getJdbcAction(tableType);
+		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
