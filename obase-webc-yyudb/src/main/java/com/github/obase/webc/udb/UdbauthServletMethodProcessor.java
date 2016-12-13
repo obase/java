@@ -1,5 +1,9 @@
 package com.github.obase.webc.udb;
 
+import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
+import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
+import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -11,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
+import com.github.obase.Message;
+import com.github.obase.json.Jsons;
 import com.github.obase.kit.SerialKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
@@ -19,7 +25,6 @@ import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.YyudbErrno;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.udb.UdbKit.Callback;
@@ -166,15 +171,6 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	@Override
-	public void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException {
-		if (sendError) {
-			Kits.sendError(resp, errno, errmsg);
-		} else {
-			Kits.writeErrorMessage(resp, YyudbErrno.SOURCE, errno, errmsg);
-		}
-	}
-
-	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		StringBuilder psb = new StringBuilder(256);
@@ -189,6 +185,23 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		sb.append("?").append(UdbKit.PARAM_URL).append("=").append(URLEncoder.encode(psb.toString(), Webc.CHARSET_NAME));
 
 		Kits.sendRedirect(response, sb.toString());
+	}
+
+	@Override
+	public void sendError(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
+		switch (errno) {
+		case SC_MISSING_TOKEN:
+		case SC_MISSING_VERIFIER:
+		case SC_INVALID_ACCOUNT:
+			Kits.sendError(response, errno, errmsg);
+			break;
+		default:
+			if (sendError) {
+				Kits.sendError(response, sc, Jsons.writeAsString(new Message<Object>(errno, errmsg)));
+			} else {
+				Kits.writeErrorMessage(response, errno, errmsg);
+			}
+		}
 	}
 
 	// for subclass override

@@ -142,14 +142,6 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		Kits.sendRedirect(response, Kits.getServletPath(request, StringKit.isNotEmpty(homepage) ? homepage : "/"));
 	}
 
-	public void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException {
-		if (sendError) {
-			Kits.sendError(resp, errno, errmsg);
-		} else {
-			Kits.writeErrorMessage(resp, errno, errmsg);
-		}
-	}
-
 	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Kits.sendRedirect(response, StringKit.isNotEmpty(hiidoLoginUrl) ? hiidoLoginUrl : HiidoKit.HIIDO_LOGIN_URL);

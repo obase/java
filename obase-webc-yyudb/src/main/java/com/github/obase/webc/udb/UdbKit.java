@@ -138,17 +138,17 @@ public final class UdbKit {
 		// 校验下
 		if (tokenSecret == null) {
 			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_SESSION_TIMEOUT));
-			c.sendBadParameterError(response, SC_SESSION_TIMEOUT, "Timeout for udb session, please try again!");
+			c.sendError(response, SC_SESSION_TIMEOUT, SC_SESSION_TIMEOUT, "Timeout for udb session, please try again!");
 			return;
 		}
 		if (StringKit.isEmpty(oauthToken)) {
 			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_TOKEN));
-			c.sendBadParameterError(response, SC_MISSING_TOKEN, "Missing udb param oauthToken");
+			c.sendError(response, SC_MISSING_TOKEN, SC_MISSING_TOKEN, "Missing udb param oauthToken");
 			return;
 		}
 		if (StringKit.isEmpty(oauthVerfier)) {
 			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_TOKEN));
-			c.sendBadParameterError(response, SC_MISSING_VERIFIER, "Missing udb param oauthVerfier");
+			c.sendError(response, SC_MISSING_VERIFIER, SC_MISSING_VERIFIER, "Missing udb param oauthVerfier");
 			return;
 		}
 		// 用返回的requestToken以及veriferCode，同udb通信
@@ -163,7 +163,7 @@ public final class UdbKit {
 		String[] uProfile = duowan.getUserProfile(accessTokenInfo[0]); // passport
 		if (!c.postUdbLogin(request, response, yyuid, uProfile)) {
 			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_INVALID_ACCOUNT));
-			c.sendBadParameterError(response, SC_INVALID_ACCOUNT, "Invalid account!");
+			c.sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
 			return;
 		}
 
@@ -255,6 +255,6 @@ public final class UdbKit {
 
 		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 
-		void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException;
+		void sendError(HttpServletResponse resp, int sc, int errno, String errmsg) throws IOException;
 	}
 }

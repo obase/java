@@ -92,11 +92,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			}
 
 			try {
-				if (sendError) {
-					Kits.sendError(response, sc, Jsons.writeAsString(new Message<>(errno, errmsg)));
-				} else {
-					Kits.writeErrorMessage(response, errno, errmsg);
-				}
+				sendError(response, sc, errno, errmsg);
 				posterror(sc, errmsg, t);
 			} catch (IOException e) {
 				logger.error("Write error message failed", e);
@@ -176,6 +172,13 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 		}
 
 		return sb.toString().replace('.', '/');
+	}
+
+	/**
+	 * override for subclass
+	 */
+	protected void sendError(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
+		Kits.sendError(response, sc, Jsons.writeAsString(new Message<Object>(errno, errmsg)));
 	}
 
 }
