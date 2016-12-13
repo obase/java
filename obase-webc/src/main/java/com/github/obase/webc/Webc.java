@@ -33,6 +33,7 @@ import org.springframework.asm.Label;
 import org.springframework.asm.MethodVisitor;
 import org.springframework.asm.Opcodes;
 import org.springframework.asm.Type;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -110,15 +111,22 @@ public interface Webc {
 		}
 
 		public static <T> T findBean(ApplicationContext appctx, Class<T> requiredType, String name) {
-			Map<String, T> beans = appctx.getBeansOfType(requiredType);
-			if (beans.size() > 0) {
-				if (name == null) {
-					return beans.values().iterator().next();
-				} else {
-					return beans.get(name);
+
+			T bean = null;
+			try {
+				bean = (name == null) ? appctx.getBean(requiredType) : appctx.getBean(name, requiredType);
+			} catch (NoSuchBeanDefinitionException e) {
+				Map<String, T> beans = appctx.getBeansOfType(requiredType);
+				if (beans.size() > 0) {
+					if (name == null) {
+						bean = beans.values().iterator().next();
+					} else {
+						bean = beans.get(name);
+					}
 				}
 			}
-			return null;
+
+			return bean;
 		}
 
 		public static Resource getDefaultConfigResource(ServletContext servletContext, String servletpath, Class<?> clazz, String classpath) {

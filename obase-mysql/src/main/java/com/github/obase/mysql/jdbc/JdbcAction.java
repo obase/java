@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.cglib.beans.BeanMap;
-
 import com.github.obase.mysql.JavaType;
 
 /**
@@ -750,12 +748,7 @@ public abstract class JdbcAction {
 		@SuppressWarnings("rawtypes")
 		public void setParam(PreparedStatement pstmt, Map<String, int[]> params, Object obj) throws SQLException {
 			if (params.size() > 0) {
-				Map map;
-				if (obj instanceof Map) {
-					map = (Map) obj;
-				} else {
-					map = BeanMap.create(obj);
-				}
+				Map map = (Map) obj;
 				for (Map.Entry<String, int[]> entry : params.entrySet()) {
 					setParamByType(pstmt, entry.getValue(), map.get(entry.getKey()));
 				}
@@ -764,12 +757,7 @@ public abstract class JdbcAction {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public void getResult2(ResultSet rs, Map<String, Integer> types, Object obj) throws SQLException {
-			Map map;
-			if (obj instanceof Map) {
-				map = (Map) obj;
-			} else {
-				map = BeanMap.create(obj);
-			}
+			Map map = (Map) obj;
 			for (Map.Entry<String, Integer> entry : types.entrySet()) {
 				map.put(entry.getKey(), rs.getObject(entry.getValue()));
 			}
