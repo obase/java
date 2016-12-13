@@ -125,7 +125,6 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 		UserPrincipal principal = validatePrincipal(yyuid, uProfile);
 		if (principal == null) {
-			sendBadParameterError(response, Webc.SC_INVALID_ACCOUNT, "Invalid account!");
 			return false;
 		}
 
