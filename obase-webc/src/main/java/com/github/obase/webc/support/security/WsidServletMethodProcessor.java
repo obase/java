@@ -120,11 +120,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		// step4: check permission
 		if (object.authType == AuthType.PERMISSION) {
 			if (!validatePermission(principal, Kits.getHttpMethod(request), Kits.getLookupPath(request))) {
-				if (sendError) {
-					Kits.sendError(response, Webc.SC_PERMISSION_DENIED, "Permission denied!");
-				} else {
-					Kits.writeErrorMessage(response, Webc.SC_PERMISSION_DENIED, "Permission denied!");
-				}
+				Kits.sendError(response, Webc.SC_PERMISSION_DENIED, "Permission denied!");
 				return null;
 			}
 		}

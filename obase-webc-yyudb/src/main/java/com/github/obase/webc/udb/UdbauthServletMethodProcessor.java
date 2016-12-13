@@ -19,7 +19,6 @@ import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
-import com.github.obase.webc.YyudbErrno;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.udb.UdbKit.Callback;
@@ -163,15 +162,6 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			}
 		}
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);
-	}
-
-	@Override
-	public void sendBadParameterError(HttpServletResponse resp, int errno, String errmsg) throws IOException {
-		if (sendError) {
-			Kits.sendError(resp, errno, errmsg);
-		} else {
-			Kits.writeErrorMessage(resp, YyudbErrno.SOURCE, errno, errmsg);
-		}
 	}
 
 	@Override
