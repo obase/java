@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,7 @@ public final class Jsons {
 		OM.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
 		OM.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
 		OM.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
+		OM.setSerializationInclusion(Include.NON_NULL); // ignore null
 	}
 
 	public static final JavaType Object = TF.constructParametricType(HashMap.class, String.class, Object.class);
