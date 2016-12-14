@@ -17,7 +17,7 @@ import com.github.obase.webc.AuthType;
 @Documented
 public @interface ServletMethod {
 
-	String value() default ""; // "$": join methodName to lookupPath, "": ignore, other: join value to lookupPath
+	String value() default ""; // "$": ignore the methodName
 
 	org.springframework.http.HttpMethod[] method() default {}; // if empty support all methods
 
@@ -25,10 +25,14 @@ public @interface ServletMethod {
 
 	boolean csrf() default true; // check csrf
 
-	boolean export() default false; // export the servlet method to api access
+	boolean api() default false; // export the servlet method to api access
 
-	String summary() default ""; // summary to the servlet method
+	String name() default ""; // name of the api
 
-	String category() default ""; // category of the servlet method
+	String remark() default ""; // summary to the api
+
+	String category() default ""; // category of the api
+
+	String service() default ""; // service catalog of the api
 
 }
