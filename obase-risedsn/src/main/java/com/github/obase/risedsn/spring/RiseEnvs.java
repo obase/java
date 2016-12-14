@@ -29,10 +29,13 @@ public final class RiseEnvs {
 	 *            属性或环境变量名称
 	 * @return
 	 */
-	public static String getSysEnv(String name) {
+	static String getSysEnv(String name) {
 		String val = System.getProperty(name);
 		if (val == null) {
 			val = System.getenv(name);
+		}
+		if (val == null) {
+			throw new IllegalStateException("Can't found environment variable: " + name);
 		}
 		return val;
 	}
