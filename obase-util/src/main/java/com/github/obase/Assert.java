@@ -3,6 +3,9 @@ package com.github.obase;
 import java.util.Collection;
 import java.util.Map;
 
+import com.github.obase.kit.CollectKit;
+import com.github.obase.kit.MapKit;
+import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 
 public class Assert {
@@ -20,6 +23,7 @@ public class Assert {
 	}
 
 	public static void isTrue(Boolean obj, int errno, String errmsg) {
+
 		if (obj == null || !obj) {
 			throw new MessageException(errno, errmsg);
 		}
@@ -68,25 +72,37 @@ public class Assert {
 	}
 
 	public static <T> void isEmpty(Collection<T> obj, int errno, String errmsg) {
-		if (obj == null || obj.size() == 0) {
+		if (CollectKit.isNotEmpty(obj)) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
 	public static <T> void notEmpty(Collection<T> obj, int errno, String errmsg) {
-		if (obj != null && obj.size() != 0) {
+		if (CollectKit.isEmpty(obj)) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
 	public static <K, T> void isEmpty(Map<K, T> obj, int errno, String errmsg) {
-		if (obj == null || obj.size() == 0) {
+		if (MapKit.isNotEmpty(obj)) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
 	public static <K, T> void notEmpty(Map<K, T> obj, int errno, String errmsg) {
-		if (obj != null && obj.size() != 0) {
+		if (MapKit.isEmpty(obj)) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static void equals(Object obj1, Object obj2, int errno, String errmsg) {
+		if (ObjectKit.notEquals(obj1, obj2)) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static void notEquals(Object obj1, Object obj2, int errno, String errmsg) {
+		if (ObjectKit.equals(obj1, obj2)) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
