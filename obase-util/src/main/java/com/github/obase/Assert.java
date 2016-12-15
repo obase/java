@@ -19,6 +19,18 @@ public class Assert {
 		}
 	}
 
+	public static void isTrue(Boolean obj, int errno, String errmsg) {
+		if (obj != null && !obj) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static void notTrue(Boolean obj, int errno, String errmsg) {
+		if (obj != null && obj) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
 	public static void isNull(Object obj, int errno, String errmsg) {
 		if (obj != null) {
 			throw new MessageException(errno, errmsg);
