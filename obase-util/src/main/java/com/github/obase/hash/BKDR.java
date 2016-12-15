@@ -5,7 +5,7 @@ public class BKDR {
 	private BKDR() {
 	}
 
-	private static final int DEFAULT_SEED = 104729;
+	private static final int DEFAULT_SEED = 274372069; // 29bit
 
 	public static int hash32(String... val) {
 		return hash32(DEFAULT_SEED, val);
