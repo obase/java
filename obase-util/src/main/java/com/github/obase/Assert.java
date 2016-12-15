@@ -20,6 +20,7 @@ public class Assert {
 	}
 
 	public static void isTrue(Boolean obj, int errno, String errmsg) {
+
 		if (obj == null || !obj) {
 			throw new MessageException(errno, errmsg);
 		}
