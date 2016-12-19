@@ -106,4 +106,29 @@ public class Assert {
 			throw new MessageException(errno, errmsg);
 		}
 	}
+
+	public static void minLength(String val, int min, int errno, String errmsg) {
+		if (val != null && val.length() < min) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static void maxLength(String val, int max, int errno, String errmsg) {
+		if (val != null && val.length() > max) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static void alphanumeric(String val, int errno, String errmsg) {
+		if (val != null) {
+			char ch;
+			for (int i = 0, n = val.length(); i < n; i++) {
+				ch = val.charAt(i);
+				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_') {
+					continue;
+				}
+				throw new MessageException(errno, errmsg);
+			}
+		}
+	}
 }
