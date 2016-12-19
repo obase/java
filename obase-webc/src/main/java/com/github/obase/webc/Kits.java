@@ -551,14 +551,19 @@ public abstract class Kits {
 	}
 
 	public static String readHeader(HttpServletRequest request, String name) {
-		return request.getHeader(name);
+		String val = request.getHeader(name);
+		if (val != null) {
+			val = val.trim();
+			return val.length() == 0 ? null : val;
+		}
+		return null;
 	}
 
 	public static Map<String, String> readHeaderMap(HttpServletRequest request) {
 		Map<String, String> map = new HashMap<String, String>();
 		for (Enumeration<String> enums = request.getHeaderNames(); enums.hasMoreElements();) {
 			String name = enums.nextElement();
-			map.put(name, request.getParameter(name));
+			map.put(name, Kits.readHeader(request, name));
 		}
 		return map;
 	}
