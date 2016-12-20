@@ -92,43 +92,7 @@ public class HttpKit {
 		return conn;
 	}
 
-	public static HttpResponse doGet(String url, String query, Map<String, String> headers) throws IOException {
-		HttpRequest request = new HttpRequest();
-		request.method = GET;
-		request.url = url;
-		request.query = query;
-		request.properties = headers;
-		return doHttp(request);
-	}
-
-	public static HttpResponse doDelete(String url, String query, Map<String, String> headers) throws IOException {
-		HttpRequest request = new HttpRequest();
-		request.method = DELETE;
-		request.url = url;
-		request.query = query;
-		request.properties = headers;
-		return doHttp(request);
-	}
-
-	public static HttpResponse doPost(String url, String json, Map<String, String> headers) throws IOException {
-		HttpRequest request = new HttpRequest();
-		request.method = POST;
-		request.url = url;
-		request.content = json;
-		request.properties = headers;
-		return doHttp(request);
-	}
-
-	public static HttpResponse doPut(String url, String json, Map<String, String> headers) throws IOException {
-		HttpRequest request = new HttpRequest();
-		request.method = PUT;
-		request.url = url;
-		request.content = json;
-		request.properties = headers;
-		return doHttp(request);
-	}
-
-	public static HttpResponse doHttp(HttpRequest request) throws IOException {
+	public static HttpResponse execute(HttpRequest request) throws IOException {
 
 		HttpURLConnection connection = null;
 		try {
