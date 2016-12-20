@@ -92,17 +92,38 @@ public class HttpKit {
 		return conn;
 	}
 
-	public static HttpResponse doRest(String method, String url, String params, Map<String, String> headers) throws IOException {
+	public static HttpResponse doGet(String url, String query, Map<String, String> headers) throws IOException {
 		HttpRequest request = new HttpRequest();
-		if (GET.equals(method) || DELETE.equals(method)) {
-			request.query = params;
-		} else if (POST.equals(method) || PUT.equals(method)) {
-			request.content = params;
-		} else {
-			throw new IllegalArgumentException("Method should be GET,DELETE,POST or PUT");
-		}
-		request.method = method;
+		request.method = GET;
 		request.url = url;
+		request.query = query;
+		request.properties = headers;
+		return doHttp(request);
+	}
+
+	public static HttpResponse doDelete(String url, String query, Map<String, String> headers) throws IOException {
+		HttpRequest request = new HttpRequest();
+		request.method = DELETE;
+		request.url = url;
+		request.query = query;
+		request.properties = headers;
+		return doHttp(request);
+	}
+
+	public static HttpResponse doPost(String url, String json, Map<String, String> headers) throws IOException {
+		HttpRequest request = new HttpRequest();
+		request.method = POST;
+		request.url = url;
+		request.content = json;
+		request.properties = headers;
+		return doHttp(request);
+	}
+
+	public static HttpResponse doPut(String url, String json, Map<String, String> headers) throws IOException {
+		HttpRequest request = new HttpRequest();
+		request.method = PUT;
+		request.url = url;
+		request.content = json;
 		request.properties = headers;
 		return doHttp(request);
 	}
@@ -117,6 +138,8 @@ public class HttpKit {
 				sb.append(url);
 				if (url.indexOf('?') == -1) {
 					sb.append('?');
+				} else {
+					sb.append(LAND);
 				}
 				sb.append(request.query);
 				url = sb.toString();
