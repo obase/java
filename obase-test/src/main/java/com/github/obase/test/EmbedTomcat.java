@@ -2,16 +2,16 @@ package com.github.obase.test;
 
 import java.io.File;
 
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.EmptyResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.coyote.http11.Http11Nio2Protocol;
+import org.apache.tomcat.util.scan.Constants;
+import org.apache.tomcat.util.scan.StandardJarScanFilter;
 
 public final class EmbedTomcat extends SpringJUnitTester {
 
@@ -93,18 +93,18 @@ public final class EmbedTomcat extends SpringJUnitTester {
 			if (WEBAPP.exists()) {
 				ctx = (StandardContext) tomcat.addWebapp(contextPath, WEBAPP.getAbsolutePath());
 				if (WEBXML.exists()) {
-					ctx.setDefaultContextXml(WEBXML.getAbsolutePath()); // FIX BUG: here is not setDefaultWebXml()
-					for (LifecycleListener ll : ctx.findLifecycleListeners()) {
-						if (ll instanceof ContextConfig) {
-							((ContextConfig) ll).setDefaultWebXml(ctx.getDefaultWebXml());
-						}
-					}
+					ctx.setDefaultWebXml(WEBXML.getAbsolutePath());
 				}
-
 			} else {
 				ctx = (StandardContext) tomcat.addWebapp(contextPath, ROOT.getAbsolutePath());
 			}
 			ctx.setParentClassLoader(EmbedTomcat.class.getClassLoader());
+
+			// Disable TLD scanning by default
+			if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
+				StandardJarScanFilter jarScanFilter = (StandardJarScanFilter) ctx.getJarScanner().getJarScanFilter();
+				jarScanFilter.setTldSkip("*");
+			}
 
 			WebResourceRoot resources = new StandardRoot(ctx);
 			boolean targetClassesExists = TARGET_CLASSES.exists(), targetTestClassesExists = TARGET_TEST_CLASSES.exists();
