@@ -3,16 +3,18 @@ package com.github.obase.test;
 import java.io.File;
 
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.coyote.http11.Http11NioProtocol;
-import org.apache.naming.resources.VirtualDirContext;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.EmptyResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
+import org.apache.coyote.http11.Http11Nio2Protocol;
 
 public final class EmbedTomcat extends SpringJUnitTester {
 
-	public static final String WEBAPP_DIRECTORY = "src/main/webapp/";
 	public static final String ROOT_CONTEXT = "";
 	public static final int HTTP_PORT = 80;
 	public static final int HTTPS_PORT = 443;
@@ -38,22 +40,28 @@ public final class EmbedTomcat extends SpringJUnitTester {
 		start(ROOT_CONTEXT, httpPort, httpsPort, keyAlias, password, keystorePath);
 	}
 
+	// FOR Tomcat 8.x
 	public static void start(String contextPath, int httpPort, int httpsPort, String keyAlias, String password, String keystorePath) {
+
+		processSystemEnvironment();
+
+		final File ROOT = new File("./");
+		final File WEBAPP = new File(ROOT, "src/main/webapp/");
+		final File WEBXML = new File(ROOT, "src/main/webapp/WEB-INF/web.xml");
+		final File TARGET_CLASSES = new File(ROOT, "target/classes/");
+		final File TARGET_TEST_CLASSES = new File(ROOT, "target/test-classes");
 
 		// FIX: A context path must either be an empty string or start with a '/' and do not end with a '/'.
 		if (contextPath == null || contextPath.equals("/")) {
 			contextPath = ROOT_CONTEXT;
 		}
 		try {
-			// initial
-			processSystemEnvironment();
 
 			Tomcat tomcat = new Tomcat();
 
 			if (httpsPort > 0) {
 				tomcat.setPort(httpsPort);
-				Connector connector = tomcat.getConnector();
-				connector.setProtocol(Http11NioProtocol.class.getCanonicalName()); // set nio, default is bio
+				Connector connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
 				connector.setSecure(true);
 				connector.setScheme("https");
 				connector.setAttribute("keyAlias", keyAlias);
@@ -62,38 +70,60 @@ public final class EmbedTomcat extends SpringJUnitTester {
 				connector.setAttribute("clientAuth", "false");
 				connector.setAttribute("sslProtocol", "TLS");
 				connector.setAttribute("SSLEnabled", true);
+				tomcat.setConnector(connector);
 
 				if (httpPort > 0) {
-					connector = new Connector(Http11NioProtocol.class.getCanonicalName());
+					connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
 					connector.setPort(httpPort);
 					connector.setRedirectPort(httpsPort);
 					tomcat.getService().addConnector(connector);
 				}
+
 			} else if (httpPort > 0) {
+
 				tomcat.setPort(httpPort);
+				Connector connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
+				tomcat.setConnector(connector);
+
 			} else {
 				throw new IllegalArgumentException("Both port are invalid");
 			}
 
-			File webapp = new File(WEBAPP_DIRECTORY);
-			if (webapp.exists()) {
-				StandardContext ctx = (StandardContext) tomcat.addWebapp(contextPath, webapp.getAbsolutePath());
-				// Declare an alternative location for your "WEB-INF/classes" dir Servlet 3.0 annotation will work
-				VirtualDirContext resources = new VirtualDirContext();
-				resources.setExtraResourcePaths("/WEB-INF/classes=" + new File("target/classes").getAbsolutePath() + ',' + new File("target/test-classes").getAbsolutePath());
-				ctx.setResources(resources);
-				ctx.setDefaultWebXml(new File("src/main/webapp/WEB-INF/web.xml").getAbsolutePath());
-				for (LifecycleListener ll : ctx.findLifecycleListeners()) {
-					if (ll instanceof ContextConfig) {
-						((ContextConfig) ll).setDefaultWebXml(ctx.getDefaultWebXml());
+			StandardContext ctx;
+			if (WEBAPP.exists()) {
+				ctx = (StandardContext) tomcat.addWebapp(contextPath, WEBAPP.getAbsolutePath());
+				if (WEBXML.exists()) {
+					ctx.setDefaultWebXml(WEBXML.getAbsolutePath());
+					for (LifecycleListener ll : ctx.findLifecycleListeners()) {
+						if (ll instanceof ContextConfig) {
+							((ContextConfig) ll).setDefaultWebXml(ctx.getDefaultWebXml());
+						}
 					}
 				}
+
+			} else {
+				ctx = (StandardContext) tomcat.addWebapp(contextPath, ROOT.getAbsolutePath());
 			}
+			ctx.setParentClassLoader(EmbedTomcat.class.getClassLoader());
+
+			WebResourceRoot resources = new StandardRoot(ctx);
+			boolean targetClassesExists = TARGET_CLASSES.exists(), targetTestClassesExists = TARGET_TEST_CLASSES.exists();
+			if (targetClassesExists || targetTestClassesExists) {
+				if (targetClassesExists) {
+					resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", TARGET_CLASSES.getAbsolutePath(), "/"));
+				}
+				if (targetTestClassesExists) {
+					resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", TARGET_TEST_CLASSES.getAbsolutePath(), "/"));
+				}
+			} else {
+				resources.addPreResources(new EmptyResourceSet(resources));
+			}
+			ctx.setResources(resources);
 
 			tomcat.start();
 			tomcat.getServer().await();
 		} catch (Exception e) {
-			throw new RuntimeException("tomcat launch failed", e);
+			throw new RuntimeException("EmbedTomcat start failed", e);
 		}
 	}
 
