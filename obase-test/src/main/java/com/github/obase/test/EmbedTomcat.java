@@ -99,6 +99,12 @@ public final class EmbedTomcat extends SpringJUnitTester {
 			} else {
 				ctx = (StandardContext) tomcat.addWebapp(contextPath, ROOT.getAbsolutePath());
 			}
+			/* FIX: No global web.xml */
+			for (LifecycleListener ll : ctx.findLifecycleListeners()) {
+				if (ll instanceof ContextConfig) {
+					((ContextConfig) ll).setDefaultWebXml(null);
+				}
+			}
 			ctx.setParentClassLoader(EmbedTomcat.class.getClassLoader());
 
 			/* FIX: No global web.xml */
