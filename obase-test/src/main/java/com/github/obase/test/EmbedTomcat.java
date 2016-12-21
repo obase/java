@@ -2,9 +2,11 @@ package com.github.obase.test;
 
 import java.io.File;
 
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.EmptyResourceSet;
@@ -99,7 +101,14 @@ public final class EmbedTomcat extends SpringJUnitTester {
 			}
 			ctx.setParentClassLoader(EmbedTomcat.class.getClassLoader());
 
-			// Disable scan manifest
+			/* FIX: No global web.xml */
+			for (LifecycleListener ll : ctx.findLifecycleListeners()) {
+				if (ll instanceof ContextConfig) {
+					((ContextConfig) ll).setDefaultWebXml(null);
+				}
+			}
+
+			/* FIX: scanner bug */
 			((StandardJarScanner) ctx.getJarScanner()).setScanManifest(false);
 
 			WebResourceRoot resources = new StandardRoot(ctx);
