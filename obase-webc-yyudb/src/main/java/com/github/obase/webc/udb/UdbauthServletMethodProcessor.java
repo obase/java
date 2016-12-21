@@ -1,9 +1,5 @@
 package com.github.obase.webc.udb;
 
-import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
-import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
-import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -15,9 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
-import com.github.obase.Message;
-import com.github.obase.json.Jsons;
-import com.github.obase.kit.SerialKit;
+import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
@@ -120,7 +114,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		if (data != null) {
-			return (Principal) SerialKit.deserialize(data);
+			return (Principal) ObjectKit.deserialize(data);
 		}
 		return null;
 	}
@@ -135,7 +129,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
 
-		byte[] data = SerialKit.serialize(principal);
+		byte[] data = ObjectKit.serialize(principal);
 		Jedis jedis = null;
 		try {
 			jedis = getJedisPool().getResource();
@@ -185,23 +179,6 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		sb.append("?").append(UdbKit.PARAM_URL).append("=").append(URLEncoder.encode(psb.toString(), Webc.CHARSET_NAME));
 
 		Kits.sendRedirect(response, sb.toString());
-	}
-
-	@Override
-	public void sendError(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
-		switch (errno) {
-		case SC_MISSING_TOKEN:
-		case SC_MISSING_VERIFIER:
-		case SC_INVALID_ACCOUNT:
-			Kits.sendError(response, errno, errmsg);
-			break;
-		default:
-			if (sendError) {
-				Kits.sendError(response, sc, Jsons.writeAsString(new Message<Object>(errno, errmsg)));
-			} else {
-				Kits.writeErrorMessage(response, errno, errmsg);
-			}
-		}
 	}
 
 	// for subclass override

@@ -1,7 +1,10 @@
 package com.github.obase.webc.support;
 
+import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
+import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
+import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
+
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -17,7 +20,6 @@ import org.springframework.web.multipart.MultipartException;
 import com.github.obase.Message;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
-import com.github.obase.json.Jsons;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Kits;
@@ -65,12 +67,15 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				t = t.getCause();
 			}
 
+			// Important
+			logger.error("Error: " + t.getMessage(), t);
+
 			int sc = 0, errno = 0;
 			String errmsg = null;
 			if (t instanceof MessageException) {
 				MessageException ae = (MessageException) t;
-				sc = ae.getErrno() > 0 ? ae.getErrno() : HttpURLConnection.HTTP_INTERNAL_ERROR;
-				errno = sc;
+				sc = Webc.SC_SERVER_ERROR;
+				errno = ae.getErrno();
 				errmsg = ae.getErrmsg();
 			} else if (t instanceof MultipartException) {
 				if (t instanceof MaxUploadSizeExceededException) {
@@ -93,14 +98,14 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 			try {
 				sendError(response, sc, errno, errmsg);
-				posterror(sc, errmsg, t);
+				posterror(sc, errno, errmsg, t);
 			} catch (IOException e) {
 				logger.error("Write error message failed", e);
 			}
 		}
 	}
 
-	protected void posterror(int errno, String errmsg, Throwable t) {
+	protected void posterror(int sc, int errno, String errmsg, Throwable t) {
 		// for subclass
 	}
 
@@ -177,8 +182,20 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	/**
 	 * override for subclass
 	 */
-	protected void sendError(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
-		Kits.sendError(response, sc, Jsons.writeAsString(new Message<Object>(errno, errmsg)));
+	public void sendError(HttpServletResponse response, int sc, int errno, String errmsg) throws IOException {
+		switch (errno) {
+		case SC_MISSING_TOKEN:
+		case SC_MISSING_VERIFIER:
+		case SC_INVALID_ACCOUNT:
+			Kits.sendError(response, errno, errmsg);
+			break;
+		default:
+			if (sendError) {
+				Kits.sendError(response, sc, errno + ':' + errmsg);
+			} else {
+				Kits.writeErrorMessage(response, errno, errmsg);
+			}
+		}
 	}
 
 }
