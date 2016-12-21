@@ -63,6 +63,7 @@ public final class EmbedTomcat extends SpringJUnitTester {
 			if (httpsPort > 0) {
 				tomcat.setPort(httpsPort);
 				Connector connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
+				connector.setPort(httpsPort);
 				connector.setSecure(true);
 				connector.setScheme("https");
 				connector.setAttribute("keyAlias", keyAlias);
@@ -84,6 +85,7 @@ public final class EmbedTomcat extends SpringJUnitTester {
 
 				tomcat.setPort(httpPort);
 				Connector connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
+				connector.setPort(httpPort);
 				tomcat.setConnector(connector);
 
 			} else {
@@ -98,6 +100,12 @@ public final class EmbedTomcat extends SpringJUnitTester {
 				}
 			} else {
 				ctx = (StandardContext) tomcat.addWebapp(contextPath, ROOT.getAbsolutePath());
+			}
+			/* FIX: No global web.xml */
+			for (LifecycleListener ll : ctx.findLifecycleListeners()) {
+				if (ll instanceof ContextConfig) {
+					((ContextConfig) ll).setDefaultWebXml(null);
+				}
 			}
 			ctx.setParentClassLoader(EmbedTomcat.class.getClassLoader());
 
