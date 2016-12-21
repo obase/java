@@ -21,7 +21,7 @@
 		<spring.version>4.3.4.RELEASE</spring.version>
 		<server.version>3.0.1</server.version>
 		<jsp.version>2.2.1</jsp.version>
-		<tomcat.version>7.0.72</tomcat.version>
+		<tomcat.version>8.5.9</tomcat.version>
 	</properties>
 
 	<dependencyManagement>
