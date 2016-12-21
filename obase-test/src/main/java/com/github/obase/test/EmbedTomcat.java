@@ -93,7 +93,7 @@ public final class EmbedTomcat extends SpringJUnitTester {
 			if (WEBAPP.exists()) {
 				ctx = (StandardContext) tomcat.addWebapp(contextPath, WEBAPP.getAbsolutePath());
 				if (WEBXML.exists()) {
-					ctx.setDefaultWebXml(WEBXML.getAbsolutePath());
+					ctx.setDefaultContextXml(WEBXML.getAbsolutePath()); // FIX BUG: here is not setDefaultWebXml()
 					for (LifecycleListener ll : ctx.findLifecycleListeners()) {
 						if (ll instanceof ContextConfig) {
 							((ContextConfig) ll).setDefaultWebXml(ctx.getDefaultWebXml());
