@@ -215,7 +215,7 @@ class JdbcActionClassWriter implements Opcodes {
 			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l2, 3);
 			mv.visitLocalVariable("that", targetDescriptor, null, l1, l2, 4);
 			mv.visitLocalVariable("pos", "Ljava/lang/Integer;", null, l1, l2, 5);
-			mv.visitMaxs(3, 6);
+			mv.visitMaxs(4, 6);
 			mv.visitEnd();
 		}
 		cw.visitEnd();
