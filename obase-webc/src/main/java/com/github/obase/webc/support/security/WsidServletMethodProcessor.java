@@ -76,8 +76,9 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 
 		// step1: read session id, if null forward to login page
-		Wsid wsid = Wsid.decode(Kits.readCookie(request, Wsid.COOKIE_NAME));
-		if (wsid == null) {
+		String tk = Kits.readCookie(request, Wsid.COOKIE_NAME);
+		Wsid wsid;
+		if (tk == null || (wsid = Wsid.decode(tk)) == null) {
 			wsid = tryOssLogin(request);
 			if (wsid == null) {
 				redirectLoginPage(request, response);
