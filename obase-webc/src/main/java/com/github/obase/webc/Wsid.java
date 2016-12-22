@@ -119,12 +119,10 @@ public final class Wsid implements Serializable {
 		System.arraycopy(data, 0, id, 0, idx);
 		Wsid wsid = new Wsid(id);
 		for (int n = idx + 8; idx < n; idx++) {
-			wsid.ts <<= 8;
-			wsid.ts |= (data[idx] & 0xFF);
+			wsid.ts = (wsid.ts << 8) | (data[idx] & 0xFF);
 		}
 		for (int n = idx + 4; idx < n; idx++) {
-			wsid.tk <<= 8;
-			wsid.ts |= (data[idx] & 0xFF);
+			wsid.tk = (wsid.tk << 8) | (data[idx] & 0xFF);
 		}
 		return wsid;
 	}
