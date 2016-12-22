@@ -128,20 +128,18 @@ public final class Wsid implements Serializable {
 	}
 
 	public static String encode(Wsid wsid) {
-		int idx = wsid.id.length;
-		byte[] data = new byte[idx + 12];
-		System.arraycopy(wsid.id, 0, data, 0, idx);
-		long v = wsid.ts;
-		for (int i = idx + 7; i >= idx; i--) {
-			data[i] = (byte) (v & 0xFF);
-			v >>>= 8;
+
+		byte[] data = new byte[wsid.id.length + 12];
+		int idx = data.length - 1;
+		for (int n = idx - 4; idx > n; idx--) {
+			data[idx] = (byte) (wsid.tk & 0xFF);
+			wsid.tk >>>= 8;
 		}
-		idx += 8;
-		v = wsid.tk;
-		for (int i = idx + 3; i >= idx; i--) {
-			data[i] = (byte) (v & 0xFF);
-			v >>>= 8;
+		for (int n = idx - 8; idx > n; idx--) {
+			data[idx] = (byte) (wsid.ts & 0xFF);
+			wsid.ts >>>= 8;
 		}
+		System.arraycopy(wsid.id, 0, data, 0, idx + 1);
 		return Encoder.RFC4648_URLSAFE.encodeToString(data);
 	}
 
