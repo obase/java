@@ -104,7 +104,7 @@ public final class Wsid implements Serializable {
 		if (Math.abs(System.currentTimeMillis() - ts) > timeoutMillis) {
 			return false;
 		}
-		long tk = BKDRHash(base);
+		int tk = BKDRHash(base);
 		return this.tk == tk;
 	}
 
