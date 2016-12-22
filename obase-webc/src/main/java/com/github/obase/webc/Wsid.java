@@ -124,7 +124,7 @@ public final class Wsid implements Serializable {
 		}
 		for (int n = idx + 4; idx < n; idx++) {
 			wsid.tk <<= 8;
-			wsid.ts |= (data[idx] & 0xFF);
+			wsid.tk |= (data[idx] & 0xFF);
 		}
 		return wsid;
 	}
