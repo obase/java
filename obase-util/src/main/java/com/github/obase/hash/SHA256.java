@@ -38,11 +38,31 @@ public class SHA256 {
 		return output;
 	}
 
+	public static byte[] hashv(byte[]... inputs) {
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		for (byte[] input : inputs) {
+			alg.update(input);
+		}
+		byte[] output = alg.digest();
+		return output;
+	}
+
 	public static String hash(String val) {
 		byte[] input = val.getBytes();
 		MessageDigest alg = LOCAL.get();
 		alg.reset();
 		alg.update(input);
+		byte[] output = alg.digest();
+		return new String(output);
+	}
+
+	public static String hashv(String... vals) {
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		for (String val : vals) {
+			alg.update(val.getBytes());
+		}
 		byte[] output = alg.digest();
 		return new String(output);
 	}
@@ -53,6 +73,17 @@ public class SHA256 {
 		alg.reset();
 		alg.update(input);
 		byte[] output = alg.digest();
-		return Encoder.RFC4648_URLSAFE.encodeToString(output);
+		return Encoder.RFC4648.encodeToString(output);
+	}
+
+	public static String hashBase64v(String... vals) {
+
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		for (String val : vals) {
+			alg.update(val.getBytes());
+		}
+		byte[] output = alg.digest();
+		return Encoder.RFC4648.encodeToString(output);
 	}
 }
