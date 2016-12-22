@@ -138,7 +138,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 			}
 		}
 
-		Kits.writeCookie(response, Wsid.COOKIE_NAME, wsid.toHexs(), Wsid.COOKIE_TEMPORY_EXPIRE);
+		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 		Kits.sendRedirect(response, Kits.getServletPath(request, StringKit.isNotEmpty(homepage) ? homepage : "/"));
 	}
 

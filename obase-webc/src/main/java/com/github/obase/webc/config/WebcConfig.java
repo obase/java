@@ -47,10 +47,10 @@ public class WebcConfig {
 	public static class FilterInitParam {
 		public String namespace;
 		public String contextConfigLocation;
-		public Class<?> asyncListener;
+		public String asyncListener;
 		public int timeoutSecond;
 		public boolean sendError;
-		public Class<?> controlProcessor;
+		public String controlProcessor;
 		public String controlPrefix; // multi values by comma
 		public String controlSuffix;// multi values by comma
 		public int wsidTokenBase; // BKDRHash的base,默认为0
@@ -72,10 +72,10 @@ public class WebcConfig {
 		FilterInitParam ret = new FilterInitParam();
 		ret.namespace = getStringParam(filterConfig, NAMESPACE, null);
 		ret.contextConfigLocation = getStringParam(filterConfig, CONTEXT_CONFIG_LOCATION, null);
-		ret.asyncListener = getClassParam(filterConfig, ASYNC_LISTENER, null);
+		ret.asyncListener = getStringParam(filterConfig, ASYNC_LISTENER, null);
 		ret.timeoutSecond = getIntParam(filterConfig, TIMEOUT_SECOND, 0);
 		ret.sendError = getBooleanParam(filterConfig, SEND_ERROR, false);
-		ret.controlProcessor = getClassParam(filterConfig, CONTROL_PROCESSOR, null);
+		ret.controlProcessor = getStringParam(filterConfig, CONTROL_PROCESSOR, null);
 		ret.controlPrefix = getStringParam(filterConfig, CONTROL_PREFIX, null);
 		ret.controlSuffix = getStringParam(filterConfig, CONTROL_SUFFIX, null);
 		ret.wsidTokenBase = getIntParam(filterConfig, WSID_TOKEN_BASE, 0);
@@ -99,7 +99,7 @@ public class WebcConfig {
 		}
 
 		if (param.asyncListener != null) {
-			dynamic.setInitParameter(ASYNC_LISTENER, param.asyncListener.getCanonicalName());
+			dynamic.setInitParameter(ASYNC_LISTENER, param.asyncListener);
 		}
 
 		if (param.timeoutSecond != 0) {
@@ -111,7 +111,7 @@ public class WebcConfig {
 		}
 
 		if (param.controlProcessor != null) {
-			dynamic.setInitParameter(CONTROL_PROCESSOR, param.controlProcessor.getCanonicalName());
+			dynamic.setInitParameter(CONTROL_PROCESSOR, param.controlProcessor);
 		}
 
 		if (StringKit.isNotEmpty(param.controlPrefix)) {

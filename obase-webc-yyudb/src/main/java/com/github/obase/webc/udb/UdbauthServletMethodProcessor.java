@@ -140,7 +140,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			}
 		}
 
-		Kits.writeCookie(response, Wsid.COOKIE_NAME, wsid.toHexs(), Wsid.COOKIE_TEMPORY_EXPIRE);
+		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;
 	}
@@ -150,7 +150,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 		Wsid wsid = Kits.getWsid(request);
 		if (wsid == null) {
-			wsid = Wsid.fromHexs(Kits.readCookie(request, Wsid.COOKIE_NAME));
+			wsid = Wsid.decode(Kits.readCookie(request, Wsid.COOKIE_NAME));
 		}
 		Jedis jedis = null;
 		try {

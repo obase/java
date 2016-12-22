@@ -27,7 +27,6 @@ import com.github.obase.kit.ClassKit.DelegateClassLoader;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
-import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 @SuppressWarnings("rawtypes")
 public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
@@ -42,20 +41,8 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	protected final void initFrameworkFilter() throws ServletException {
 
 		delegateClassLoader = new DelegateClassLoader(applicationContext.getClassLoader());
-
-		if (params.controlProcessor != null) {
-			processor = (ServletMethodProcessor) applicationContext.getBean(params.controlProcessor);
-		} else {// using default if not set
-			processor = Util.findBean(applicationContext, ServletMethodProcessor.class, null);
-			if (processor == null) {
-				processor = new BaseServletMethodProcessor();
-			}
-		}
-
-		if (params.asyncListener != null) {
-			listener = (AsyncListener) applicationContext.getBean(params.asyncListener);
-		}
-
+		processor = Util.findWebcBean(applicationContext, ServletMethodProcessor.class, params.controlProcessor);
+		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.timeoutSecond * 1000;
 
 		// key is lookupPath

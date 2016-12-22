@@ -76,7 +76,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 
 		// step1: read session id, if null forward to login page
-		Wsid wsid = Wsid.fromHexs(Kits.readCookie(request, Wsid.COOKIE_NAME));
+		Wsid wsid = Wsid.decode(Kits.readCookie(request, Wsid.COOKIE_NAME));
 		if (wsid == null) {
 			wsid = tryOssLogin(request);
 			if (wsid == null) {
@@ -96,7 +96,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				return null;
 			} else {
 				wsid.resetToken(wsidTokenBase);
-				Kits.writeCookie(response, Wsid.COOKIE_NAME, wsid.toHexs(), Wsid.COOKIE_TEMPORY_EXPIRE);
+				Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 			}
 
 			String refererDomain = Util.extractDomainFromUrl(Kits.getReferer(request), false);

@@ -3,8 +3,7 @@ package com.github.obase.hash;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.github.obase.coding.Base64;
-import com.github.obase.coding.Hex;
+import com.github.obase.coding.Base64.Encoder;
 
 public class SHA1 {
 
@@ -23,39 +22,38 @@ public class SHA1 {
 	private SHA1() {
 	}
 
-	public static long hash64(String key) {
-		return hash64(key.getBytes());
-	}
-
-	public static long hash64(byte[] key) {
-		byte[] bKey = hash64AsBytes(key);
-		long res = ((long) (bKey[3] & 0xFF) << 24) | ((long) (bKey[2] & 0xFF) << 16) | ((long) (bKey[1] & 0xFF) << 8) | (long) (bKey[0] & 0xFF);
-		return res;
-	}
-
-	public static byte[] hash64AsBytes(byte[] key) {
+	public static byte[] hash(byte[] input) {
 		MessageDigest alg = LOCAL.get();
 		alg.reset();
-		alg.update(key);
-		byte[] bytes = alg.digest();
-		return bytes;
+		alg.update(input);
+		byte[] output = alg.digest();
+		return output;
 	}
 
-	public static String hashToHex(String key) {
-		return hashToHex(key.getBytes());
+	public static byte[] hash(byte[] input, int offset, int len) {
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		alg.update(input, offset, len);
+		byte[] output = alg.digest();
+		return output;
 	}
 
-	public static String hashToHex(byte[] key) {
-		byte[] bKey = hash64AsBytes(key);
-		return Hex.encode(bKey);
+	public static String hash(String val) {
+		byte[] input = val.getBytes();
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		alg.update(input);
+		byte[] output = alg.digest();
+		return new String(output);
 	}
 
-	public static String hashToBase64(String key) {
-		return hashToBase64(key.getBytes());
+	public static String hashBase64(String val) {
+		byte[] input = val.getBytes();
+		MessageDigest alg = LOCAL.get();
+		alg.reset();
+		alg.update(input);
+		byte[] output = alg.digest();
+		return Encoder.RFC4648_URLSAFE.encodeToString(output);
 	}
 
-	public static String hashToBase64(byte[] key) {
-		byte[] bKey = hash64AsBytes(key);
-		return Base64.Encoder.RFC4648_URLSAFE.encodeToString(bKey);
-	}
 }

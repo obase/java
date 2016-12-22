@@ -3,7 +3,8 @@ package com.github.obase.webc;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.github.obase.coding.Hex;
+import com.github.obase.coding.Base64.Decoder;
+import com.github.obase.coding.Base64.Encoder;
 
 /**
  * 该类的fromHexs与toHexs是一组对称方法!必须保证二者的对称性.
@@ -107,62 +108,43 @@ public final class Wsid implements Serializable {
 		return this.tk == tk;
 	}
 
-	public static Wsid fromHexs(String hexs) {
-		// must more than 64 chars
+	public static Wsid decode(String hexs) {
 
-		int len;
-		if (hexs == null || (len = hexs.length()) < 24) {
+		byte[] data = Decoder.RFC4648_URLSAFE.decode(hexs);
+		if (data.length < 12) {
 			return null;
 		}
-
-		int j, n;
-		long ts = 0;
-		int tk = 0;
-
-		for (j = len - 8, n = j + 8; j < n; j++) {
-			tk <<= 4;
-			tk |= Hex.getDec(hexs.charAt(j));
-		}
-
-		for (j = len - 24, n = j + 16; j < n; j++) {
-			ts <<= 4;
-			ts |= Hex.getDec(hexs.charAt(j));
-		}
-
-		len -= 24;
-		byte[] id = new byte[len / 2];
-		for (j = 0, n = 0; j < id.length; j++, n += 2) {
-			id[j] = (byte) ((Hex.getDec(hexs.charAt(n)) << 4) | Hex.getDec(hexs.charAt(n + 1)));
-		}
-
+		int idx = data.length - 12;
+		byte[] id = new byte[idx];
+		System.arraycopy(data, 0, id, 0, idx);
 		Wsid wsid = new Wsid(id);
-		wsid.ts = ts;
-		wsid.tk = tk;
-
+		for (int n = idx + 8; idx < n; idx++) {
+			wsid.ts <<= 8;
+			wsid.ts |= (data[idx] & 0xFF);
+		}
+		for (int n = idx + 4; idx < n; idx++) {
+			wsid.tk <<= 8;
+			wsid.ts |= (data[idx] & 0xFF);
+		}
 		return wsid;
 	}
 
-	public String toHexs() {
-		int mark = id.length * 2;
-		char[] chars = new char[mark + 24];
-		int j = 0;
-		long v;
-		for (j = 0; j < id.length; j++) {
-			v = id[j];
-			chars[2 * j + 1] = Hex.getHex((int) (v & 0x0F));
-			v >>>= 4;
-			chars[2 * j] = Hex.getHex((int) (v & 0x0F));
+	public static String encode(Wsid wsid) {
+		int idx = wsid.id.length;
+		byte[] data = new byte[idx + 12];
+		System.arraycopy(wsid.id, 0, data, 0, idx);
+		long v = wsid.ts;
+		for (int i = idx + 7; i >= idx; i--) {
+			data[i] = (byte) (v & 0xFF);
+			v >>>= 8;
 		}
-		for (j = mark + 15, v = ts; j >= mark; j--) {
-			chars[j] = Hex.getHex((int) (v & 0x0F));
-			v >>>= 4;
+		idx += 8;
+		v = wsid.tk;
+		for (int i = idx + 3; i >= idx; i--) {
+			data[i] = (byte) (v & 0xFF);
+			v >>>= 8;
 		}
-		mark += 16;
-		for (j = mark + 7, v = tk; j >= mark; j--) {
-			chars[j] = Hex.getHex((int) (v & 0x0F));
-			v >>>= 4;
-		}
-		return String.valueOf(chars);
+		return Encoder.RFC4648_URLSAFE.encodeToString(data);
 	}
 
 }

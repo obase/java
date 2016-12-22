@@ -25,7 +25,6 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.InvokerService;
-import com.github.obase.webc.support.BaseInvokerServiceProcessor;
 
 public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 
@@ -41,19 +40,8 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 	@Override
 	protected void initFrameworkFilter() throws ServletException {
 
-		if (params.controlProcessor != null) {
-			processor = (InvokerServiceProcessor) applicationContext.getBean(params.controlProcessor);
-		} else {
-			processor = Util.findBean(applicationContext, InvokerServiceProcessor.class, null);
-			if (processor == null) {
-				processor = new BaseInvokerServiceProcessor();
-			}
-		}
-
-		if (params.asyncListener != null) {
-			listener = (AsyncListener) applicationContext.getBean(params.asyncListener);
-		}
-
+		processor = Util.findWebcBean(applicationContext, InvokerServiceProcessor.class, params.controlProcessor);
+		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.timeoutSecond * 1000;
 
 		Map<Class<?>, InvokerServiceObject> map = new HashMap<Class<?>, InvokerServiceObject>();

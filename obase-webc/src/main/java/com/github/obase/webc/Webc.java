@@ -109,18 +109,19 @@ public interface Webc {
 			return sb.append('/').append(namespace).append("/*").toString();
 		}
 
-		public static <T> T findBean(ApplicationContext appctx, Class<T> requiredType, String name) {
+		public static <T> T findWebcBean(ApplicationContext appctx, Class<T> requiredType, String name) {
 
 			T bean = null;
-			try {
-				bean = (name == null) ? appctx.getBean(requiredType) : appctx.getBean(name, requiredType);
-			} catch (NoSuchBeanDefinitionException e) {
-				Map<String, T> beans = appctx.getBeansOfType(requiredType);
-				if (beans.size() > 0) {
-					if (name == null) {
+
+			if (StringKit.isNotEmpty(name)) {
+				bean = appctx.getBean(name, requiredType);
+			} else {
+				try {
+					bean = appctx.getBean(requiredType);
+				} catch (NoSuchBeanDefinitionException e) {
+					Map<String, T> beans = appctx.getBeansOfType(requiredType);
+					if (beans.size() > 0) {
 						bean = beans.values().iterator().next();
-					} else {
-						bean = beans.get(name);
 					}
 				}
 			}
