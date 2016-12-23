@@ -4,5 +4,5 @@ import redis.clients.jedis.Transaction;
 
 public interface TransactionCallback {
 
-	void doInTransaction(Transaction transaction);
+	void doInTransaction(Transaction transaction, Object... args);
 }

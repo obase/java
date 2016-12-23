@@ -4427,8 +4427,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public ScanResult<String> scan(int cursor) {
 		Jedis jedis = null;
 		try {
@@ -4494,11 +4494,11 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public <T> T submit(JedisCallback<T> callback) {
+	public <T> T submit(JedisCallback<T> callback, Object... args) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			return callback.doInJedis(jedis);
+			return callback.doInJedis(jedis, args);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -4507,12 +4507,12 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public List<Response<?>> execGetResponse(TransactionCallback callback) {
+	public List<Response<?>> execGetResponse(TransactionCallback callback, Object... args) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			Transaction tx = jedis.multi();
-			callback.doInTransaction(tx);
+			callback.doInTransaction(tx, args);
 			return tx.execGetResponse();
 		} finally {
 			if (jedis != null) {
@@ -4522,12 +4522,12 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public void exec(TransactionCallback callback) {
+	public void exec(TransactionCallback callback, Object... args) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			Transaction tx = jedis.multi();
-			callback.doInTransaction(tx);
+			callback.doInTransaction(tx, args);
 			tx.exec();
 		} finally {
 			if (jedis != null) {
@@ -4537,12 +4537,12 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public List<Object> syncAndReturnAll(PipelineCallback callback) {
+	public List<Object> syncAndReturnAll(PipelineCallback callback, Object... args) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			Pipeline pipeline = jedis.pipelined();
-			callback.doInPipeline(pipeline);
+			callback.doInPipeline(pipeline, args);
 			return pipeline.syncAndReturnAll();
 		} finally {
 			if (jedis != null) {
@@ -4552,12 +4552,12 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public void sync(PipelineCallback callback) {
+	public void sync(PipelineCallback callback, Object... args) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			Pipeline pipeline = jedis.pipelined();
-			callback.doInPipeline(pipeline);
+			callback.doInPipeline(pipeline, args);
 			pipeline.sync();
 		} finally {
 			if (jedis != null) {
@@ -4566,8 +4566,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public List<String> blpop(String arg) {
 		Jedis jedis = null;
 		try {
@@ -4580,8 +4580,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public List<String> brpop(String arg) {
 		Jedis jedis = null;
 		try {
@@ -4594,8 +4594,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public ScanResult<Entry<String, String>> hscan(String key, int cursor) {
 		Jedis jedis = null;
 		try {
@@ -4608,8 +4608,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public ScanResult<String> sscan(String key, int cursor) {
 		Jedis jedis = null;
 		try {
@@ -4622,8 +4622,8 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public ScanResult<Tuple> zscan(String key, int cursor) {
 		Jedis jedis = null;
 		try {
@@ -4692,31 +4692,13 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
-	/*@Override FOR 2.9.0
-	public List<byte[]> bitfield(byte[] key, byte[]... arguments) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.bitfield(key, arguments);
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
-	}*/
+	/*
+	 * @Override FOR 2.9.0 public List<byte[]> bitfield(byte[] key, byte[]... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally { if (jedis != null) { jedis.close(); } } }
+	 */
 
-	/*@Override FOR: 2.9.0
-	public List<Long> bitfield(String key, String... arguments) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.bitfield(key, arguments);
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
-	}*/
+	/*
+	 * @Override FOR: 2.9.0 public List<Long> bitfield(String key, String... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally { if (jedis != null) { jedis.close(); } } }
+	 */
 
 	@Override
 	public byte[] getex(byte[] key, int seconds) {

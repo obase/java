@@ -4,5 +4,5 @@ import redis.clients.jedis.Pipeline;
 
 public interface PipelineCallback {
 
-	void doInPipeline(Pipeline pipeline);
+	void doInPipeline(Pipeline pipeline, Object... args);
 }

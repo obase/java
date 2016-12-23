@@ -11,15 +11,15 @@ import redis.clients.jedis.Response;
 
 public interface JedisClient extends BinaryJedisCommands, MultiKeyBinaryCommands, JedisCommands, MultiKeyCommands {
 
-	List<Object> syncAndReturnAll(PipelineCallback callback);
+	List<Object> syncAndReturnAll(PipelineCallback callback, Object... args);
 
-	void sync(PipelineCallback callback);
+	void sync(PipelineCallback callback, Object... args);
 
-	List<Response<?>> execGetResponse(TransactionCallback callback);
+	List<Response<?>> execGetResponse(TransactionCallback callback, Object... args);
 
-	void exec(TransactionCallback callback);
+	void exec(TransactionCallback callback, Object... args);
 
-	<T> T submit(JedisCallback<T> callback);
+	<T> T submit(JedisCallback<T> callback, Object... args);
 
 	JedisPool getJedisPool();
 
