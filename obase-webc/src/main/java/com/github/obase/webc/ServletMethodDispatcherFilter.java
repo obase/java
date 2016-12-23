@@ -27,6 +27,7 @@ import com.github.obase.kit.ClassKit.DelegateClassLoader;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
+import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 @SuppressWarnings("rawtypes")
 public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
@@ -42,6 +43,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 		delegateClassLoader = new DelegateClassLoader(applicationContext.getClassLoader());
 		processor = Util.findWebcBean(applicationContext, ServletMethodProcessor.class, params.controlProcessor);
+		if (processor == null) {
+			processor = new BaseServletMethodProcessor();
+		}
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.timeoutSecond * 1000;
 
