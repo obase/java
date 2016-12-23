@@ -7,13 +7,13 @@ public class Message<T> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final int ERRNO_UNDEFINED = -1;
 
-	public final String src;
+	private String src;
 
-	public final int errno;
+	private int errno;
 
-	public final String errmsg;
+	private String errmsg;
 
-	public final T data;
+	private T data;
 
 	public Message(String src, int errno, String errmsg, T data) {
 		this.errno = errno;
@@ -42,20 +42,40 @@ public class Message<T> implements Serializable {
 		this(null, 0, null, data);
 	}
 
+	public Message() {
+		this(null, 0, null, null);
+	}
+
 	public String getSrc() {
 		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
 	}
 
 	public int getErrno() {
 		return errno;
 	}
 
+	public void setErrno(int errno) {
+		this.errno = errno;
+	}
+
 	public String getErrmsg() {
 		return errmsg;
 	}
 
+	public void setErrmsg(String errmsg) {
+		this.errmsg = errmsg;
+	}
+
 	public T getData() {
 		return data;
+	}
+
+	public void setData(T data) {
+		this.data = data;
 	}
 
 }
