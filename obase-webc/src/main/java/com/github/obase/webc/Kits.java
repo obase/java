@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -176,6 +177,16 @@ public abstract class Kits {
 				@Override
 				public void write(int b) throws IOException {
 					out.write(b);
+				}
+
+				@Override
+				public boolean isReady() {
+					return true;
+				}
+
+				@Override
+				public void setWriteListener(WriteListener arg0) {
+
 				}
 			};
 			final PrintWriter pw = new PrintWriter(out);
