@@ -7,13 +7,13 @@ public class Message<T> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final int ERRNO_UNDEFINED = -1;
 
-	private String src;
+	public String src;
 
-	private int errno;
+	public int errno;
 
-	private String errmsg;
+	public String errmsg;
 
-	private T data;
+	public T data;
 
 	public Message(String src, int errno, String errmsg, T data) {
 		this.errno = errno;
