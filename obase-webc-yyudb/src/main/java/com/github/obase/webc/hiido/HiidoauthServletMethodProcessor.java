@@ -95,7 +95,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		try {
 			jedis = jedisPool.getResource();
 			Transaction tx = jedis.multi();
-			Response<byte[]> resp = tx.get(wsid.id);
+			Response<byte[]> resp = tx.get(wsid.id.getBytes());
 			tx.pexpire(wsid.id, timeoutMillis);
 			tx.exec();
 
@@ -131,7 +131,7 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.psetex(wsid.id, timeoutMillis, data);
+			jedis.psetex(wsid.id.getBytes(), timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
