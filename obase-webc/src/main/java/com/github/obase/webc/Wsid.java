@@ -25,14 +25,14 @@ public final class Wsid implements Serializable {
 	}
 
 	public static String keysPattern(long uid) {
-		return new StringBuilder(24).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
+		return new StringBuilder(32).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
 	}
 
 	/**
 	 * Used for any text id
 	 */
 	public static Wsid valueOf(String uid) {
-		return new Wsid(new StringBuilder(uid.length() + 17).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
+		return new Wsid(new StringBuilder(uid.length() + 32).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
 	}
 
 	/**
