@@ -10,7 +10,7 @@ public final class Wsid implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String COOKIE_NAME = "wsid";
 	public static final int COOKIE_TEMPORY_EXPIRE = -1;
-	public static final char COOKIE_SEPARATOR = '-';
+	public static final char COOKIE_MARKER = '-';
 
 	public final String id; // 16bytes for uuid or other
 	public long ts; // 8bytes for timestamp
@@ -21,25 +21,25 @@ public final class Wsid implements Serializable {
 	}
 
 	public static String keysPattern(String uid) {
-		return new StringBuilder(uid.length() + 8).append(uid).append(COOKIE_SEPARATOR).append('*').toString();
+		return new StringBuilder(uid.length() + 8).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
 	}
 
 	public static String keysPattern(long uid) {
-		return new StringBuilder(24).append(uid).append(COOKIE_SEPARATOR).append('*').toString();
+		return new StringBuilder(24).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
 	}
 
 	/**
 	 * Used for any text id
 	 */
 	public static Wsid valueOf(String uid) {
-		return new Wsid(new StringBuilder(uid.length() + 17).append(uid).append(COOKIE_SEPARATOR).append(Long.toHexString(System.nanoTime())).toString());
+		return new Wsid(new StringBuilder(uid.length() + 17).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
 	}
 
 	/**
 	 * Used for uuid or increment id
 	 */
 	public static Wsid valueOf(long uid) {
-		return new Wsid(new StringBuilder(36).append(uid).append(COOKIE_SEPARATOR).append(Long.toHexString(System.nanoTime())).toString());
+		return new Wsid(new StringBuilder(36).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
 	}
 
 	public Wsid resetToken(long base) {
@@ -66,8 +66,8 @@ public final class Wsid implements Serializable {
 	}
 
 	public static Wsid decode(String hexs) {
-		int pos2 = hexs.lastIndexOf(COOKIE_SEPARATOR);
-		int pos1 = hexs.lastIndexOf(COOKIE_SEPARATOR, pos2 - 1);
+		int pos2 = hexs.lastIndexOf(COOKIE_MARKER);
+		int pos1 = hexs.lastIndexOf(COOKIE_MARKER, pos2 - 1);
 		if (pos1 == -1) {
 			return null;
 		}
@@ -78,7 +78,7 @@ public final class Wsid implements Serializable {
 	}
 
 	public static String encode(Wsid wsid) {
-		return new StringBuilder(wsid.id.length() + 36).append(wsid.id).append(COOKIE_SEPARATOR).append(Long.toHexString(wsid.ts)).append(COOKIE_SEPARATOR).append(Integer.toHexString(wsid.tk)).toString();
+		return new StringBuilder(wsid.id.length() + 36).append(wsid.id).append(COOKIE_MARKER).append(Long.toHexString(wsid.ts)).append(COOKIE_MARKER).append(Integer.toHexString(wsid.tk)).toString();
 	}
 
 }
