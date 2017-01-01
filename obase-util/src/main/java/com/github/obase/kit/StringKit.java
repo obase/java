@@ -1,6 +1,8 @@
 package com.github.obase.kit;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class StringKit {
 
@@ -54,9 +56,17 @@ public class StringKit {
 	}
 
 	static final String[] EMPTY_ARRAY = new String[0];
+	static final List<String> EMPTY_LIST = Collections.emptyList();
 
 	public static String[] split(String val, char sep, boolean ignoreEmptyTokens) {
+		if (val.length() > 0) {
+			List<String> list = split2List(val, sep, ignoreEmptyTokens);
+			return list.toArray(new String[list.size()]);
+		}
+		return EMPTY_ARRAY;
+	}
 
+	public static List<String> split2List(String val, char sep, boolean ignoreEmptyTokens) {
 		if (val.length() > 0) {
 			LinkedList<String> list = new LinkedList<String>();
 			int vlen = val.length(), mark = 0, pos = 0;
@@ -69,16 +79,20 @@ public class StringKit {
 			if (mark < vlen) {
 				list.add(val.substring(mark));
 			}
+			return list;
+		}
+		return EMPTY_LIST;
+	}
+
+	public static String[] split(String val, String sep, boolean ignoreEmptyTokens) {
+		if (val.length() > 0) {
+			List<String> list = split2List(val, sep, ignoreEmptyTokens);
 			return list.toArray(new String[list.size()]);
 		}
 		return EMPTY_ARRAY;
 	}
 
-	public static String[] split(String val, String sep, boolean ignoreEmptyTokens) {
-		if (isEmpty(sep)) {
-			return new String[] { val };
-		}
-
+	public static List<String> split2List(String val, String sep, boolean ignoreEmptyTokens) {
 		if (val.length() > 0) {
 			LinkedList<String> list = new LinkedList<String>();
 			int vlen = val.length(), slen = sep.length(), mark = 0, pos = 0;
@@ -91,9 +105,65 @@ public class StringKit {
 			if (mark < vlen) {
 				list.add(val.substring(mark));
 			}
-			return list.toArray(new String[list.size()]);
+			return list;
 		}
-		return EMPTY_ARRAY;
+		return EMPTY_LIST;
+	}
+
+	public static String join(String[] val, char sep, boolean ignoreEmptyTokens) {
+		StringBuilder sb = new StringBuilder(512);
+		for (String v : val) {
+			if (isEmpty(v) && ignoreEmptyTokens) {
+				continue;
+			}
+			sb.append(v).append(sep);
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length() - 1);
+		}
+		return sb.toString();
+	}
+
+	public static String join(List<String> val, char sep, boolean ignoreEmptyTokens) {
+		StringBuilder sb = new StringBuilder(512);
+		for (String v : val) {
+			if (isEmpty(v) && ignoreEmptyTokens) {
+				continue;
+			}
+			sb.append(v).append(sep);
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length() - 1);
+		}
+		return sb.toString();
+	}
+
+	public static String join(String[] val, String sep, boolean ignoreEmptyTokens) {
+		StringBuilder sb = new StringBuilder(512);
+		for (String v : val) {
+			if (isEmpty(v) && ignoreEmptyTokens) {
+				continue;
+			}
+			sb.append(v).append(sep);
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length() - sep.length());
+		}
+		return sb.toString();
+	}
+
+	public static String join(List<String> val, String sep, boolean ignoreEmptyTokens) {
+		StringBuilder sb = new StringBuilder(512);
+		for (String v : val) {
+			if (isEmpty(v) && ignoreEmptyTokens) {
+				continue;
+			}
+			sb.append(v).append(sep);
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length() - sep.length());
+		}
+		return sb.toString();
 	}
 
 	public static boolean equals(String val1, String val2) {
