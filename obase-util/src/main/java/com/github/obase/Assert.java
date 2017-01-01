@@ -131,4 +131,16 @@ public class Assert {
 			}
 		}
 	}
+
+	public static <T> void isContains(Collection<T> c, Object v, int errno, String errmsg) {
+		if (c == null || !c.contains(v)) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
+
+	public static <T> void notContains(Collection<T> c, Object v, int errno, String errmsg) {
+		if (c != null && c.contains(v)) {
+			throw new MessageException(errno, errmsg);
+		}
+	}
 }
