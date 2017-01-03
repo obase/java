@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import com.github.obase.coding.Base64.Encoder;
+import com.github.obase.coding.Hex;
 
 public class MD5 {
 
@@ -54,7 +55,7 @@ public class MD5 {
 		alg.reset();
 		alg.update(input);
 		byte[] output = alg.digest();
-		return new String(output);
+		return Hex.encode(output);
 	}
 
 	public static String hashv(String... vals) {
@@ -64,7 +65,7 @@ public class MD5 {
 			alg.update(val.getBytes());
 		}
 		byte[] output = alg.digest();
-		return new String(output);
+		return Hex.encode(output);
 	}
 
 	public static String hashBase64(String val) {
