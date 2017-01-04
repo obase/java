@@ -13,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.obase.WrappedException;
+import com.github.obase.kit.ArrayKit;
 
 public final class Jsons {
 	private Jsons() {
@@ -62,9 +64,18 @@ public final class Jsons {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(String json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			return OM.readValue(json, TF.constructParametricType(parametrized, parameterClasses));
+			if (ArrayKit.isNotEmpty(parameterClasses)) {
+				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
+				for (int i = 1; i < parameterClasses.length; i++) {
+					ptypes[i] = TF.constructType(parameterClasses[i]);
+				}
+				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+			} else {
+				return (T) OM.readValue(json, parametrized);
+			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
 		}
@@ -94,9 +105,18 @@ public final class Jsons {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(byte[] json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			return OM.readValue(json, TF.constructParametricType(parametrized, parameterClasses));
+			if (ArrayKit.isNotEmpty(parameterClasses)) {
+				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
+				for (int i = 1; i < parameterClasses.length; i++) {
+					ptypes[i] = TF.constructType(parameterClasses[i]);
+				}
+				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+			} else {
+				return (T) OM.readValue(json, parametrized);
+			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
 		}
@@ -126,9 +146,18 @@ public final class Jsons {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(Reader in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
+			if (ArrayKit.isNotEmpty(parameterClasses)) {
+				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
+				for (int i = 1; i < parameterClasses.length; i++) {
+					ptypes[i] = TF.constructType(parameterClasses[i]);
+				}
+				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+			} else {
+				return (T) OM.readValue(in, parametrized);
+			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
 		}
@@ -150,9 +179,18 @@ public final class Jsons {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(InputStream in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
+			if (ArrayKit.isNotEmpty(parameterClasses)) {
+				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
+				for (int i = 1; i < parameterClasses.length; i++) {
+					ptypes[i] = TF.constructType(parameterClasses[i]);
+				}
+				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+			} else {
+				return (T) OM.readValue(in, parametrized);
+			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
 		}
