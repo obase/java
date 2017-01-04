@@ -317,7 +317,7 @@ public final class SqlMetaKit extends SqlKit {
 			}
 
 		} else {
-			for (String field : cols) {
+			for (String field : classMetaInfo.keys) {
 				if (updateStr.length() > 0) {
 					updateStr.append(',');
 				}
