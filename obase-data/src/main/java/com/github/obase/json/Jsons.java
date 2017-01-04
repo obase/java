@@ -111,7 +111,7 @@ public final class Jsons {
 			if (ArrayKit.isNotEmpty(parameterClasses)) {
 				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
 				for (int i = 1; i < parameterClasses.length; i++) {
-					ptypes[i] = TF.constructType(parameterClasses[i]);
+					ptypes[i - 1] = TF.constructType(parameterClasses[i]);
 				}
 				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
 			} else {
