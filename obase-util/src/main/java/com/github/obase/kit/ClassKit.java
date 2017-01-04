@@ -19,4 +19,11 @@ public final class ClassKit {
 
 	}
 
+	public static Class<?> forName(String name) throws ClassNotFoundException {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		if (loader == null) {
+			loader = ClassKit.class.getClassLoader();
+		}
+		return loader.loadClass(name);
+	}
 }
