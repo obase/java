@@ -23,7 +23,7 @@ public final class Jsons {
 
 	private static final ObjectMapper OM = new ObjectMapper();
 	private static final TypeFactory TF = OM.getTypeFactory();
-	
+
 	static {
 		OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		OM.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
