@@ -303,19 +303,20 @@ public final class SqlMetaKit extends SqlKit {
 		LinkedHashSet<String> cols = new LinkedHashSet<String>();
 		cols.addAll(classMetaInfo.columns);
 		cols.removeAll(classMetaInfo.keys);
-		for (String field : cols) {
-			if (updateStr.length() > 0) {
-				updateStr.append(',');
+		if (cols.size() > 0) {//FIXBUG: all is primary key
+			for (String field : cols) {
+				if (updateStr.length() > 0) {
+					updateStr.append(',');
+				}
+				if (!field.equals(optLckCol)) {
+					updateStr.append(identifier(field)).append("=IFNULL(?,").append(identifier(field)).append(")");
+				} else {
+					updateStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
+				}
+				append(params, field, ++pos);
 			}
-			if (!field.equals(optLckCol)) {
-				updateStr.append(identifier(field)).append("=IFNULL(?,").append(identifier(field)).append(")");
-			} else {
-				updateStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
-			}
-			append(params, field, ++pos);
+			insertOrUpdate.append(" ON DUPLICATE KEY UPDATE ").append(updateStr);
 		}
-		insertOrUpdate.append(" ON DUPLICATE KEY UPDATE ").append(updateStr);
-
 		return new SqlMeta(insertOrUpdate.toString(), Collections.unmodifiableMap(params), -1);
 	}
 
