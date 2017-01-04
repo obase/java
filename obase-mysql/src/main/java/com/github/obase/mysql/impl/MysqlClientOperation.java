@@ -40,6 +40,7 @@ import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.MessageException;
 import com.github.obase.Page;
 import com.github.obase.WrappedException;
+import com.github.obase.kit.ClassKit;
 import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.config.ConfigMetaInfo;
 import com.github.obase.mysql.config.ConfigSAXParser;
@@ -1483,7 +1484,7 @@ abstract class MysqlClientOperation {
 		Class<?> clazz;
 		for (Map.Entry<String, ClassMetaInfo> entry : classMetaInfoMap.entrySet()) {
 
-			clazz = Class.forName(entry.getKey());
+			clazz = ClassKit.forName(entry.getKey());
 			classMetaInfo = entry.getValue();
 
 			setJdbcAction(clazz, AsmKit.newJdbcAction(classMetaInfo));

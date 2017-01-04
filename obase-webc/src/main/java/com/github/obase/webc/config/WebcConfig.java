@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.github.obase.WrappedException;
+import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.AuthType;
 
@@ -164,7 +165,7 @@ public class WebcConfig {
 			return def;
 		}
 		try {
-			return Class.forName(param);
+			return ClassKit.forName(param);
 		} catch (ClassNotFoundException e) {
 			throw new WrappedException(e);
 		}
