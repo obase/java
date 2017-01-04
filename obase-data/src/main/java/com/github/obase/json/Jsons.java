@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.ArrayKit;
@@ -22,8 +21,9 @@ public final class Jsons {
 	private Jsons() {
 	}
 
-	private static final TypeFactory TF = TypeFactory.defaultInstance();
 	private static final ObjectMapper OM = new ObjectMapper();
+	private static final TypeFactory TF = OM.getTypeFactory();
+	
 	static {
 		OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		OM.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
@@ -68,11 +68,12 @@ public final class Jsons {
 	public static final <T> T readGeneric(String json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
 			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
-				for (int i = 1; i < parameterClasses.length; i++) {
-					ptypes[i] = TF.constructType(parameterClasses[i]);
+				int last = parameterClasses.length - 1;
+				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
+				for (int i = last - 1; i >= 0; i--) {
+					types[0] = TF.constructSimpleType(parameterClasses[i], types);
 				}
-				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+				return OM.readValue(json, TF.constructSimpleType(parametrized, types));
 			} else {
 				return (T) OM.readValue(json, parametrized);
 			}
@@ -109,11 +110,12 @@ public final class Jsons {
 	public static final <T> T readGeneric(byte[] json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
 			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
-				for (int i = 1; i < parameterClasses.length; i++) {
-					ptypes[i] = TF.constructType(parameterClasses[i]);
+				int last = parameterClasses.length - 1;
+				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
+				for (int i = last - 1; i >= 0; i--) {
+					types[0] = TF.constructSimpleType(parameterClasses[i], types);
 				}
-				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+				return OM.readValue(json, TF.constructSimpleType(parametrized, types));
 			} else {
 				return (T) OM.readValue(json, parametrized);
 			}
@@ -150,11 +152,12 @@ public final class Jsons {
 	public static final <T> T readGeneric(Reader in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
 			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
-				for (int i = 1; i < parameterClasses.length; i++) {
-					ptypes[i] = TF.constructType(parameterClasses[i]);
+				int last = parameterClasses.length - 1;
+				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
+				for (int i = last - 1; i >= 0; i--) {
+					types[0] = TF.constructSimpleType(parameterClasses[i], types);
 				}
-				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+				return OM.readValue(in, TF.constructSimpleType(parametrized, types));
 			} else {
 				return (T) OM.readValue(in, parametrized);
 			}
@@ -183,11 +186,12 @@ public final class Jsons {
 	public static final <T> T readGeneric(InputStream in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
 			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				JavaType[] ptypes = new JavaType[parameterClasses.length - 1];
-				for (int i = 1; i < parameterClasses.length; i++) {
-					ptypes[i] = TF.constructType(parameterClasses[i]);
+				int last = parameterClasses.length - 1;
+				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
+				for (int i = last - 1; i >= 0; i--) {
+					types[0] = TF.constructSimpleType(parameterClasses[i], types);
 				}
-				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parameterClasses[0], ptypes)));
+				return OM.readValue(in, TF.constructSimpleType(parametrized, types));
 			} else {
 				return (T) OM.readValue(in, parametrized);
 			}
