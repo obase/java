@@ -174,4 +174,63 @@ public class StringKit {
 		return (val1 == val2) || (val1 != null && val1.equalsIgnoreCase(val2));
 	}
 
+	public static class Join {
+
+		final LinkedList<String> list = new LinkedList<String>();
+
+		public static Join one() {
+			return new Join();
+		}
+
+		public Join join(String val) {
+			list.add(val);
+			return this;
+		}
+
+		public String value(char seq, String nil) {
+			if (list.isEmpty()) {
+				return "";
+			}
+			int len = 0;
+			for (String itm : list) {
+				len += itm.length();
+			}
+			StringBuilder sb = new StringBuilder(len + list.size() + 16);
+			for (String itm : list) {
+				sb.append(itm == null ? nil : itm).append(seq);
+			}
+			sb.setLength(sb.length() - 1);
+			return sb.toString();
+		}
+	}
+
+	public static class Split {
+
+		final char sep;
+		final String text;
+		int mark;
+
+		Split(char sep, String text) {
+			this.sep = sep;
+			this.text = text;
+		}
+
+		public static Split one(char sep, String text) {
+			return new Split(sep, text);
+		}
+
+		public String next() {
+			String val;
+			int pos = text.indexOf(sep, mark);
+			if (pos == -1) {
+				val = text.substring(mark);
+				mark = text.length();
+			} else {
+				val = text.substring(mark, pos);
+				mark = pos + 1;
+			}
+			return val;
+		}
+	}
+
 }
