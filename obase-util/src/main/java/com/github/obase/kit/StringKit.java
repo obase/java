@@ -174,4 +174,75 @@ public class StringKit {
 		return (val1 == val2) || (val1 != null && val1.equalsIgnoreCase(val2));
 	}
 
+	public static class Join {
+
+		final char sep;
+		final String nil;
+		final LinkedList<String> list = new LinkedList<String>();
+
+		Join(char sep, String nil) {
+			this.sep = sep;
+			this.nil = nil;
+		}
+
+		public static Join one(char sep, String nil) {
+			return new Join(sep, nil);
+		}
+
+		public Join join(String val) {
+			list.add(val);
+			return this;
+		}
+
+		public String toString() {
+			if (list.isEmpty()) {
+				return "";
+			}
+			int len = 0;
+			for (String itm : list) {
+				len += (itm == null) ? nil.length() : itm.length();
+			}
+			StringBuilder sb = new StringBuilder(len + list.size() + 16);
+			for (String itm : list) {
+				sb.append(itm == null ? nil : itm).append(sep);
+			}
+			sb.setLength(sb.length() - 1);
+			return sb.toString();
+		}
+	}
+
+	public static class Split {
+
+		final char sep;
+		final String nil;
+		final String text;
+		int mark;
+
+		Split(char sep, String nil, String text) {
+			this.sep = sep;
+			this.nil = nil;
+			this.text = text;
+		}
+
+		public static Split one(char sep, String nil, String text) {
+			return new Split(sep, nil, text);
+		}
+
+		public String next() {
+			if (mark < text.length()) {
+				String val;
+				int pos = text.indexOf(sep, mark);
+				if (pos == -1) {
+					val = text.substring(mark);
+					mark = text.length();
+				} else {
+					val = text.substring(mark, pos);
+					mark = pos + 1;
+				}
+				return StringKit.equals(val, nil) ? null : val;
+			}
+			return null;
+		}
+	}
+
 }
