@@ -1,7 +1,5 @@
 package com.github.obase.mysql.asm;
 
-import static com.github.obase.kit.ClassKit.DefinedClassLoader;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +18,7 @@ import org.springframework.asm.Type;
 import org.springframework.core.io.Resource;
 
 import com.github.obase.MessageException;
+import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.annotation.Column;
@@ -65,10 +64,10 @@ public final class AsmKit {
 
 		Class<?> c = null;
 		try {
-			c = DefinedClassLoader.loadClass(className);
+			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			byte[] data = JdbcActionClassWriter.dump(internalName, classMetaInfo);
-			c = DefinedClassLoader.defineClass(className, data);
+			c = ClassKit.defineClass(className, data);
 		}
 		return (JdbcAction) c.newInstance();
 	}
@@ -77,12 +76,12 @@ public final class AsmKit {
 		String className = targetClassName + JdbcActionSuffix;
 		Class<?> c = null;
 		try {
-			c = DefinedClassLoader.loadClass(className);
+			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			ClassMetaInfo classMetaInfo = getClassMetaInfo(targetClassName);
 			String internalName = className.replace('.', '/');
 			byte[] data = JdbcActionClassWriter.dump(internalName, classMetaInfo);
-			c = DefinedClassLoader.defineClass(className, data);
+			c = ClassKit.defineClass(className, data);
 		}
 		return (JdbcAction) c.newInstance();
 	}
