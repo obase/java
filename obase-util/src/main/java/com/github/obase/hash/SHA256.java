@@ -62,7 +62,8 @@ public class SHA256 {
 		MessageDigest alg = LOCAL.get();
 		alg.reset();
 		for (String val : vals) {
-			alg.update(val.getBytes());
+			if (val != null)
+				alg.update(val.getBytes());
 		}
 		byte[] output = alg.digest();
 		return Hex.encode(output);
@@ -82,7 +83,8 @@ public class SHA256 {
 		MessageDigest alg = LOCAL.get();
 		alg.reset();
 		for (String val : vals) {
-			alg.update(val.getBytes());
+			if (val != null)
+				alg.update(val.getBytes());
 		}
 		byte[] output = alg.digest();
 		return Encoder.RFC4648.encodeToString(output);
