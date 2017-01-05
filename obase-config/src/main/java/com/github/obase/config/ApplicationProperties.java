@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -139,6 +140,9 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	public static final String DEFAULT_ABSOLUTE_CONFIG_APP_PROPERTIES = Envs.APP_PROPERTIES_PATH;
 	public static final String DEFAULT_RELATIVE_CONFIG_APP_PROPERTIES = "../config/" + Envs.DWENV + "/app.properties";
 
+	static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
+	static final Properties EMPTY_PROPS = new Properties();
+
 	// 静态配置
 	String locations; // app配置路径,支持多值,用逗号分隔
 
@@ -242,9 +246,9 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	ScheduledExecutorService service;
 
 	// 静态配置
-	Map<String, String> systemEnvironment;
-	Properties systemProperties;
-	Map<String, String> statics;
+	Map<String, String> systemEnvironment = EMPTY_MAP;
+	Properties systemProperties = EMPTY_PROPS;
+	Map<String, String> statics = EMPTY_MAP;
 	// 动态配置，可能为空
 	volatile Map<String, String> dynamic; // 存储动态配置string值
 	volatile Map<String, Object> objects; // 存储动态配置根据rule转换后的值
