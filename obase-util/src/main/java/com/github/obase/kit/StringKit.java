@@ -181,7 +181,7 @@ public class StringKit {
 
 		int mark = r.indexOf(POLICY_DEFAULT_SEPACHAR);
 		if (mark > 0) {
-			if (c.length() != mark || !r.regionMatches(0, c, 0, mark)) {
+			if (c == null || c.length() != mark || !r.regionMatches(0, c, 0, mark)) {
 				return false;
 			}
 		}
@@ -192,17 +192,18 @@ public class StringKit {
 			// 前置
 			mark++;
 			len -= mark;
-			return len <= a.length() && r.regionMatches(mark, a, a.length() - len, len);
+			return a != null && len <= a.length() && r.regionMatches(mark, a, a.length() - len, len);
 		} else if (r.charAt(len - 1) == POLICY_DEFAULT_WILDCHAR) {
 			// 后置
 			len--;
 			len -= mark;
-			return len <= a.length() && r.regionMatches(mark, a, 0, len);
+			return a != null && len <= a.length() && r.regionMatches(mark, a, 0, len);
 		} else {
 			// 完全
 			len -= mark;
-			return len == a.length() && r.regionMatches(mark, a, 0, len);
+			return a != null && len == a.length() && r.regionMatches(mark, a, 0, len);
 		}
+
 	}
 
 	public static class Join {
