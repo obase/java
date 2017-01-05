@@ -652,13 +652,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return true;
 			}
 		}
-		if (statics.containsKey(key)) {
-			return true;
-		}
-		if (systemProperties.containsKey(key)) {
-			return true;
-		}
-		return systemEnvironment.containsKey(key);
+		return false;
 	}
 
 	// 提供类型转换等一些辅助性方法
@@ -669,7 +663,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return val;
 			}
 		}
-		return coalesceNotDynamic(key);
+		return null;
 	}
 
 	public Boolean getBoolean(String key) {
@@ -679,7 +673,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Boolean) val;
 			}
 		}
-		return (Boolean) Type.parseType(Type.Boolean, getString(key));
+		return null;
 	}
 
 	public Integer getInteger(String key) {
@@ -689,7 +683,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Integer) val;
 			}
 		}
-		return (Integer) Type.parseType(Type.Integer, getString(key));
+		return null;
 	}
 
 	public Long getLong(String key) {
@@ -699,7 +693,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Long) val;
 			}
 		}
-		return (Long) Type.parseType(Type.Long, getString(key));
+		return null;
 	}
 
 	public Double getDouble(String key) {
@@ -709,7 +703,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Double) val;
 			}
 		}
-		return (Double) Type.parseType(Type.Double, getString(key));
+		return null;
 	}
 
 	public String[] getStringArray(String key) {
@@ -719,7 +713,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (String[]) val;
 			}
 		}
-		return (String[]) Type.parseType(Type.StringArray, getString(key));
+		return null;
 	}
 
 	public Boolean[] getBooleanArray(String key) {
@@ -729,7 +723,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Boolean[]) val;
 			}
 		}
-		return (Boolean[]) Type.parseType(Type.BooleanArray, getString(key));
+		return null;
 	}
 
 	public Integer[] getIntegerArray(String key) {
@@ -739,7 +733,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Integer[]) val;
 			}
 		}
-		return (Integer[]) Type.parseType(Type.IntegerArray, getString(key));
+		return null;
 	}
 
 	public Long[] getLongArray(String key) {
@@ -749,10 +743,126 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				return (Long[]) val;
 			}
 		}
-		return (Long[]) Type.parseType(Type.LongArray, getString(key));
+		return null;
 	}
 
 	public Double[] getDoubleArray(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Integer[]) {
+				return (Double[]) val;
+			}
+		}
+		return null;
+	}
+
+	public boolean contains2(String key) {
+		if (dynamic != null) {
+			if (dynamic.containsKey(key)) {
+				return true;
+			}
+		}
+		if (statics.containsKey(key)) {
+			return true;
+		}
+		if (systemProperties.containsKey(key)) {
+			return true;
+		}
+		return systemEnvironment.containsKey(key);
+	}
+
+	// 提供类型转换等一些辅助性方法
+	public String getString2(String key) {
+		if (dynamic != null) {
+			String val = dynamic.get(key);
+			if (val != null) {
+				return val;
+			}
+		}
+		return coalesceNotDynamic(key);
+	}
+
+	public Boolean getBoolean2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Boolean) {
+				return (Boolean) val;
+			}
+		}
+		return (Boolean) Type.parseType(Type.Boolean, getString(key));
+	}
+
+	public Integer getInteger2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Integer) {
+				return (Integer) val;
+			}
+		}
+		return (Integer) Type.parseType(Type.Integer, getString(key));
+	}
+
+	public Long getLong2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Long) {
+				return (Long) val;
+			}
+		}
+		return (Long) Type.parseType(Type.Long, getString(key));
+	}
+
+	public Double getDouble2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Double) {
+				return (Double) val;
+			}
+		}
+		return (Double) Type.parseType(Type.Double, getString(key));
+	}
+
+	public String[] getStringArray2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof String[]) {
+				return (String[]) val;
+			}
+		}
+		return (String[]) Type.parseType(Type.StringArray, getString(key));
+	}
+
+	public Boolean[] getBooleanArray2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Boolean[]) {
+				return (Boolean[]) val;
+			}
+		}
+		return (Boolean[]) Type.parseType(Type.BooleanArray, getString(key));
+	}
+
+	public Integer[] getIntegerArray2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Integer[]) {
+				return (Integer[]) val;
+			}
+		}
+		return (Integer[]) Type.parseType(Type.IntegerArray, getString(key));
+	}
+
+	public Long[] getLongArray2(String key) {
+		if (objects != null) {
+			Object val = objects.get(key);
+			if (val instanceof Integer[]) {
+				return (Long[]) val;
+			}
+		}
+		return (Long[]) Type.parseType(Type.LongArray, getString(key));
+	}
+
+	public Double[] getDoubleArray2(String key) {
 		if (objects != null) {
 			Object val = objects.get(key);
 			if (val instanceof Integer[]) {
