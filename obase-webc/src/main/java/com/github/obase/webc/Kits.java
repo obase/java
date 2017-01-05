@@ -670,12 +670,10 @@ public abstract class Kits {
 			}
 		}
 
-		if (StringKit.isEmpty(client)) {
-			String[] tmp = StringKit.split(client, ',', true);
-			if (ArrayKit.isNotEmpty(tmp)) {
-				client = tmp[0];
-			} else {
-				client = null;
+		if (StringKit.isNotEmpty(client)) {
+			int pos = client.indexOf(',');
+			if (pos > 0) {
+				client = client.substring(0, pos);
 			}
 		}
 
