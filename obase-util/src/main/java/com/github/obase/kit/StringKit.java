@@ -203,6 +203,7 @@ public class StringKit {
 			len -= mark;
 			return len == a.length() && r.regionMatches(mark, a, 0, len);
 		}
+
 	}
 
 	public static class Join {
