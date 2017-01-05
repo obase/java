@@ -174,6 +174,36 @@ public class StringKit {
 		return (val1 == val2) || (val1 != null && val1.equalsIgnoreCase(val2));
 	}
 
+	public static final char POLICY_DEFAULT_SEPACHAR = ':';
+	public static final char POLICY_DEFAULT_WILDCHAR = '*';
+
+	public static boolean policyMatches(String c, String a, String r) {
+
+		int mark = r.indexOf(POLICY_DEFAULT_SEPACHAR);
+		if (mark > 0) {
+			int gpre = r.indexOf(POLICY_DEFAULT_WILDCHAR);
+			if (gpre > mark) {
+				gpre = -1;
+			}
+			int gsuf = r.lastIndexOf(POLICY_DEFAULT_WILDCHAR, mark);
+			if (gsuf <= gpre) {
+				gsuf = mark;
+			}
+			if (!r.regionMatches(gpre + 1, c, 0, gsuf - gpre - 1)) {
+				return false;
+			}
+		}
+		int apre = r.indexOf(POLICY_DEFAULT_WILDCHAR, mark + 1);
+		if (apre < mark) {
+			apre = mark;
+		}
+		int asuf = r.lastIndexOf(POLICY_DEFAULT_WILDCHAR);
+		if (asuf <= apre) {
+			asuf = r.length();
+		}
+		return r.regionMatches(apre + 1, a, 0, asuf - apre - 1);
+	}
+
 	public static class Join {
 
 		final char sep;
