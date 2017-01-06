@@ -93,6 +93,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				if (logger.isDebugEnabled()) {
 					logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
 				}
+				Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);// 转发前销毁cookie
 				redirectLoginPage(request, response);
 				return null;
 			} else {
@@ -113,6 +114,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		// step3: check session, if null forward to login page
 		Principal principal = validateAndExtendPrincipal(wsid);
 		if (principal == null) {
+			Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);// 转发前销毁cookie
 			redirectLoginPage(request, response);
 			return null;
 		}

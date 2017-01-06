@@ -136,7 +136,7 @@ public final class UdbKit {
 			}
 		}
 		// 校验下
-		if (tokenSecret == null) {
+		if (StringKit.isEmpty(tokenSecret)) {
 			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_SESSION_TIMEOUT));
 			c.sendError(response, SC_SESSION_TIMEOUT, SC_SESSION_TIMEOUT, "Timeout for udb session, please try again!");
 			return;
@@ -147,7 +147,7 @@ public final class UdbKit {
 			return;
 		}
 		if (StringKit.isEmpty(oauthVerfier)) {
-			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_TOKEN));
+			response.addHeader("X-DUOWAN-UDB-ERROR", String.valueOf(SC_MISSING_VERIFIER));
 			c.sendError(response, SC_MISSING_VERIFIER, SC_MISSING_VERIFIER, "Missing udb param oauthVerfier");
 			return;
 		}

@@ -105,7 +105,7 @@ public class UserPrincipal implements Principal {
 	}
 
 	@Override
-	public void decode(String text) {
+	public Principal decode(String text) {
 		Split s = Split.one('\001', "\002", text);
 		passport = s.next();
 		realname = s.next();
@@ -115,6 +115,7 @@ public class UserPrincipal implements Principal {
 		phone = s.next();
 		jobCode = s.next();
 		level = Integer.parseInt(s.next());
+		return this;
 	}
 
 }

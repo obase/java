@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
-import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
@@ -97,12 +96,12 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	@Override
 	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
-		byte[] data = null;
+		String data = null;
 		Jedis jedis = null;
 		try {
 			jedis = getJedisPool().getResource();
 			Transaction tx = jedis.multi();
-			Response<byte[]> resp = tx.get(wsid.id.getBytes());
+			Response<String> resp = tx.get(wsid.id);
 			tx.pexpire(wsid.id, timeoutMillis);
 			tx.exec();
 
@@ -114,7 +113,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		if (data != null) {
-			return (Principal) ObjectKit.deserialize(data);
+			return new UserPrincipal().decode(data);
 		}
 		return null;
 	}
@@ -129,17 +128,16 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
 
-		byte[] data = ObjectKit.serialize(principal);
+		String data = principal.encode();
 		Jedis jedis = null;
 		try {
 			jedis = getJedisPool().getResource();
-			jedis.psetex(wsid.id.getBytes(), timeoutMillis, data);
+			jedis.psetex(wsid.id, timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
 			}
 		}
-
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;
@@ -152,15 +150,18 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		if (wsid == null) {
 			wsid = Wsid.decode(Kits.readCookie(request, Wsid.COOKIE_NAME));
 		}
-		Jedis jedis = null;
-		try {
-			jedis = getJedisPool().getResource();
-			jedis.del(wsid.id);
-		} finally {
-			if (jedis != null) {
-				jedis.close();
+		if (wsid != null) {
+			Jedis jedis = null;
+			try {
+				jedis = getJedisPool().getResource();
+				jedis.del(wsid.id);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
 			}
 		}
+
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);
 	}
 

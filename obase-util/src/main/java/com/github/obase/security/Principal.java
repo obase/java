@@ -15,6 +15,6 @@ public interface Principal extends Serializable {
 	/**
 	 * 自身反序列化
 	 */
-	void decode(String value);
+	Principal decode(String value);
 
 }
