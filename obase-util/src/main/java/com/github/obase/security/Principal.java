@@ -7,4 +7,14 @@ import java.io.Serializable;
  */
 public interface Principal extends Serializable {
 
+	/**
+	 * 自身序列化
+	 */
+	String encode();
+
+	/**
+	 * 自身反序列化
+	 */
+	void decode(String value);
+
 }
