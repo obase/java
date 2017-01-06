@@ -17,8 +17,7 @@ import com.github.obase.kit.StringKit;
 import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodObject;
-import com.github.obase.webc.Webc;
-import com.github.obase.webc.Webc.Util;
+import static com.github.obase.webc.Webc.*;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.security.Principal;
@@ -40,18 +39,18 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 
 		wsidTokenBase = params.wsidTokenBase;
 		if (wsidTokenBase == 0) {
-			wsidTokenBase = Webc.DEFAULT_WSID_TOKEN_BASE;
+			wsidTokenBase = DEFAULT_WSID_TOKEN_BASE;
 		}
 		timeoutMillis = params.timeoutSecond * 1000;
 		if (timeoutMillis == 0) {
-			timeoutMillis = Webc.DEFAULT_TIMEOUT_SECOND * 1000;
+			timeoutMillis = DEFAULT_TIMEOUT_SECOND * 1000;
 		}
 		defaultAuthType = params.defaultAuthType;
 		if (defaultAuthType == null) {
-			defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
+			defaultAuthType = DEFAULT_AUTH_TYPE;
 		}
 		if (params.refererDomain != null) {
-			Collections.addAll(refererDomainSet, StringKit.split(params.refererDomain, Webc.COMMA, true));
+			Collections.addAll(refererDomainSet, StringKit.split(params.refererDomain, COMMA, true));
 		}
 
 		// set object authType
@@ -85,7 +84,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				return null;
 			}
 		}
-		request.setAttribute(Webc.ATTR_WSID, wsid);
+		request.setAttribute(ATTR_WSID, wsid);
 
 		// step2: check csrf
 		if (object.annotation.csrf()) {
@@ -106,7 +105,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				if (logger.isDebugEnabled()) {
 					logger.debug("Referer validate fail:" + refererDomain);
 				}
-				redirectLoginPage(request, response);
+				sendError(response, SC_INVALID_ACCESS, SC_INVALID_ACCESS, "非正常访问!");
 				return null;
 			}
 		}
@@ -118,12 +117,12 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			redirectLoginPage(request, response);
 			return null;
 		}
-		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
+		request.setAttribute(ATTR_PRINCIPAL, principal);
 
 		// step4: check permission
 		if (object.authType == AuthType.PERMISSION) {
 			if (!validatePermission(principal, Kits.getHttpMethod(request), Kits.getLookupPath(request))) {
-				sendError(response, Webc.SC_PERMISSION_DENIED, Webc.SC_PERMISSION_DENIED, "Permission denied!");
+				sendError(response, SC_PERMISSION_DENIED, SC_PERMISSION_DENIED, "Permission denied!");
 				return null;
 			}
 		}
