@@ -50,7 +50,7 @@ public final class Wsid implements Serializable {
 
 	public boolean validate(int base, long timeoutMillis) {
 		long diff = System.currentTimeMillis() - ts;
-		if (diff >= timeoutMillis || -timeoutMillis / 2 <= diff) {
+		if ((diff > 0 && diff >= timeoutMillis) || (diff < 0 && -2 * diff > timeoutMillis)) {
 			return false;
 		}
 		int tk = signature(id, ts, base);
