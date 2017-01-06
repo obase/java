@@ -49,14 +49,15 @@ public final class Wsid implements Serializable {
 	}
 
 	public boolean validate(int base, long timeoutMillis) {
-		if (Math.abs(System.currentTimeMillis() - ts) > timeoutMillis) {
+		long diff = System.currentTimeMillis() - ts;
+		if (diff >= timeoutMillis || -timeoutMillis / 2 <= diff) {
 			return false;
 		}
 		int tk = signature(id, ts, base);
 		return this.tk == tk;
 	}
 
-	public static int signature(String sid, long nonce, long base) {
+	private static int signature(String sid, long nonce, long base) {
 		int hash = 31 * (int) (base ^ (base >>> 32));
 		for (int i = 0, n = sid.length(); i < n; i++) {
 			hash = 31 * hash + sid.charAt(i);
@@ -78,7 +79,7 @@ public final class Wsid implements Serializable {
 	}
 
 	public static String encode(Wsid wsid) {
-		return new StringBuilder(wsid.id.length() + 36).append(wsid.id).append(COOKIE_MARKER).append(Long.toHexString(wsid.ts)).append(COOKIE_MARKER).append(Integer.toHexString(wsid.tk)).toString();
+		return new StringBuilder(wsid.id.length() + 44).append(wsid.id).append(COOKIE_MARKER).append(Long.toHexString(wsid.ts)).append(COOKIE_MARKER).append(Integer.toHexString(wsid.tk)).toString();
 	}
 
 }
