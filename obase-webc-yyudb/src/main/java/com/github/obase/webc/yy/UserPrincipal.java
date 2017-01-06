@@ -1,5 +1,7 @@
 package com.github.obase.webc.yy;
 
+import com.github.obase.kit.StringKit.Join;
+import com.github.obase.kit.StringKit.Split;
 import com.github.obase.security.Principal;
 
 public class UserPrincipal implements Principal {
@@ -86,6 +88,33 @@ public class UserPrincipal implements Principal {
 
 	public void setLevel(int level) {
 		this.level = level;
+	}
+
+	@Override
+	public String encode() {
+		Join j = Join.one('\001', "\002");
+		j.join(passport);
+		j.join(realname);
+		j.join(nickname);
+		j.join(deptname);
+		j.join(email);
+		j.join(phone);
+		j.join(jobCode);
+		j.join(Integer.toString(level));
+		return j.toString();
+	}
+
+	@Override
+	public void decode(String text) {
+		Split s = Split.one('\001', "\002", text);
+		passport = s.next();
+		realname = s.next();
+		nickname = s.next();
+		deptname = s.next();
+		email = s.next();
+		phone = s.next();
+		jobCode = s.next();
+		level = Integer.parseInt(s.next());
 	}
 
 }
