@@ -13,9 +13,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.obase.WrappedException;
-import com.github.obase.kit.ArrayKit;
 
 public final class Jsons {
 	private Jsons() {
@@ -67,15 +67,16 @@ public final class Jsons {
 	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(String json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				int last = parameterClasses.length - 1;
-				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
-				for (int i = last - 1; i >= 0; i--) {
-					types[0] = TF.constructSimpleType(parameterClasses[i], types);
+			if (parameterClasses != null && parameterClasses.length > 0) {
+				int idx = parameterClasses.length - 1;
+				JavaType type = TF.constructType(parameterClasses[idx]);
+				for (Class<?> clazz = null; --idx >= 0;) {
+					clazz = parameterClasses[idx];
+					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
 				}
-				return OM.readValue(json, TF.constructSimpleType(parametrized, types));
+				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
 			} else {
-				return (T) OM.readValue(json, parametrized);
+				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
@@ -109,15 +110,16 @@ public final class Jsons {
 	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(byte[] json, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				int last = parameterClasses.length - 1;
-				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
-				for (int i = last - 1; i >= 0; i--) {
-					types[0] = TF.constructSimpleType(parameterClasses[i], types);
+			if (parameterClasses != null && parameterClasses.length > 0) {
+				int idx = parameterClasses.length - 1;
+				JavaType type = TF.constructType(parameterClasses[idx]);
+				for (Class<?> clazz = null; --idx >= 0;) {
+					clazz = parameterClasses[idx];
+					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
 				}
-				return OM.readValue(json, TF.constructSimpleType(parametrized, types));
+				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
 			} else {
-				return (T) OM.readValue(json, parametrized);
+				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
@@ -151,15 +153,16 @@ public final class Jsons {
 	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(Reader in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				int last = parameterClasses.length - 1;
-				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
-				for (int i = last - 1; i >= 0; i--) {
-					types[0] = TF.constructSimpleType(parameterClasses[i], types);
+			if (parameterClasses != null && parameterClasses.length > 0) {
+				int idx = parameterClasses.length - 1;
+				JavaType type = TF.constructType(parameterClasses[idx]);
+				for (Class<?> clazz = null; --idx >= 0;) {
+					clazz = parameterClasses[idx];
+					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
 				}
-				return OM.readValue(in, TF.constructSimpleType(parametrized, types));
+				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
 			} else {
-				return (T) OM.readValue(in, parametrized);
+				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
@@ -185,15 +188,16 @@ public final class Jsons {
 	@SuppressWarnings("unchecked")
 	public static final <T> T readGeneric(InputStream in, Class<?> parametrized, Class<?>... parameterClasses) {
 		try {
-			if (ArrayKit.isNotEmpty(parameterClasses)) {
-				int last = parameterClasses.length - 1;
-				JavaType[] types = new JavaType[] { TF.constructType(parameterClasses[last]) };
-				for (int i = last - 1; i >= 0; i--) {
-					types[0] = TF.constructSimpleType(parameterClasses[i], types);
+			if (parameterClasses != null && parameterClasses.length > 0) {
+				int idx = parameterClasses.length - 1;
+				JavaType type = TF.constructType(parameterClasses[idx]);
+				for (Class<?> clazz = null; --idx >= 0;) {
+					clazz = parameterClasses[idx];
+					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
 				}
-				return OM.readValue(in, TF.constructSimpleType(parametrized, types));
+				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
 			} else {
-				return (T) OM.readValue(in, parametrized);
+				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
 			throw new WrappedException(e);
