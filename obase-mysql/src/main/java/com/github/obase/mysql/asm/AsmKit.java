@@ -1,10 +1,7 @@
 package com.github.obase.mysql.asm;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -50,17 +47,9 @@ public final class AsmKit {
 
 	static final int CLASS_READER_ACCEPT_FLAGS = ClassReader.SKIP_DEBUG | ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES;
 
-	public static String getClassNameFromInternalName(String internalName) {
-		return internalName.replace('/', '.');
-	}
-
-	public static String getInternalNameFromClassName(String className) {
-		return className.replace('.', '/');
-	}
-
 	public static JdbcAction newJdbcAction(ClassMetaInfo classMetaInfo) throws IOException, ReflectiveOperationException {
 		String internalName = classMetaInfo.internalName + JdbcActionSuffix;
-		String className = internalName.replace('/', '.');
+		String className = ClassKit.getClassNameFromInternalName(internalName);
 
 		Class<?> c = null;
 		try {
@@ -79,7 +68,7 @@ public final class AsmKit {
 			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			ClassMetaInfo classMetaInfo = getClassMetaInfo(targetClassName);
-			String internalName = className.replace('.', '/');
+			String internalName = ClassKit.getInternalNameFromClassName(className);
 			byte[] data = JdbcActionClassWriter.dump(internalName, classMetaInfo);
 			c = ClassKit.defineClass(className, data);
 		}
@@ -111,7 +100,7 @@ public final class AsmKit {
 	}
 
 	public static ClassMetaInfo getClassMetaInfo(String className) throws IOException {
-		ClassReader cr = new ClassReader(className);
+		ClassReader cr = new ClassReader(ClassKit.getResourceAsStream(ClassKit.getClassPathFromClassName(className)));
 		ClassMetaInfo result = new ClassMetaInfo();
 		cr.accept(new MetaInfoClassVisitor(result), CLASS_READER_ACCEPT_FLAGS);
 		return postProcessClassMetaInfo(result);
@@ -207,24 +196,4 @@ public final class AsmKit {
 
 	}
 
-	public static String readResourceContent(String classpath) throws IOException {
-		InputStream in = null;
-		try {
-			in = AsmKit.class.getResourceAsStream(classpath);
-			if (in != null) {
-				Reader reader = new BufferedReader(new InputStreamReader(in));
-				StringBuilder sb = new StringBuilder(1024);
-				int len = 0;
-				for (char[] buff = new char[1024]; (len = reader.read(buff)) > 0;) {
-					sb.append(buff, 0, len);
-				}
-				return sb.toString();
-			}
-			return null;
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-		}
-	}
 }

@@ -1,5 +1,11 @@
 package com.github.obase.kit;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 public final class ClassKit {
 
 	private ClassKit() {
@@ -41,5 +47,46 @@ public final class ClassKit {
 			loader = ClassKit.class.getClassLoader();
 		}
 		return loader;
+	}
+
+	public static String getResourceAsString(String classpath) throws IOException {
+		InputStream in = null;
+		try {
+			in = ContextClassLoader.getResourceAsStream(classpath);
+			if (in != null) {
+				Reader reader = new BufferedReader(new InputStreamReader(in));
+				StringBuilder sb = new StringBuilder(1024);
+				int len = 0;
+				for (char[] buff = new char[1024]; (len = reader.read(buff)) > 0;) {
+					sb.append(buff, 0, len);
+				}
+				return sb.toString();
+			}
+			return null;
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+		}
+	}
+
+	public static InputStream getResourceAsStream(String classpath) {
+		return ContextClassLoader.getResourceAsStream(classpath);
+	}
+
+	public static String getClassPathFromClassName(String className) {
+		return new StringBuilder(128).append('/').append(className.replace('.', '/')).append(".class").toString();
+	}
+
+	public static String getClassPathFromInternalName(String internalName) {
+		return new StringBuilder(128).append('/').append(internalName).append(".class").toString();
+	}
+
+	public static String getClassNameFromInternalName(String internalName) {
+		return internalName.replace('/', '.');
+	}
+
+	public static String getInternalNameFromClassName(String className) {
+		return className.replace('.', '/');
 	}
 }

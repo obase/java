@@ -23,6 +23,7 @@ import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 import org.springframework.asm.Type;
 
+import com.github.obase.kit.ClassKit;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.data.FieldMetaInfo;
 import com.github.obase.mysql.data.IndexAnnotation;
@@ -144,12 +145,11 @@ class MetaInfoClassVisitor extends ClassVisitor {
 		try {
 			result.hierarchies++;
 			// using current classLoader but not system class loader
-			ClassReader cr = new ClassReader(this.getClass().getResourceAsStream(new StringBuilder(128).append('/').append(superName).append(".class").toString()));
+			ClassReader cr = new ClassReader(ClassKit.getResourceAsStream(ClassKit.getClassPathFromInternalName(superName)));
 			cr.accept(new MetaInfoClassVisitor(result), CLASS_READER_ACCEPT_FLAGS);
 
 		} catch (IOException e) {
 			throw new RuntimeException("visit failed for " + superName, e);
 		}
 	}
-
 }

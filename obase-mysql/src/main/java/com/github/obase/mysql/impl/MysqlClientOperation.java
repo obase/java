@@ -1411,19 +1411,20 @@ abstract class MysqlClientOperation {
 			for (String pkg : pkgs) {
 				if (isNotEmpty(pkg)) {
 					sb.setLength(0);
-					String packageSearchPath = sb.append(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX).append(AsmKit.getInternalNameFromClassName(pkg)).append("/**/*.class").toString();
+					String packageSearchPath = sb.append(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX).append(ClassKit.getInternalNameFromClassName(pkg)).append("/**/*.class").toString();
 					Resource[] rss = resolver.getResources(packageSearchPath);
 					for (Resource rs : rss) {
 						classMetaInfo = AsmKit.getAnnotationClassMetaInfo(rs);
 
 						if (classMetaInfo.tableAnnotation != null || classMetaInfo.metaAnnotation != null) {
-							classMetaInfoMap.put(AsmKit.getClassNameFromInternalName(classMetaInfo.internalName), classMetaInfo);
+							classMetaInfoMap.put(ClassKit.getClassNameFromInternalName(classMetaInfo.internalName), classMetaInfo);
 							if (classMetaInfo.tableAnnotation != null) {
 								if (logger.isInfoEnabled()) {
 									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 								}
 								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:"
+											+ classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 								}
 							}
 						}
@@ -1450,7 +1451,8 @@ abstract class MysqlClientOperation {
 											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 										}
 										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName
+													+ ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 										}
 									}
 								}
