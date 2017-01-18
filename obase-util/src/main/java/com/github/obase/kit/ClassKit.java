@@ -52,7 +52,8 @@ public final class ClassKit {
 	public static String getResourceAsString(String classpath) throws IOException {
 		InputStream in = null;
 		try {
-			in = ContextClassLoader.getResourceAsStream(classpath);
+			// FIXBUG: not const ContextClassLoader
+			in = ClassKit.class.getResourceAsStream(classpath);
 			if (in != null) {
 				Reader reader = new BufferedReader(new InputStreamReader(in));
 				StringBuilder sb = new StringBuilder(1024);
@@ -71,7 +72,8 @@ public final class ClassKit {
 	}
 
 	public static InputStream getResourceAsStream(String classpath) {
-		return ContextClassLoader.getResourceAsStream(classpath);
+		// FIXBUG: not const ContextClassLoader
+		return ClassKit.class.getResourceAsStream(classpath);
 	}
 
 	public static String getClassPathFromClassName(String className) {
