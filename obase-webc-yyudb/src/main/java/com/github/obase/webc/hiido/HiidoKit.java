@@ -139,7 +139,7 @@ public final class HiidoKit {
 		return staffs;
 	}
 
-	public void validaMyStaffAgentInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, boolean valid, String... users) {
+	public static void updateMyStaffAgentInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, boolean valid, String... users) {
 		if (users == null || users.length == 0) {
 			return;
 		}
@@ -154,7 +154,22 @@ public final class HiidoKit {
 		}
 	}
 
-	public JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String method) {
+	public static void updateMyStaffAgentInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, Map<String, Boolean> users) {
+		if (users == null || users.size() == 0) {
+			return;
+		}
+		List<Map<String, Map<String, Boolean>>> updUserMap = new ArrayList<Map<String, Map<String, Boolean>>>(users.size());
+		for (Map.Entry<String, Boolean> entry : users.entrySet()) {
+			updUserMap.add(as(entry.getKey(), Boolean.TRUE.equals(entry.getValue()) ? VALID : INVALID));
+		}
+		// 执行同步, 将usrmgr中maintain中的user同步到hiido
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", updUserMap);
+		if (RpcKit.code(result) != 1) {
+			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
+		}
+	}
+
+	public static JSONObject jsonrpc(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String method) {
 		return jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, new JSONRPC2Request(method, null));
 	}
 
