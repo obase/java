@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
+import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.YyudbErrno;
@@ -95,10 +96,11 @@ public final class HiidoKit {
 			return null;
 		}
 		Map<String, Object> data = RpcKit.dataObject(result);
-		if (data.containsKey("passport")) {
+		String passport = RpcKit._String(data, "passport", null);
+		if (StringKit.isNotEmpty(passport)) {
 			UserPrincipal principal = new UserPrincipal();
+			principal.setPassport(passport);
 			principal.setJobCode(RpcKit._String(data, "job_code", null));
-			principal.setPassport(RpcKit._String(data, "passport", null));
 			principal.setEmail(RpcKit._String(data, "email", null));
 			principal.setRealname(RpcKit._String(data, "realname", null));
 			principal.setNickname(RpcKit._String(data, "nickname", null));
@@ -122,10 +124,11 @@ public final class HiidoKit {
 		if (CollectKit.isNotEmpty(list)) {
 			for (Object item : list) {
 				Map<String, Object> data = (Map<String, Object>) item;
-				if (data.containsKey("passport")) {
+				String passport = RpcKit._String(data, "passport", null);
+				if (StringKit.isNotEmpty(passport)) {
 					UserPrincipal principal = new UserPrincipal();
+					principal.setPassport(passport);
 					principal.setJobCode(RpcKit._String(data, "job_code", null));
-					principal.setPassport(RpcKit._String(data, "passport", null));
 					principal.setEmail(RpcKit._String(data, "email", null));
 					principal.setRealname(RpcKit._String(data, "realname", null));
 					principal.setNickname(RpcKit._String(data, "nickname", null));
