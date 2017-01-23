@@ -4,6 +4,7 @@ import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -142,4 +143,15 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		return true;
 	}
 
+	public final List<Principal> getMyAgentStaffInfo() {
+		return HiidoKit.getMyAgentStaffInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey());
+	}
+
+	public void updateMyStaffAgentInfo(boolean valid, String... users) {
+		HiidoKit.updateMyStaffAgentInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), valid, users);
+	}
+
+	public void updateMyStaffAgentInfo(Map<String, Boolean> users) {
+		HiidoKit.updateMyStaffAgentInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), users);
+	}
 }
