@@ -58,7 +58,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 					sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
 					return;
 				}
-				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String> ifnull(getHomepage(), "/")));
+				Kits.forward(request, response, Kits.getServletPath(request, ObjectKit.<String> ifnull(getHomepage(), "/")));
 			}
 		};
 
