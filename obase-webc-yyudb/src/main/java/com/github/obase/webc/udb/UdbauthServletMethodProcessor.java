@@ -138,6 +138,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 				jedis.close();
 			}
 		}
+		request.setAttribute(Webc.ATTR_WSID, wsid);
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;

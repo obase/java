@@ -24,6 +24,7 @@ import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.hiido.HiidoKit.Callback;
@@ -117,6 +118,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 			}
 		}
 
+		request.setAttribute(Webc.ATTR_WSID, wsid);
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;
