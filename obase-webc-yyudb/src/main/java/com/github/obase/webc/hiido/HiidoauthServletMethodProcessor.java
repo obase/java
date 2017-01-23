@@ -1,5 +1,7 @@
 package com.github.obase.webc.hiido;
 
+import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -9,66 +11,39 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
-import org.springframework.util.SerializationUtils;
-
-import com.github.obase.kit.StringKit;
-import com.github.obase.security.Principal;
-import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodHandler;
-import com.github.obase.webc.ServletMethodObject;
-import com.github.obase.webc.Webc;
-import com.github.obase.webc.Wsid;
-import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.webc.hiido.HiidoKit.Callback;
-import com.github.obase.webc.support.security.WsidServletMethodProcessor;
-import com.github.obase.webc.yy.UserPrincipal;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
-public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
+import com.github.obase.kit.ObjectKit;
+import com.github.obase.kit.StringKit;
+import com.github.obase.security.Principal;
+import com.github.obase.webc.Kits;
+import com.github.obase.webc.ServletMethodHandler;
+import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.Wsid;
+import com.github.obase.webc.config.WebcConfig.FilterInitParam;
+import com.github.obase.webc.hiido.HiidoKit.Callback;
+import com.github.obase.webc.support.security.WsidServletMethodProcessor;
+import com.github.obase.webc.yy.UserPrincipal;
 
-	protected String udbApi;
-	protected String agentId;
-	protected byte[] agentPwd;
-	protected String publicKey;
-	protected String homepage;
-	protected String hiidoLoginUrl;
-	protected JedisPool jedisPool;
+public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
 
-	public void setUdbApi(String udbApi) {
-		this.udbApi = udbApi;
-	}
+	protected abstract String getUdbApi();
 
-	public void setAgentId(String agentId) {
-		this.agentId = agentId;
-	}
+	protected abstract String getAgentId();
 
-	public void setAgentPwd(byte[] agentPwd) {
-		this.agentPwd = agentPwd;
-	}
+	protected abstract byte[] getAgentPwd();
 
-	public void setAgentPwd(String agentPwd) {
-		this.agentPwd = agentPwd.getBytes();
-	}
+	protected abstract String getPublicKey();
 
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
-	}
+	protected abstract String getHomepage();
 
-	public void setHomepage(String homepage) {
-		this.homepage = homepage;
-	}
+	protected abstract String getHiidoLoginUrl();
 
-	public void setHiidoLoginUrl(String hiidoLoginUrl) {
-		this.hiidoLoginUrl = hiidoLoginUrl;
-	}
-
-	public void setJedisPool(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
-	}
+	protected abstract JedisPool getJedisPool();
 
 	@Override
 	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
@@ -76,7 +51,12 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		ServletMethodHandler postHiidoLoginObject = new ServletMethodHandler() {
 			@Override
 			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				postHiidoLogin(request, response);
+				String token = Kits.readParam(request, HiidoKit.PARAM_TOKEN);
+				if (!postHiidoLogin(request, response, token)) {
+					sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
+					return;
+				}
+				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String> ifnull(getHomepage(), "/")));
 			}
 		};
 
@@ -90,12 +70,12 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 	@Override
 	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
-		byte[] data = null;
+		String data = null;
 		Jedis jedis = null;
 		try {
-			jedis = jedisPool.getResource();
+			jedis = getJedisPool().getResource();
 			Transaction tx = jedis.multi();
-			Response<byte[]> resp = tx.get(wsid.id.getBytes());
+			Response<String> resp = tx.get(wsid.id);
 			tx.pexpire(wsid.id, timeoutMillis);
 			tx.exec();
 
@@ -107,31 +87,29 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		}
 
 		if (data != null) {
-			return (Principal) SerializationUtils.deserialize(data);
+			return new UserPrincipal().decode(data);
 		}
 		return null;
 	}
 
 	@Override
-	public void postHiidoLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String token = Kits.readParam(request, HiidoKit.PARAM_TOKEN);
+	public boolean postHiidoLogin(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException {
+
 		if (StringKit.isEmpty(token)) {
-			Kits.sendError(response, Webc.SC_INVALID_ACCOUNT, "Invalid account!");
-			return;
+			return false;
 		}
-		UserPrincipal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(udbApi, agentId, agentPwd, publicKey, token));
+		UserPrincipal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(getUdbApi(), getAgentId(), getAgentPwd(), getPublicKey(), token));
 		if (principal == null) {
-			Kits.sendError(response, Webc.SC_INVALID_ACCOUNT, "Invalid account!");
-			return;
+			return false;
 		}
 
-		Wsid wsid = Wsid.valueOf(Webc.GLOBAL_ATTRIBUTE_PREFFIX + principal.getPassport()).resetToken(wsidTokenBase); // csrf
+		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
 
-		byte[] data = SerializationUtils.serialize(principal);
+		String data = principal.encode();
 		Jedis jedis = null;
 		try {
-			jedis = jedisPool.getResource();
-			jedis.psetex(wsid.id.getBytes(), timeoutMillis, data);
+			jedis = getJedisPool().getResource();
+			jedis.psetex(wsid.id, timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -139,12 +117,13 @@ public class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor 
 		}
 
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
-		Kits.sendRedirect(response, Kits.getServletPath(request, StringKit.isNotEmpty(homepage) ? homepage : "/"));
+
+		return true;
 	}
 
 	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Kits.sendRedirect(response, StringKit.isNotEmpty(hiidoLoginUrl) ? hiidoLoginUrl : HiidoKit.HIIDO_LOGIN_URL);
+		Kits.sendRedirect(response, ObjectKit.<String> ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
 	}
 
 	@Override
