@@ -75,16 +75,18 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 
 		// step1: read session id, if null forward to login page
-		String tk = Kits.readCookie(request, Wsid.COOKIE_NAME);
-		Wsid wsid;
-		if (tk == null || (wsid = Wsid.decode(tk)) == null) {
-			wsid = tryOssLogin(request);
-			if (wsid == null) {
-				redirectLoginPage(request, response);
-				return null;
+		Wsid wsid = (Wsid) request.getAttribute(ATTR_WSID);
+		if (wsid == null) {
+			String tk = Kits.readCookie(request, Wsid.COOKIE_NAME);
+			if (tk == null || (wsid = Wsid.decode(tk)) == null) {
+				wsid = tryOssLogin(request);
+				if (wsid == null) {
+					redirectLoginPage(request, response);
+					return null;
+				}
 			}
+			request.setAttribute(ATTR_WSID, wsid);
 		}
-		request.setAttribute(ATTR_WSID, wsid);
 
 		// step2: check csrf
 		if (object.annotation.csrf()) {
