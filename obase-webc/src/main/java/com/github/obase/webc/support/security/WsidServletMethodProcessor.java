@@ -107,7 +107,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 				if (logger.isDebugEnabled()) {
 					logger.debug("Referer validate fail:" + refererDomain);
 				}
-				sendError(response, SC_INVALID_ACCESS, SC_INVALID_ACCESS, "非正常访问!");
+				sendError(response, SC_INVALID_ACCESS, SC_INVALID_ACCESS, "Invalid access!");
 				return null;
 			}
 		}
