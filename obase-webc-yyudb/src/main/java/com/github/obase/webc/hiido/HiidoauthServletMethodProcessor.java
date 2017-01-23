@@ -119,6 +119,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		}
 
 		request.setAttribute(Webc.ATTR_WSID, wsid);
+		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
 		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;
