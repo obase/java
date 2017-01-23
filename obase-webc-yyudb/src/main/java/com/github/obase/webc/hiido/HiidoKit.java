@@ -62,6 +62,8 @@ public final class HiidoKit {
 	private HiidoKit() {
 	}
 
+	public static final String HIIDO_UDB_API = "http://udb.hiido.com/udbApi.php";
+
 	public static final String HIIDO_LOGIN_URL = "https://portal.hiido.com";
 
 	public static final String LOOKUP_PATH_POST_HIIDO_LOGIN = "/postHiidoLogin";
@@ -88,7 +90,7 @@ public final class HiidoKit {
 	}
 
 	public static UserPrincipal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object>asList(token));
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object> asList(token));
 		if (RpcKit.code(result) != 1) {
 			return null;
 		}
@@ -109,7 +111,7 @@ public final class HiidoKit {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<Principal> getMyAgentStaffInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey) {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo", Arrays.<Object>asList(Collections.emptyList()));
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo", Arrays.<Object> asList(Collections.emptyList()));
 		if (RpcKit.code(result) != 1) {
 			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
 		}
@@ -195,7 +197,7 @@ public final class HiidoKit {
 			long now = System.currentTimeMillis();
 
 			// 认证, 用户信息保存在cookie
-			JSONRPC2Request authReq = new JSONRPC2Request("authenticate", Arrays.<Object>asList(identityString(String.valueOf(now), agentId, agentPwdBytes, publicKey)), 0); // id是int
+			JSONRPC2Request authReq = new JSONRPC2Request("authenticate", Arrays.<Object> asList(identityString(String.valueOf(now), agentId, agentPwdBytes, publicKey)), 0); // id是int
 			JSONRPC2Response authResp = session.send(authReq);
 			if (!authResp.indicatesSuccess()) {
 				JSONRPC2Error error = authResp.getError();
@@ -580,8 +582,10 @@ public final class HiidoKit {
 
 	public static interface Callback {
 
-		void postHiidoLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+		boolean postHiidoLogin(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException;
 
 		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
+
+		void sendError(HttpServletResponse resp, int sc, int errno, String errmsg) throws IOException;
 	}
 }
