@@ -25,14 +25,10 @@ public @interface ServletMethod {
 
 	boolean csrf() default true; // check csrf
 
-	boolean api() default false; // export the servlet method to api access
-
-	String name() default ""; // name of the api
-
 	String remark() default ""; // summary to the api
 
-	String category() default ""; // category of the api
+	String api() default ""; // name of the api, if not empty, it will export as api
 
-	String service() default ""; // service catalog of the api
+	String category() default ""; // category of the api
 
 }
