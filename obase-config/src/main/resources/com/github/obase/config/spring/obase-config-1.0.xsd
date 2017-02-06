@@ -4,8 +4,7 @@
 	targetNamespace="http://obase.github.io/schema/config"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-	<xsd:import namespace="http://www.springframework.org/schema/beans"
-		schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
+	<xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
 
 	<xsd:complexType name="applicationConfigurationType">
 		<xsd:complexContent>
@@ -16,26 +15,27 @@
 						<xsd:documentation><![CDATA[app.properties配置路径,支持多值,用逗号分隔]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="ignoreSystemEnvironment" type="xsd:boolean"
-					use="optional">
+				<xsd:attribute name="ignoreSystemEnvironment" type="xsd:boolean" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[是否忽略System.getenv()变量]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="ignoreSystemProperties" type="xsd:boolean"
-					use="optional">
+				<xsd:attribute name="ignoreSystemProperties" type="xsd:boolean" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[是否忽略System.getProperties()变量]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="ignorePropertyPlaceholder" type="xsd:boolean"
-					use="optional">
+				<xsd:attribute name="ignorePropertyPlaceholder" type="xsd:boolean" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[是否忽略PropertySourcePlaceholderResolver功能]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="dataSourceRef" type="xsd:string"
-					use="optional">
+				<xsd:attribute name="ignoreUnresolvablePlaceholder" type="xsd:boolean" use="optional">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[是否忽略不能解析的占位符,默认false]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="dataSourceRef" type="xsd:string" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[数据源ID引用]]></xsd:documentation>
 					</xsd:annotation>
@@ -45,8 +45,7 @@
 						<xsd:documentation><![CDATA[查询SQL]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="jedisPoolRef" type="xsd:string"
-					use="optional">
+				<xsd:attribute name="jedisPoolRef" type="xsd:string" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[缓存池ID引用]]></xsd:documentation>
 					</xsd:annotation>
@@ -66,8 +65,7 @@
 						<xsd:documentation><![CDATA[定时器,单位秒]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:attribute>
-				<xsd:attribute name="fatalIfError" type="xsd:boolean"
-					use="optional">
+				<xsd:attribute name="fatalIfError" type="xsd:boolean" use="optional">
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[错误是否抛出异常]]></xsd:documentation>
 					</xsd:annotation>
@@ -109,8 +107,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="beans:identifiedType">
 				<xsd:sequence>
-					<xsd:element name="rule" type="ruleType" maxOccurs="unbounded"
-						minOccurs="0" />
+					<xsd:element name="rule" type="ruleType" maxOccurs="unbounded" minOccurs="0" />
 				</xsd:sequence>
 				<xsd:attribute name="passwd" type="xsd:string" use="optional" />
 			</xsd:extension>
