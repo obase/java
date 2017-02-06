@@ -48,6 +48,7 @@ public class ApplicationPropertiesBeanDefinitionParser extends AbstractBeanDefin
 		String ignoreSystemEnvironment = element.getAttribute("ignoreSystemEnvironment");
 		String ignoreSystemProperties = element.getAttribute("ignoreSystemProperties");
 		String ignorePropertyPlaceholder = element.getAttribute("ignorePropertyPlaceholder");
+		String ignoreUnresolvablePlaceholder = element.getAttribute("ignoreUnresolvablePlaceholder");
 		String dataSourceRef = element.getAttribute("dataSourceRef");
 		String query = element.getAttribute("query");
 		String jedisPoolRef = element.getAttribute("jedisPoolRef");
@@ -67,6 +68,9 @@ public class ApplicationPropertiesBeanDefinitionParser extends AbstractBeanDefin
 		}
 		if (!StringUtils.isEmpty(ignorePropertyPlaceholder)) {
 			builder.addPropertyValue("ignorePropertyPlaceholder", Boolean.parseBoolean(ignorePropertyPlaceholder));
+		}
+		if (!StringUtils.isEmpty(ignoreUnresolvablePlaceholder)) {
+			builder.addPropertyValue("ignoreUnresolvablePlaceholder", Boolean.parseBoolean(ignoreUnresolvablePlaceholder));
 		}
 		if (!StringUtils.isEmpty(dataSourceRef)) {
 			builder.addPropertyValue("dataSourceRef", dataSourceRef);

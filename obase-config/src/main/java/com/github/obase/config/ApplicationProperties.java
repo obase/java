@@ -56,78 +56,78 @@ import redis.clients.jedis.JedisPool;
 
 /**
  * <pre>
-# 静态配置
-
-## app.properties, xx.properties
-使用locations({DWPROJECTNO}/config/{DWENV}/app.propertes)加载的应用配置. **支持Spring通配符\***
-## system.envs
-使用System.getenv()加载的环境变量
-
-## system.properties
-使用System.getProperties()加载的系统配置
-
-# 动态配置
-
-## 来自jdbc query
-使用dataSourceRef + query(默认SELECT * FROM `app.properties`)加载的配置项.
-
-## 来自redis hash
-* 使用jedisPoolRef + hash(默认app.properties)加载的配置项.
-
-# 规则处理
-根据rules规则处理加载的配置项,目前支持下述规则.
-
-## type
-- boolean
-- byte
-- char
-- short
-- int
-- long
-- float
-- double
-- string #默认#
-
-- booleanArray
-- byteArray
-- charArray
-- shorArray
-- intArray
-- longArray
-- floatArray
-- doubleArray
-- stringArray
-
-**array**只支持逗号分隔，如果值中包含逗号，请使用string自行分割.
-
-## required 
-**错误**只以log记录日志,不影响程序运转.
-
-## default
-如果值为空,自动使用默认值.
-
-## crpyted + passwd
-**敏感**配置加密存储,基于AES类进行加解密. 同时提供Windows及Linux下的AES工具:  
-- windows: http://risedev.yy.com/schema/config/AES.exe
-
-- linux:http://risedev.yy.com/schema/config/AES
-
-**用法**
-```
-AES (-e|-d) (key) (content)
-```
-参数|作用
----|---
--e: |表示加密  
--d: |表示解密  
-key: |表示密码  
-content: |表示内容  
-
-# 动态配置定期更新
-使用timer(单位秒)启动schedule线程,定期更新动态配置(从数据表或缓存).
-
-# 动态配置变更事件
-使用addPropertyChangeLister()添加属性变更事件监听器,在值发生改变时触发事件处理.
+ * # 静态配置
+ * 
+ * ## app.properties, xx.properties
+ * 使用locations({DWPROJECTNO}/config/{DWENV}/app.propertes)加载的应用配置. **支持Spring通配符\***
+ * ## system.envs
+ * 使用System.getenv()加载的环境变量
+ * 
+ * ## system.properties
+ * 使用System.getProperties()加载的系统配置
+ * 
+ * # 动态配置
+ * 
+ * ## 来自jdbc query
+ * 使用dataSourceRef + query(默认SELECT * FROM `app.properties`)加载的配置项.
+ * 
+ * ## 来自redis hash
+ *  使用jedisPoolRef + hash(默认app.properties)加载的配置项.
+ * 
+ * # 规则处理
+ * 根据rules规则处理加载的配置项,目前支持下述规则.
+ * 
+ * ## type
+ * - boolean
+ * - byte
+ * - char
+ * - short
+ * - int
+ * - long
+ * - float
+ * - double
+ * - string #默认#
+ * 
+ * - booleanArray
+ * - byteArray
+ * - charArray
+ * - shorArray
+ * - intArray
+ * - longArray
+ * - floatArray
+ * - doubleArray
+ * - stringArray
+ * 
+ * *array**只支持逗号分隔，如果值中包含逗号，请使用string自行分割.
+ * 
+ * ## required 
+ * *错误**只以log记录日志,不影响程序运转.
+ * 
+ * ## default
+ * 如果值为空,自动使用默认值.
+ * 
+ * ## crpyted + passwd
+ * *敏感**配置加密存储,基于AES类进行加解密. 同时提供Windows及Linux下的AES工具:  
+ * - windows: http://risedev.yy.com/schema/config/AES.exe
+ * 
+ * - linux:http://risedev.yy.com/schema/config/AES
+ * 
+ * *用法**
+ * ```
+ * AES (-e|-d) (key) (content)
+ * ```
+ * 参数|作用
+ * ---|---
+ * -e: |表示加密  
+ * -d: |表示解密  
+ * key: |表示密码  
+ * content: |表示内容  
+ * 
+ * # 动态配置定期更新
+ * 使用timer(单位秒)启动schedule线程,定期更新动态配置(从数据表或缓存).
+ * 
+ * # 动态配置变更事件
+ * 使用addPropertyChangeLister()添加属性变更事件监听器,在值发生改变时触发事件处理.
  * 
  * </pre>
  */
@@ -149,6 +149,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	boolean ignoreSystemEnvironment; // 是否忽略System.getenv()变量
 	boolean ignoreSystemProperties = !Envs.IS_DEV; // 是否忽略System.getProperties()变量
 	boolean ignorePropertyPlaceholder; // 是否忽略PropertySourcePlaceholderResolver功能
+	boolean ignoreUnresolvablePlaceholder; // 是 否忽略不能解析的占位符
 	boolean fatalIfError; // 如果错误,直接抛出异常.默认输出错误日志.
 
 	// 动态配置
@@ -165,6 +166,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 	public void setIgnorePropertyPlaceholder(boolean ignorePropertyPlaceholder) {
 		this.ignorePropertyPlaceholder = ignorePropertyPlaceholder;
+	}
+
+	public void setIgnoreUnresolvablePlaceholder(boolean ignoreUnresolvablePlaceholder) {
+		this.ignoreUnresolvablePlaceholder = ignoreUnresolvablePlaceholder;
 	}
 
 	public void setIgnoreSystemEnvironment(boolean ignoreSystemEnvironment) {
@@ -380,7 +385,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			StringValueResolver valueResolver = new StringValueResolver() {
 				@Override
 				public String resolveStringValue(String strVal) {
-					String resolved = propertyResolver.resolvePlaceholders(strVal);
+					String resolved = ignoreUnresolvablePlaceholder ? propertyResolver.resolvePlaceholders(strVal) : propertyResolver.resolveRequiredPlaceholders(strVal);
 					return StringUtils.isEmpty(resolved) ? null : resolved.trim();
 				}
 			};
