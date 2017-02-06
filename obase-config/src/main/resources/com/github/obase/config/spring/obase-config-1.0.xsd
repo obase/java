@@ -73,7 +73,6 @@
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-
 	<xsd:element name="application-properties" type="applicationConfigurationType" />
 
 	<xsd:complexType name="ruleType">
