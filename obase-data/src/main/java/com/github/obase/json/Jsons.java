@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.obase.WrappedException;
 
@@ -71,9 +70,9 @@ public final class Jsons {
 				JavaType type = TF.constructType(parameterClasses[idx]);
 				for (Class<?> clazz = null; --idx >= 0;) {
 					clazz = parameterClasses[idx];
-					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
+					type = TF.constructSimpleType(clazz, new JavaType[] { type });
 				}
-				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
+				return OM.readValue(json, TF.constructSimpleType(parametrized, new JavaType[] { type }));
 			} else {
 				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
@@ -114,9 +113,9 @@ public final class Jsons {
 				JavaType type = TF.constructType(parameterClasses[idx]);
 				for (Class<?> clazz = null; --idx >= 0;) {
 					clazz = parameterClasses[idx];
-					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
+					type = TF.constructSimpleType(clazz, new JavaType[] { type });
 				}
-				return OM.readValue(json, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
+				return OM.readValue(json, TF.constructSimpleType(parametrized, new JavaType[] { type }));
 			} else {
 				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
@@ -157,9 +156,9 @@ public final class Jsons {
 				JavaType type = TF.constructType(parameterClasses[idx]);
 				for (Class<?> clazz = null; --idx >= 0;) {
 					clazz = parameterClasses[idx];
-					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
+					type = TF.constructSimpleType(clazz, new JavaType[] { type });
 				}
-				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
+				return OM.readValue(in, TF.constructSimpleType(parametrized, new JavaType[] { type }));
 			} else {
 				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
@@ -192,9 +191,9 @@ public final class Jsons {
 				JavaType type = TF.constructType(parameterClasses[idx]);
 				for (Class<?> clazz = null; --idx >= 0;) {
 					clazz = parameterClasses[idx];
-					type = TF.constructType(clazz, TypeBindings.create(clazz, new JavaType[] { type }));
+					type = TF.constructSimpleType(clazz, new JavaType[] { type });
 				}
-				return OM.readValue(in, TF.constructType(parametrized, TypeBindings.create(parametrized, new JavaType[] { type })));
+				return OM.readValue(in, TF.constructSimpleType(parametrized, new JavaType[] { type }));
 			} else {
 				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
