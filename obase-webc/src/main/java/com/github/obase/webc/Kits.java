@@ -662,7 +662,7 @@ public abstract class Kits {
 	public static String getClientIp(HttpServletRequest request) {
 
 		String client = null;
-		client = request.getHeader("X-Fowarded-For");
+		client = request.getHeader("X-Forwarded-For");
 		if (StringKit.isEmpty(client)) {
 			client = request.getHeader("X-Real-IP");
 			if (StringKit.isEmpty(client)) {
