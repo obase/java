@@ -195,7 +195,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 	// for subclass override
 	@Override
-	protected boolean validatePermission(Principal principal, HttpMethod method, String lookupPath) {
+	protected boolean validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
 		return true;
 	}
 
