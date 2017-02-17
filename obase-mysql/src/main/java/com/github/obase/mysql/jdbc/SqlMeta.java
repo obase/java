@@ -16,7 +16,7 @@ public class SqlMeta {
 
 	public Map<String, Integer> labels;
 
-	public SqlMeta(String psql,Map<String, int[]> params, int limitIndex) {
+	public SqlMeta(String psql, Map<String, int[]> params, int limitIndex) {
 		this.psql = psql;
 		this.pidx = SqlMetaKit.parsePlaceHolderList(psql);
 		this.params = params == null ? Collections.<String, int[]> emptyMap() : params;
