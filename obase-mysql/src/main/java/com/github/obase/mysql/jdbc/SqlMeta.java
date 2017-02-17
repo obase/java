@@ -8,7 +8,8 @@ public class SqlMeta {
 
 	public final String psql;
 
-	public final int[] pidx;
+	// Just for config query to process collection param
+	public final int[] psqlParamIndex;
 
 	public final int limitIndex;
 
@@ -17,9 +18,13 @@ public class SqlMeta {
 	public Map<String, Integer> labels;
 
 	public SqlMeta(String psql, Map<String, int[]> params, int limitIndex) {
+		this(psql, params, null, limitIndex);
+	}
+
+	public SqlMeta(String psql, Map<String, int[]> params, int[] psqlParamIndex, int limitIndex) {
 		this.psql = psql;
-		this.pidx = SqlMetaKit.parsePlaceHolderList(psql);
 		this.params = params == null ? Collections.<String, int[]> emptyMap() : params;
+		this.psqlParamIndex = psqlParamIndex;
 		this.limitIndex = limitIndex;
 	}
 

@@ -93,7 +93,7 @@ public final class SqlMetaKit extends SqlKit {
 				params.put(name, array);
 			}
 
-			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parseLimitIndexIfExist(psql));
+			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parsePlaceHolderList(psql), parseLimitIndexIfExist(psql));
 		} else {
 			meta = new SqlMeta(sql, Collections.<String, int[]> emptyMap(), parseLimitIndexIfExist(sql));
 		}
@@ -424,7 +424,7 @@ public final class SqlMetaKit extends SqlKit {
 		return -1;
 	}
 
-	static int[] parsePlaceHolderList(String sql) {
+	public static int[] parsePlaceHolderList(String sql) {
 
 		LinkedList<Integer> vars = new LinkedList<Integer>();
 		for (int i = 0, n = sql.length(); i < n;) {
@@ -463,7 +463,7 @@ public final class SqlMetaKit extends SqlKit {
 		return ret;
 	}
 
-	static ParamHolder[] parseParamHolderList(String sql) {
+	public static ParamHolder[] parseParamHolderList(String sql) {
 
 		LinkedList<ParamHolder> vars = new LinkedList<ParamHolder>();
 		int mark = 0;
@@ -474,6 +474,7 @@ public final class SqlMetaKit extends SqlKit {
 				while ((++i) < n && Character.isJavaIdentifierPart(sql.charAt(i))) {
 				}
 				vars.add(new ParamHolder(sql.substring(mark + 1, i), mark, i));
+				i++;
 				break;
 			case '`':
 				while ((++i) < n && sql.charAt(i) != '`') {
