@@ -3,7 +3,6 @@ package com.github.obase.mysql.jdbc;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -63,7 +62,7 @@ public final class SqlMetaKit extends SqlKit {
 
 	public static SqlMeta genConfigSqlMeta(String id, String sql) {
 		SqlMeta meta = null;
-		ParamHolder[] holders = parseParamHolderList(id, sql);
+		ParamHolder[] holders = parseParamHolderList(sql);
 		if (holders.length > 0) {
 
 			StringBuilder sb = new StringBuilder(sql);
@@ -96,7 +95,7 @@ public final class SqlMetaKit extends SqlKit {
 
 			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parseLimitIndexIfExist(psql));
 		} else {
-			meta = new SqlMeta(sql, Collections.<String, int[]>emptyMap(), parseLimitIndexIfExist(sql));
+			meta = new SqlMeta(sql, Collections.<String, int[]> emptyMap(), parseLimitIndexIfExist(sql));
 		}
 
 		return meta;
@@ -425,29 +424,66 @@ public final class SqlMetaKit extends SqlKit {
 		return -1;
 	}
 
-	static ParamHolder[] parseParamHolderList(String id, String sql) {
+	static int[] parsePlaceHolderList(String sql) {
 
-		char[] chars = sql.toCharArray();
-
-		ArrayList<ParamHolder> vars = new ArrayList<ParamHolder>(16);
-		int mark = 0;
-		for (int i = 0, n = chars.length; i < n;) {
-			switch (chars[i]) {
-			case ':':
-				mark = i;
-				while ((++i) < n && Character.isJavaIdentifierPart(chars[i])) {
-				}
-				vars.add(new ParamHolder(String.valueOf(chars, mark + 1, i - mark - 1), mark, i));
+		LinkedList<Integer> vars = new LinkedList<Integer>();
+		for (int i = 0, n = sql.length(); i < n;) {
+			switch (sql.charAt(i)) {
+			case '?':
+				vars.add(i);
+				i++;
 				break;
 			case '`':
-				while ((++i) < n && chars[i] != '`') {
+				while ((++i) < n && sql.charAt(i) != '`') {
 				}
 				i++;
 				break;
 			case '\'':
 				while ((++i) < n) {
-					if (chars[i] == '\'') {
-						if (i + 1 < n && chars[i + 1] == '\'') {
+					if (sql.charAt(i) == '\'') {
+						if (i + 1 < n && sql.charAt(i + 1) == '\'') {
+							i++;
+						} else {
+							break;
+						}
+					}
+				}
+				i++;
+				break;
+			default:
+				i++;
+			}
+		}
+
+		int[] ret = new int[vars.size()];
+		int idx = 0;
+		for (Integer var : vars) {
+			ret[idx++] = var.intValue();
+		}
+		return ret;
+	}
+
+	static ParamHolder[] parseParamHolderList(String sql) {
+
+		LinkedList<ParamHolder> vars = new LinkedList<ParamHolder>();
+		int mark = 0;
+		for (int i = 0, n = sql.length(); i < n;) {
+			switch (sql.charAt(i)) {
+			case ':':
+				mark = i;
+				while ((++i) < n && Character.isJavaIdentifierPart(sql.charAt(i))) {
+				}
+				vars.add(new ParamHolder(sql.substring(mark + 1, i), mark, i));
+				break;
+			case '`':
+				while ((++i) < n && sql.charAt(i) != '`') {
+				}
+				i++;
+				break;
+			case '\'':
+				while ((++i) < n) {
+					if (sql.charAt(i) == '\'') {
+						if (i + 1 < n && sql.charAt(i + 1) == '\'') {
 							i++;
 						} else {
 							break;
