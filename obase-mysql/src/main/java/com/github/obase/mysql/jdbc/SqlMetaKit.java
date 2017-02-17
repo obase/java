@@ -94,9 +94,9 @@ public final class SqlMetaKit extends SqlKit {
 				params.put(name, array);
 			}
 
-			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parseLimitIndexIfExist(psql));
+			meta = new SqlMeta(psql, holders, Collections.unmodifiableMap(params), parseLimitIndexIfExist(psql));
 		} else {
-			meta = new SqlMeta(sql, Collections.<String, int[]>emptyMap(), parseLimitIndexIfExist(sql));
+			meta = new SqlMeta(sql, holders, Collections.<String, int[]> emptyMap(), parseLimitIndexIfExist(sql));
 		}
 
 		return meta;
