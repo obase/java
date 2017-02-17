@@ -18,9 +18,14 @@ public class SqlMeta {
 
 	public SqlMeta(String psql, Map<String, int[]> params, int limitIndex) {
 		this.psql = psql;
-		this.pidx = SqlMetaKit.parsePlaceHolderList(psql);
 		this.params = params == null ? Collections.<String, int[]> emptyMap() : params;
 		this.limitIndex = limitIndex;
+
+		if (this.params.isEmpty()) {
+			this.pidx = new int[0];
+		} else {
+			this.pidx = SqlMetaKit.parsePlaceHolderList(psql);
+		}
 	}
 
 	public String toString() {
