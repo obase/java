@@ -26,12 +26,6 @@ public class SqlMeta {
 		this.params = params == null ? Collections.<String, int[]> emptyMap() : params;
 		this.psqlParamIndex = psqlParamIndex;
 		this.limitIndex = limitIndex;
-
-		if (this.params.isEmpty()) {
-			this.pidx = new int[0];
-		} else {
-			this.pidx = SqlMetaKit.parsePlaceHolderList(psql);
-		}
 	}
 
 	public String toString() {

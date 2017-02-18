@@ -63,31 +63,6 @@ public class QueryExt {
 		return collects;
 	}
 
-	/**
-	 * Index start from 1, the 0 element should be null;
-	 */
-	private static String[] rollSqlMetaParams(SqlMeta meta) {
-
-		if (MapKit.isEmpty(meta.params)) {
-			return null;
-		}
-
-		int size = 1; // SQL param index start from 1;
-		for (int[] vals : meta.params.values()) {
-			size += vals.length;
-		}
-
-		String[] params = new String[size];
-		for (Map.Entry<String, int[]> entry : meta.params.entrySet()) {
-			String key = entry.getKey();
-			for (int i : entry.getValue()) {
-				params[i] = key;
-			}
-		}
-
-		return params;
-	}
-
 	/** reutrn last fragment of (...?...) from mark */
 	private static int lastParamIndexOf(String psql, int mark) {
 		while (mark >= 0) {
@@ -120,33 +95,33 @@ public class QueryExt {
 		Map<String, Object> valuesNew = new HashMap<String, Object>();
 		Map<String, Integer> collects = null;
 		String[] params = null;
-		if ((collects = extcSqlMetaValues(values, valuesNew)) != null && (params = rollSqlMetaParams(meta)) != null) {
-			// execute with new meta and convert values
-			LinkedList<String> paramsNew = new LinkedList<String>();
-			StringBuilder psqlNew = new StringBuilder(meta.psql);
-			String param;
-			Integer size;
-			int mark = meta.psql.length(); // start scan position
-			// the param position start from 1, but not 0;
-			for (int n = params.length - 1; n > 0; n--) {
-
-//				mark =
-
-				param = params[n];
-				size = collects.get(param);
-				if (size != null) {
-					// process the params
-					for (int idx = size - 1; idx >= 0; idx--) {
-						paramsNew.addFirst(paramNewName(param, idx));
-					}
-					// process the psql: found the n param ? index;
-				} else {
-					paramsNew.addFirst(param);
-				}
-			}
-		} else {
-			// execute with old meta and convert values
-		}
+//		if ((collects = extcSqlMetaValues(values, valuesNew)) != null && (params = rollSqlMetaParams(meta)) != null) {
+//			// execute with new meta and convert values
+//			LinkedList<String> paramsNew = new LinkedList<String>();
+//			StringBuilder psqlNew = new StringBuilder(meta.psql);
+//			String param;
+//			Integer size;
+//			int mark = meta.psql.length(); // start scan position
+//			// the param position start from 1, but not 0;
+//			for (int n = params.length - 1; n > 0; n--) {
+//
+////				mark =
+//
+//				param = params[n];
+//				size = collects.get(param);
+//				if (size != null) {
+//					// process the params
+//					for (int idx = size - 1; idx >= 0; idx--) {
+//						paramsNew.addFirst(paramNewName(param, idx));
+//					}
+//					// process the psql: found the n param ? index;
+//				} else {
+//					paramsNew.addFirst(param);
+//				}
+//			}
+//		} else {
+//			// execute with old meta and convert values
+//		}
 
 	}
 }
