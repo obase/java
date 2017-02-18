@@ -352,20 +352,18 @@ public final class SqlMetaKit extends SqlKit {
 	static final char[] LIMIT = { 'L', 'I', 'M', 'I', 'T' };
 	static final int DIFF = ('A' - 'a');
 
-	static int parseLimitIndexIfExist(String sql) {
-
-		char[] chars = sql.toCharArray();
+	public static int parseLimitIndexIfExist(CharSequence sql) {
 
 		int mark, stack;
-		for (int i = 0, n = chars.length; i < n;) {
-			if (Character.isJavaIdentifierPart(chars[i])) {
+		for (int i = 0, n = sql.length(); i < n;) {
+			if (Character.isJavaIdentifierPart(sql.charAt(i))) {
 				mark = i++;
-				while (i < n && Character.isJavaIdentifierPart(chars[i])) {
+				while (i < n && Character.isJavaIdentifierPart(sql.charAt(i))) {
 					i++;
 				}
 				IS_LIMIT_WORD: if (i - mark == LIMIT.length) {
 					for (int j1 = 0, j2 = mark, diff; j2 < i; j1++, j2++) {
-						diff = LIMIT[j1] - chars[j2];
+						diff = LIMIT[j1] - sql.charAt(j2);
 						if (diff != 0 && diff != DIFF) {
 							break IS_LIMIT_WORD;
 						}
@@ -373,15 +371,15 @@ public final class SqlMetaKit extends SqlKit {
 					return mark;
 				}
 			} else {
-				switch (chars[i]) {
+				switch (sql.charAt(i)) {
 				case '`':
-					while ((++i) < n && chars[i] != '`') {
+					while ((++i) < n && sql.charAt(i) != '`') {
 					}
 					break;
 				case '\'':
 					while ((++i) < n) {
-						if (chars[i] == '\'') {
-							if (i + 1 < n && chars[i + 1] == '\'') {
+						if (sql.charAt(i) == '\'') {
+							if (i + 1 < n && sql.charAt(i + 1) == '\'') {
 								i++;
 							} else {
 								break;
@@ -392,15 +390,15 @@ public final class SqlMetaKit extends SqlKit {
 				case '(':
 					stack = 1;
 					while (stack > 0 && (++i) < n) {
-						switch (chars[i]) {
+						switch (sql.charAt(i)) {
 						case '`':
-							while ((++i) < n && chars[i] != '`') {
+							while ((++i) < n && sql.charAt(i) != '`') {
 							}
 							break;
 						case '\'':
 							while ((++i) < n) {
-								if (chars[i] == '\'') {
-									if (i + 1 < n && chars[i + 1] == '\'') {
+								if (sql.charAt(i) == '\'') {
+									if (i + 1 < n && sql.charAt(i + 1) == '\'') {
 										i++;
 									} else {
 										break;
@@ -424,7 +422,7 @@ public final class SqlMetaKit extends SqlKit {
 		return -1;
 	}
 
-	public static int[] parsePlaceHolderList(String sql) {
+	public static int[] parsePlaceHolderList(CharSequence sql) {
 
 		LinkedList<Integer> vars = new LinkedList<Integer>();
 		for (int i = 0, n = sql.length(); i < n;) {
@@ -455,8 +453,8 @@ public final class SqlMetaKit extends SqlKit {
 			}
 		}
 
-		int[] ret = new int[vars.size()];
-		int idx = 0;
+		int[] ret = new int[vars.size() + 1];
+		int idx = 1;
 		for (Integer var : vars) {
 			ret[idx++] = var.intValue();
 		}
