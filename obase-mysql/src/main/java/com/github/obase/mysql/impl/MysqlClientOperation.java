@@ -1746,15 +1746,21 @@ abstract class MysqlClientOperation {
 		return extcParams;
 	}
 
-	private static SqlMeta extcCollectSqlMeta(SqlMeta meta, Map<String, Integer> collects, boolean limitIndexed) throws SQLException {
+	private static SqlMeta extcCollectSqlMeta(SqlMeta meta, Map<String, Integer> collects) throws SQLException {
 
 		String[] origParams = origSqlMetaParams(meta); // position start from 1
 
 		LinkedList<String> tempParams = new LinkedList<String>();
-		StringBuilder tempPsql = new StringBuilder(meta.psql);
+		StringBuilder tempPsql = new StringBuilder(meta.psql.length() * 2);
+		if (meta.limitIndex > 0) {
+			tempPsql.append(meta.psql, 0, meta.limitIndex);
+		} else {
+			tempPsql.append(meta.psql);
+		}
+		int limit = tempPsql.length();
 		String param;
 		Integer size;
-		for (int limit = meta.psql.length(), last = origParams.length - 1, pos = last; pos > 0; pos--) {
+		for (int last = origParams.length - 1, pos = last; pos > 0; pos--) {
 			param = origParams[pos];
 			size = collects.get(param);
 			if (size != null) {
@@ -1766,8 +1772,12 @@ abstract class MysqlClientOperation {
 				tempParams.addFirst(param);
 			}
 		}
+		limit = tempPsql.length();
+		if (meta.limitIndex > 0) {
+			tempPsql.append(meta.psql, meta.limitIndex, meta.psql.length());
+		}
 		// optional: limitIndex
-		return new SqlMeta(tempPsql.toString(), extcCollectParams(tempParams), limitIndexed ? SqlMetaKit.parseLimitIndexIfExist(tempPsql) : -1);
+		return new SqlMeta(tempPsql.toString(), extcCollectParams(tempParams), limit);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1783,7 +1793,7 @@ abstract class MysqlClientOperation {
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
-			meta = extcCollectSqlMeta(meta, collects, false);
+			meta = extcCollectSqlMeta(meta, collects);
 		}
 
 		PreparedStatement pstmt = null;
@@ -1822,15 +1832,15 @@ abstract class MysqlClientOperation {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_NOT_FOUND, "Not found sql config: " + queryId);
 		}
 
-		String psql = SqlMetaKit.modifyPsqlForLimit(meta, start, max);
-		if (showSql) {
-			logger.info("Sql for queryRange: " + meta.toString(psql));
-		}
-
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
-			meta = extcCollectSqlMeta(meta, collects, true);
+			meta = extcCollectSqlMeta(meta, collects);
+		}
+
+		String psql = SqlMetaKit.modifyPsqlForLimit(meta, start, max);
+		if (showSql) {
+			logger.info("Sql for queryRange: " + meta.toString(psql));
 		}
 
 		PreparedStatement pstmt = null;
@@ -1874,7 +1884,7 @@ abstract class MysqlClientOperation {
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
-			meta = extcCollectSqlMeta(meta, collects, true);
+			meta = extcCollectSqlMeta(meta, collects);
 		}
 
 		PreparedStatement pstmt = null;
@@ -1921,15 +1931,15 @@ abstract class MysqlClientOperation {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_NOT_FOUND, "Not found sql config: " + queryId);
 		}
 
-		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.field, DIRECTION_DESC.equals(page.direction));
-		if (showSql) {
-			logger.info("Sql for queryPage: " + meta.toString(psql));
-		}
-
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
-			meta = extcCollectSqlMeta(meta, collects, true);
+			meta = extcCollectSqlMeta(meta, collects);
+		}
+
+		String psql = SqlMetaKit.modifyPsqlForPageLimit(meta, offset, count, page.field, DIRECTION_DESC.equals(page.direction));
+		if (showSql) {
+			logger.info("Sql for queryPage: " + meta.toString(psql));
 		}
 
 		PreparedStatement pstmt = null;
