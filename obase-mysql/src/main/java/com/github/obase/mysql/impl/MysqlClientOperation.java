@@ -1667,7 +1667,7 @@ abstract class MysqlClientOperation {
 				} else if (size == 0) {
 					valuesNew.put(key, null);
 				} else {
-					int idx = 0;
+					int idx = 1;
 					for (Iterator<?> iter = c.iterator(); iter.hasNext(); idx++) {
 						String nameNew = newParamName(iter.next(), idx);
 						valuesNew.put(nameNew, iter.next());
@@ -1764,7 +1764,7 @@ abstract class MysqlClientOperation {
 			param = origParams[pos];
 			size = collects.get(param);
 			if (size != null) {
-				for (int idx = size - 1; idx >= 0; idx--) {
+				for (int idx = size; idx > 0; idx--) {
 					tempParams.addFirst(newParamName(param, idx));
 				}
 				extcCollectPsql(tempPsql, size, meta.psqlParamIndex[pos], pos > 1 ? meta.psqlParamIndex[pos - 1] : -1, pos < last ? meta.psqlParamIndex[pos + 1] : limit);

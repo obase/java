@@ -2,6 +2,7 @@ package com.github.obase.mysql;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.github.obase.Page;
 
@@ -252,10 +253,10 @@ public interface MysqlClient {
 	/**
 	 * Select an object by keys using SELECT ... FROM Syntax, with the same order of declaration.
 	 * 
-	 * @param tableType,
-	 *            any class marked @Table annotation.
-	 * @param keys,
-	 *            primary keys of the table
+	 * @param tableType
+	 *            , any class marked @Table annotation.
+	 * @param keys
+	 *            , primary keys of the table
 	 * @return the record object if there is, otherwise return null
 	 * @throws SQLException
 	 *             if there are any database access error or statement execution failed
@@ -645,5 +646,13 @@ public interface MysqlClient {
 	 * @since 0.9.1
 	 */
 	<T, R> R[] batchExecute(String updateId, T[] params, Class<R> generatedKeyType) throws SQLException;
+
+	<T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
+
+	<T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int offset, int count, Map<String, Object> params) throws SQLException;
+
+	<T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
+
+	<T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException;
 
 }

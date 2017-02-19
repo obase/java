@@ -4,9 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.List;
+import java.util.Map;
 
-import com.github.obase.mysql.ConnectionCallback;
 import com.github.obase.Page;
+import com.github.obase.mysql.ConnectionCallback;
 import com.github.obase.mysql.Transaction;
 
 final class TransactionImpl implements Transaction {
@@ -362,4 +363,23 @@ final class TransactionImpl implements Transaction {
 		return batchDelete(tableObjects[0].getClass(), tableObjects);
 	}
 
+	@Override
+	public <T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+		return proxy.queryExtc(conn, queryId, elemType, params);
+	}
+
+	@Override
+	public <T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
+		return proxy.queryRangeExtc(conn, queryId, elemType, start, max, params);
+	}
+
+	@Override
+	public <T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+		return proxy.queryFirstExtc(conn, queryId, elemType, params);
+	}
+
+	@Override
+	public <T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
+		proxy.queryPageExtc(conn, queryId, elemType, page, params);
+	}
 }

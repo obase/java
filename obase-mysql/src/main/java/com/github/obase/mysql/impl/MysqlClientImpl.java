@@ -3,10 +3,11 @@ package com.github.obase.mysql.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
+import com.github.obase.Page;
 import com.github.obase.mysql.ConnectionCallback;
 import com.github.obase.mysql.MysqlClient;
-import com.github.obase.Page;
 import com.github.obase.spring.transaction.DataSourceUtils;
 
 public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient {
@@ -817,6 +818,74 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	@Override
 	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
 		return batchDelete(tableObjects[0].getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+
+		Connection conn = DataSourceUtils.getConnection(dataSource);
+		try {
+			return queryExtc(conn, queryId, elemType, params);
+		} catch (SQLException ex) {
+			// Release Connection early, to avoid potential connection pool deadlock
+			// in the case when the exception translator hasn't been initialized yet.
+			DataSourceUtils.releaseConnection(conn, dataSource);
+			conn = null;
+			throw ex;
+		} finally {
+			DataSourceUtils.releaseConnection(conn, dataSource);
+		}
+	}
+
+	@Override
+	public <T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
+
+		Connection conn = DataSourceUtils.getConnection(dataSource);
+		try {
+			return queryRangeExtc(conn, queryId, elemType, start, max, params);
+		} catch (SQLException ex) {
+			// Release Connection early, to avoid potential connection pool deadlock
+			// in the case when the exception translator hasn't been initialized yet.
+			DataSourceUtils.releaseConnection(conn, dataSource);
+			conn = null;
+			throw ex;
+		} finally {
+			DataSourceUtils.releaseConnection(conn, dataSource);
+		}
+	}
+
+	@Override
+	public <T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+
+		Connection conn = DataSourceUtils.getConnection(dataSource);
+		try {
+			return queryFirstExtc(conn, queryId, elemType, params);
+		} catch (SQLException ex) {
+			// Release Connection early, to avoid potential connection pool deadlock
+			// in the case when the exception translator hasn't been initialized yet.
+			DataSourceUtils.releaseConnection(conn, dataSource);
+			conn = null;
+			throw ex;
+		} finally {
+			DataSourceUtils.releaseConnection(conn, dataSource);
+		}
+	}
+
+	@Override
+	public <T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
+
+		Connection conn = DataSourceUtils.getConnection(dataSource);
+		try {
+			queryPageExtc(conn, queryId, elemType, page, params);
+		} catch (SQLException ex) {
+			// Release Connection early, to avoid potential connection pool deadlock
+			// in the case when the exception translator hasn't been initialized yet.
+			DataSourceUtils.releaseConnection(conn, dataSource);
+			conn = null;
+			throw ex;
+		} finally {
+			DataSourceUtils.releaseConnection(conn, dataSource);
+		}
 	}
 
 }
