@@ -1669,7 +1669,7 @@ abstract class MysqlClientOperation {
 				} else {
 					int idx = 1;
 					for (Iterator<?> iter = c.iterator(); iter.hasNext(); idx++) {
-						String nameNew = newParamName(iter.next(), idx);
+						String nameNew = newParamName(key, idx);
 						valuesNew.put(nameNew, iter.next());
 					}
 					collects.put(key, size);
@@ -1786,14 +1786,16 @@ abstract class MysqlClientOperation {
 		SqlMeta meta = configSqlMetaCache.get(queryId);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_NOT_FOUND, "Not found sql config: " + queryId);
-		} else if (showSql) {
-			logger.info("Sql for query: " + meta);
 		}
 
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
 			meta = extcCollectSqlMeta(meta, collects);
+		}
+
+		if (showSql) {
+			logger.info("Sql for query: " + meta);
 		}
 
 		PreparedStatement pstmt = null;
@@ -1877,14 +1879,16 @@ abstract class MysqlClientOperation {
 		SqlMeta meta = configSqlMetaCache.get(queryId);
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_NOT_FOUND, "Not found sql config: " + queryId);
-		} else if (showSql) {
-			logger.info("Sql for queryFirst: " + meta);
 		}
 
 		Map<String, Integer> collects = new HashMap<String, Integer>();
 		Map<String, Object> extcValues = extcCollectValues(values, collects);
 		if (MapKit.isNotEmpty(collects)) {
 			meta = extcCollectSqlMeta(meta, collects);
+		}
+
+		if (showSql) {
+			logger.info("Sql for queryFirst: " + meta);
 		}
 
 		PreparedStatement pstmt = null;
