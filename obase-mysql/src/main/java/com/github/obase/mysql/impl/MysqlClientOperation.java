@@ -1767,7 +1767,7 @@ abstract class MysqlClientOperation {
 				for (int idx = size; idx > 0; idx--) {
 					tempParams.addFirst(newParamName(param, idx));
 				}
-				extcCollectPsql(tempPsql, size, meta.psqlParamIndex[pos], pos > 1 ? meta.psqlParamIndex[pos - 1] : -1, pos < last ? meta.psqlParamIndex[pos + 1] : limit);
+				extcCollectPsql(tempPsql, size, meta.configQueryParamIndex[pos], pos > 1 ? meta.configQueryParamIndex[pos - 1] : -1, pos < last ? meta.configQueryParamIndex[pos + 1] : limit);
 			} else {
 				tempParams.addFirst(param);
 			}

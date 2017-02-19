@@ -15,13 +15,13 @@ public class TestMain {
 		String psql = "select * from (select * from abc where :bbc=123 limit 100) where a=`:abc` and b=:bbc :bbc limit :abc";
 		SqlMeta meta = SqlMetaKit.genConfigSqlMeta("test", psql);
 		System.out.println(meta.psql);
-		for(Map.Entry<String, int[]> entry : meta.params.entrySet()){
+		for (Map.Entry<String, int[]> entry : meta.params.entrySet()) {
 			System.out.print(entry.getKey());
 			System.out.print(": ");
 			System.out.print(Arrays.toString(entry.getValue()));
 			System.out.println();
 		}
-		System.out.println(Arrays.toString(meta.psqlParamIndex));
+		System.out.println(Arrays.toString(meta.configQueryParamIndex));
 		System.out.println(meta.limitIndex);
 	}
 }
