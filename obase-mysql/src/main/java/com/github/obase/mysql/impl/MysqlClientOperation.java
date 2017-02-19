@@ -589,18 +589,15 @@ abstract class MysqlClientOperation {
 
 		if (meta == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table class: " + tableType);
-		}
-
-		String psql = SqlMetaKit.modifyPsqlForLimit(meta, 0, 1);
-		if (showSql) {
-			logger.info("Sql for selectFirst: " + meta.toString(psql));
+		} else if (showSql) {
+			logger.info("Sql for selectFirst: " + meta.psql);
 		}
 
 		JdbcAction action = getJdbcAction(tableType);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = conn.prepareStatement(psql);
+			pstmt = conn.prepareStatement(meta.psql);
 			rs = pstmt.executeQuery();
 			if (meta.labels == null) {
 				SqlMetaKit.fillSqlMetaLables(rs, meta);
@@ -1767,7 +1764,7 @@ abstract class MysqlClientOperation {
 				for (int idx = size; idx > 0; idx--) {
 					tempParams.addFirst(newParamName(param, idx));
 				}
-				extcCollectPsql(tempPsql, size, meta.configQueryParamIndex[pos], pos > 1 ? meta.configQueryParamIndex[pos - 1] : -1, pos < last ? meta.configQueryParamIndex[pos + 1] : limit);
+				extcCollectPsql(tempPsql, size, meta.placeholderIndex[pos], pos > 1 ? meta.placeholderIndex[pos - 1] : -1, pos < last ? meta.placeholderIndex[pos + 1] : limit);
 			} else {
 				tempParams.addFirst(param);
 			}

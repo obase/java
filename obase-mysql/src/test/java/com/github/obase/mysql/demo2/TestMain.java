@@ -21,7 +21,7 @@ public class TestMain {
 			System.out.print(Arrays.toString(entry.getValue()));
 			System.out.println();
 		}
-		System.out.println(Arrays.toString(meta.configQueryParamIndex));
+		System.out.println(Arrays.toString(meta.placeholderIndex));
 		System.out.println(meta.limitIndex);
 	}
 }

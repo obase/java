@@ -22,10 +22,10 @@ public final class SqlMetaKit extends SqlKit {
 	}
 
 	public static String modifyPsqlForLimit(SqlMeta meta, int start, int max) {
-		StringBuilder sb = new StringBuilder(meta.psql.length() + 16);
+		StringBuilder sb = new StringBuilder(meta.psql.length() + 64);
 		sb.append(meta.psql);
-		if (meta.limitIndex > 0) {
-			sb.delete(meta.limitIndex, sb.length());
+		if (meta.limitIndex >= 0) { // FIX BUG: it will use sub query existing limit cause
+			sb.insert(0, "SELECT * FROM(").append(") _");
 		}
 		sb.append(" LIMIT ").append(start).append(',').append(max);
 		return sb.toString();
@@ -93,7 +93,7 @@ public final class SqlMetaKit extends SqlKit {
 				params.put(name, array);
 			}
 
-			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parsePlaceHolderList(psql), parseLimitIndexIfExist(psql));
+			meta = new SqlMeta(psql, Collections.unmodifiableMap(params), parsePlaceholderList(psql), parseLimitIndexIfExist(psql));
 		} else {
 			meta = new SqlMeta(sql, Collections.<String, int[]> emptyMap(), parseLimitIndexIfExist(sql));
 		}
@@ -422,7 +422,7 @@ public final class SqlMetaKit extends SqlKit {
 		return -1;
 	}
 
-	public static int[] parsePlaceHolderList(CharSequence sql) {
+	public static int[] parsePlaceholderList(CharSequence sql) {
 
 		LinkedList<Integer> vars = new LinkedList<Integer>();
 		for (int i = 0, n = sql.length(); i < n;) {

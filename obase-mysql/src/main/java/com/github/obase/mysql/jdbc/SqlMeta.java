@@ -9,7 +9,7 @@ public class SqlMeta {
 	public final String psql;
 
 	// Just for config query to process collection param
-	public final int[] configQueryParamIndex;
+	public final int[] placeholderIndex;
 
 	public final int limitIndex;
 
@@ -21,10 +21,10 @@ public class SqlMeta {
 		this(psql, params, null, limitIndex);
 	}
 
-	public SqlMeta(String psql, Map<String, int[]> params, int[] configQueryParamIndex, int limitIndex) {
+	public SqlMeta(String psql, Map<String, int[]> params, int[] placeholderIndex, int limitIndex) {
 		this.psql = psql;
 		this.params = params == null ? Collections.<String, int[]> emptyMap() : params;
-		this.configQueryParamIndex = configQueryParamIndex;
+		this.placeholderIndex = placeholderIndex;
 		this.limitIndex = limitIndex;
 	}
 
