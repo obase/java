@@ -1704,11 +1704,11 @@ abstract class MysqlClientOperation {
 	private static void extcCollectPsql(StringBuilder sqlb, int size, int idx, int lbound, int rbound) throws SQLException {
 		int pidx = sqlb.lastIndexOf("((", idx);
 		if (pidx < 0 || pidx <= lbound) {
-			throw new SQLException("Syntax error for param near index " + idx + ": " + sqlb);
+			throw new SQLException("Collection param syntax error near " + idx + ": " + sqlb);
 		}
 		int sidx = sqlb.indexOf("))", idx);
 		if (sidx < 0 || sidx >= rbound) {
-			throw new SQLException("Syntax error for param near index " + idx + ": " + sqlb);
+			throw new SQLException("Collection param syntax error near " + idx + ": " + sqlb);
 		}
 		pidx += 1;
 		sidx += 1;
