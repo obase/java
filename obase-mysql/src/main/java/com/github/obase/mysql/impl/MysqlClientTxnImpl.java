@@ -779,11 +779,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+	public <T> List<T> queryWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return queryExtc(conn, queryId, elemType, params);
+			return queryWithCollects(conn, queryId, elemType, params);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -792,11 +792,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
+	public <T> List<T> queryRangeWithCollects(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return queryRangeExtc(conn, queryId, elemType, start, max, params);
+			return queryRangeWithCollects(conn, queryId, elemType, start, max, params);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -805,11 +805,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+	public <T> T queryFirstWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			return queryFirstExtc(conn, queryId, elemType, params);
+			return queryFirstWithCollects(conn, queryId, elemType, params);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -818,11 +818,11 @@ public class MysqlClientTxnImpl extends MysqlClientOperation implements MysqlCli
 	}
 
 	@Override
-	public <T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
+	public <T> void queryPageWithCollects(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			queryPageExtc(conn, queryId, elemType, page, params);
+			queryPageWithCollects(conn, queryId, elemType, page, params);
 		} finally {
 			if (conn != null) {
 				conn.close();

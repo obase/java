@@ -821,11 +821,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+	public <T> List<T> queryWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return queryExtc(conn, queryId, elemType, params);
+			return queryWithCollects(conn, queryId, elemType, params);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -838,11 +838,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
+	public <T> List<T> queryRangeWithCollects(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return queryRangeExtc(conn, queryId, elemType, start, max, params);
+			return queryRangeWithCollects(conn, queryId, elemType, start, max, params);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -855,11 +855,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+	public <T> T queryFirstWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			return queryFirstExtc(conn, queryId, elemType, params);
+			return queryFirstWithCollects(conn, queryId, elemType, params);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
@@ -872,11 +872,11 @@ public class MysqlClientImpl extends MysqlClientOperation implements MysqlClient
 	}
 
 	@Override
-	public <T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
+	public <T> void queryPageWithCollects(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
 
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			queryPageExtc(conn, queryId, elemType, page, params);
+			queryPageWithCollects(conn, queryId, elemType, page, params);
 		} catch (SQLException ex) {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.

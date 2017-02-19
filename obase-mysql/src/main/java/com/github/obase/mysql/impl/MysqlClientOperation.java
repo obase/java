@@ -1781,7 +1781,7 @@ abstract class MysqlClientOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> queryExtc(Connection conn, String queryId, Class<T> elemType, Map<String, Object> values) throws SQLException {
+	protected <T> List<T> queryWithCollects(Connection conn, String queryId, Class<T> elemType, Map<String, Object> values) throws SQLException {
 
 		SqlMeta meta = configSqlMetaCache.get(queryId);
 		if (meta == null) {
@@ -1827,7 +1827,7 @@ abstract class MysqlClientOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> queryRangeExtc(Connection conn, String queryId, Class<T> elemType, int start, int max, Map<String, Object> values) throws SQLException {
+	protected <T> List<T> queryRangeWithCollects(Connection conn, String queryId, Class<T> elemType, int start, int max, Map<String, Object> values) throws SQLException {
 
 		SqlMeta meta = configSqlMetaCache.get(queryId);
 		if (meta == null) {
@@ -1874,7 +1874,7 @@ abstract class MysqlClientOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> T queryFirstExtc(Connection conn, String queryId, Class<T> elemType, Map<String, Object> values) throws SQLException {
+	protected <T> T queryFirstWithCollects(Connection conn, String queryId, Class<T> elemType, Map<String, Object> values) throws SQLException {
 
 		SqlMeta meta = configSqlMetaCache.get(queryId);
 		if (meta == null) {
@@ -1919,7 +1919,7 @@ abstract class MysqlClientOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> void queryPageExtc(Connection conn, String queryId, Class<T> elemType, Page<T> page, Map<String, Object> values) throws SQLException {
+	protected <T> void queryPageWithCollects(Connection conn, String queryId, Class<T> elemType, Page<T> page, Map<String, Object> values) throws SQLException {
 
 		int offset = page.start;
 		if (offset < 0) {

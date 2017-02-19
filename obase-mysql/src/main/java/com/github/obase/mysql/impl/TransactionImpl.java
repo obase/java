@@ -364,22 +364,22 @@ final class TransactionImpl implements Transaction {
 	}
 
 	@Override
-	public <T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
-		return proxy.queryExtc(conn, queryId, elemType, params);
+	public <T> List<T> queryWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+		return proxy.queryWithCollects(conn, queryId, elemType, params);
 	}
 
 	@Override
-	public <T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
-		return proxy.queryRangeExtc(conn, queryId, elemType, start, max, params);
+	public <T> List<T> queryRangeWithCollects(String queryId, Class<T> elemType, int start, int max, Map<String, Object> params) throws SQLException {
+		return proxy.queryRangeWithCollects(conn, queryId, elemType, start, max, params);
 	}
 
 	@Override
-	public <T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
-		return proxy.queryFirstExtc(conn, queryId, elemType, params);
+	public <T> T queryFirstWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException {
+		return proxy.queryFirstWithCollects(conn, queryId, elemType, params);
 	}
 
 	@Override
-	public <T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
-		proxy.queryPageExtc(conn, queryId, elemType, page, params);
+	public <T> void queryPageWithCollects(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException {
+		proxy.queryPageWithCollects(conn, queryId, elemType, page, params);
 	}
 }

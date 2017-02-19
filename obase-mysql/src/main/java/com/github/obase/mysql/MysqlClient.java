@@ -647,12 +647,12 @@ public interface MysqlClient {
 	 */
 	<T, R> R[] batchExecute(String updateId, T[] params, Class<R> generatedKeyType) throws SQLException;
 
-	<T> List<T> queryExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
+	<T> List<T> queryWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
 
-	<T> List<T> queryRangeExtc(String queryId, Class<T> elemType, int offset, int count, Map<String, Object> params) throws SQLException;
+	<T> List<T> queryRangeWithCollects(String queryId, Class<T> elemType, int offset, int count, Map<String, Object> params) throws SQLException;
 
-	<T> T queryFirstExtc(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
+	<T> T queryFirstWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;
 
-	<T> void queryPageExtc(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException;
+	<T> void queryPageWithCollects(String queryId, Class<T> elemType, Page<T> page, Map<String, Object> params) throws SQLException;
 
 }
