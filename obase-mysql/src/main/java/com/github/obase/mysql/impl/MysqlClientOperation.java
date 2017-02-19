@@ -1700,18 +1700,17 @@ abstract class MysqlClientOperation {
 		return params;
 	}
 
-	/** syntax:((...?..)) */
+	/** syntax:(condition) to (condition1 OR condition2 OR condition3) */
 	private static void extcCollectPsql(StringBuilder sqlb, int size, int idx, int lbound, int rbound) throws SQLException {
-		int pidx = sqlb.lastIndexOf("((", idx);
+		int pidx = sqlb.lastIndexOf("(", idx);
 		if (pidx < 0 || pidx <= lbound) {
 			throw new SQLException("Collection param syntax error near " + idx + ": " + sqlb);
 		}
-		int sidx = sqlb.indexOf("))", idx);
+		int sidx = sqlb.indexOf(")", idx);
 		if (sidx < 0 || sidx >= rbound) {
 			throw new SQLException("Collection param syntax error near " + idx + ": " + sqlb);
 		}
 		pidx += 1;
-		sidx += 1;
 		String str = " OR " + sqlb.substring(pidx, sidx);
 		for (int i = 1; i < size; i++) {
 			sqlb.insert(sidx, str);
@@ -1730,13 +1729,14 @@ abstract class MysqlClientOperation {
 	private static Map<String, int[]> extcCollectParams(List<String> params) {
 
 		Map<String, List<Integer>> temp = new HashMap<String, List<Integer>>();
-		int pos = 0;
+		int pos = 1;
 		for (String param : params) {
 			List<Integer> poses = temp.get(param);
 			if (poses == null) {
 				poses = new LinkedList<Integer>();
+				temp.put(param, poses);
 			}
-			poses.add(++pos);
+			poses.add(pos++);
 		}
 
 		Map<String, int[]> extcParams = new HashMap<String, int[]>(temp.size());
