@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -31,188 +32,178 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 	@Override
 	public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
 
-		if (super.getParent() == null) {
-			return super.getBeanFactoryPostProcessors();
-		}
+		ApplicationContext parent = super.getParent();
 
-		LinkedList<BeanFactoryPostProcessor> ret = new LinkedList<BeanFactoryPostProcessor>(super.getBeanFactoryPostProcessors());
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (BeanFactoryPostProcessor item : ((AbstractApplicationContext) ctx).getBeanFactoryPostProcessors()) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedList<BeanFactoryPostProcessor> ret = new LinkedList<BeanFactoryPostProcessor>(super.getBeanFactoryPostProcessors());
+			for (BeanFactoryPostProcessor item : ((AbstractApplicationContext) parent).getBeanFactoryPostProcessors()) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret;
+		} else {
+			return super.getBeanFactoryPostProcessors();
 		}
-
-		return ret;
 	}
 
 	@Override
 	public Collection<ApplicationListener<?>> getApplicationListeners() {
 
-		if (super.getParent() == null) {
-			return super.getApplicationListeners();
-		}
+		ApplicationContext parent = super.getParent();
 
-		LinkedHashSet<ApplicationListener<?>> ret = new LinkedHashSet<ApplicationListener<?>>(super.getApplicationListeners());
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (ApplicationListener<?> item : ((AbstractApplicationContext) ctx).getApplicationListeners()) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedHashSet<ApplicationListener<?>> ret = new LinkedHashSet<ApplicationListener<?>>(super.getApplicationListeners());
+			for (ApplicationListener<?> item : ((AbstractApplicationContext) parent).getApplicationListeners()) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret;
+		} else {
+			return super.getApplicationListeners();
 		}
-
-		return ret;
 	}
 
 	@Override
 	public String[] getBeanNamesForType(ResolvableType type) {
 
-		if (super.getParent() == null) {
-			return super.getBeanNamesForType(type);
-		}
+		ApplicationContext parent = super.getParent();
 
-		LinkedHashSet<String> ret = new LinkedHashSet<String>();
-		Collections.addAll(ret, super.getBeanNamesForType(type));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type)) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedList<String> ret = new LinkedList<String>();
+			Collections.addAll(ret, super.getBeanNamesForType(type));
+			for (String item : ((AbstractApplicationContext) parent).getBeanNamesForType(type)) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret.toArray(new String[ret.size()]);
+		} else {
+			return super.getBeanNamesForType(type);
 		}
-
-		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
 	public String[] getBeanNamesForType(Class<?> type) {
-		if (super.getParent() == null) {
-			return super.getBeanNamesForType(type);
-		}
 
-		LinkedHashSet<String> ret = new LinkedHashSet<String>();
-		Collections.addAll(ret, super.getBeanNamesForType(type));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type)) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedList<String> ret = new LinkedList<String>();
+			Collections.addAll(ret, super.getBeanNamesForType(type));
+			for (String item : ((AbstractApplicationContext) parent).getBeanNamesForType(type)) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret.toArray(new String[ret.size()]);
+		} else {
+			return super.getBeanNamesForType(type);
 		}
-
-		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
 	public String[] getBeanNamesForType(Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
-		if (super.getParent() == null) {
-			return super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
-		}
 
-		LinkedHashSet<String> ret = new LinkedHashSet<String>();
-		Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type, includeNonSingletons, allowEagerInit)) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedList<String> ret = new LinkedList<String>();
+			Collections.addAll(ret, super.getBeanNamesForType(type));
+			for (String item : ((AbstractApplicationContext) parent).getBeanNamesForType(type, includeNonSingletons, allowEagerInit)) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret.toArray(new String[ret.size()]);
+		} else {
+			return super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
 		}
-
-		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
 	public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
-		if (super.getParent() == null) {
-			return super.getBeansOfType(type);
-		}
 
-		LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (Map.Entry<String, T> entry : ((AbstractApplicationContext) ctx).getBeansOfType(type).entrySet()) {
-					if (!ret.containsKey(entry.getKey())) {
-						ret.put(entry.getKey(), entry.getValue());
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type));
+			for (Map.Entry<String, T> entry : ((AbstractApplicationContext) parent).getBeansOfType(type).entrySet()) {
+				if (!ret.containsKey(entry.getKey())) {
+					ret.put(entry.getKey(), entry.getValue());
 				}
 			}
+			return ret;
+		} else {
+			return super.getBeansOfType(type);
 		}
-
-		return ret;
 	}
 
 	@Override
 	public <T> Map<String, T> getBeansOfType(Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) throws BeansException {
-		if (super.getParent() == null) {
-			return super.getBeansOfType(type, includeNonSingletons, allowEagerInit);
-		}
 
-		LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type, includeNonSingletons, allowEagerInit));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (Map.Entry<String, T> entry : ((AbstractApplicationContext) ctx).getBeansOfType(type, includeNonSingletons, allowEagerInit).entrySet()) {
-					if (!ret.containsKey(entry.getKey())) {
-						ret.put(entry.getKey(), entry.getValue());
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type, includeNonSingletons, allowEagerInit));
+			for (Map.Entry<String, T> entry : ((AbstractApplicationContext) parent).getBeansOfType(type, includeNonSingletons, allowEagerInit).entrySet()) {
+				if (!ret.containsKey(entry.getKey())) {
+					ret.put(entry.getKey(), entry.getValue());
 				}
 			}
+			return ret;
+		} else {
+			return super.getBeansOfType(type);
 		}
-
-		return ret;
 	}
 
 	@Override
 	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
-		if (super.getParent() == null) {
-			return super.getBeanNamesForAnnotation(annotationType);
-		}
 
-		LinkedHashSet<String> ret = new LinkedHashSet<String>();
-		Collections.addAll(ret, super.getBeanNamesForAnnotation(annotationType));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForAnnotation(annotationType)) {
-					if (!ret.contains(item)) {
-						ret.add(item);
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedList<String> ret = new LinkedList<String>();
+			Collections.addAll(ret, getBeanNamesForAnnotation(annotationType));
+			for (String item : ((AbstractApplicationContext) parent).getBeanNamesForAnnotation(annotationType)) {
+				if (!ret.contains(item)) {
+					ret.add(item);
 				}
 			}
+			return ret.toArray(new String[ret.size()]);
+		} else {
+			return super.getBeanNamesForAnnotation(annotationType);
 		}
-
-		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
 	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException {
-		if (super.getParent() == null) {
-			return super.getBeansWithAnnotation(annotationType);
-		}
 
-		LinkedHashMap<String, Object> ret = new LinkedHashMap<String, Object>(super.getBeansWithAnnotation(annotationType));
-		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
-			if (ctx instanceof AbstractApplicationContext) {
-				for (Map.Entry<String, Object> entry : ((AbstractApplicationContext) ctx).getBeansWithAnnotation(annotationType).entrySet()) {
-					if (!ret.containsKey(entry.getKey())) {
-						ret.put(entry.getKey(), entry.getValue());
-					}
+		ApplicationContext parent = super.getParent();
+
+		if (parent instanceof AbstractApplicationContext) {
+			LinkedHashMap<String, Object> ret = new LinkedHashMap<String, Object>(super.getBeansWithAnnotation(annotationType));
+			for (Map.Entry<String, Object> entry : ((AbstractApplicationContext) parent).getBeansWithAnnotation(annotationType).entrySet()) {
+				if (!ret.containsKey(entry.getKey())) {
+					ret.put(entry.getKey(), entry.getValue());
 				}
 			}
+			return ret;
+		} else {
+			return super.getBeansWithAnnotation(annotationType);
 		}
-
-		return ret;
 	}
 
+	@Override
+	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType) throws NoSuchBeanDefinitionException {
+		A ret = super.findAnnotationOnBean(beanName, annotationType);
+		if (ret == null) {
+			ApplicationContext parent = super.getParent();
+			if (parent instanceof AbstractApplicationContext) {
+				ret = ((AbstractApplicationContext) parent).findAnnotationOnBean(beanName, annotationType);
+			}
+		}
+		return ret;
+	}
 }
