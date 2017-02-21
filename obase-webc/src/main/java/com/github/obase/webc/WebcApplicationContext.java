@@ -1,7 +1,6 @@
 package com.github.obase.webc;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -36,21 +35,16 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeanFactoryPostProcessors();
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<BeanFactoryPostProcessor> set = new LinkedHashSet<BeanFactoryPostProcessor>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				set.addAll(((AbstractApplicationContext) appctx).getBeanFactoryPostProcessors());
+		LinkedList<BeanFactoryPostProcessor> ret = new LinkedList<BeanFactoryPostProcessor>(super.getBeanFactoryPostProcessors());
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (BeanFactoryPostProcessor item : ((AbstractApplicationContext) ctx).getBeanFactoryPostProcessors()) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
-
-		ArrayList<BeanFactoryPostProcessor> ret = new ArrayList<BeanFactoryPostProcessor>();
-		ret.addAll(set);
 
 		return ret;
 	}
@@ -62,20 +56,18 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getApplicationListeners();
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<ApplicationListener<?>> set = new LinkedHashSet<ApplicationListener<?>>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				set.addAll(((AbstractApplicationContext) appctx).getApplicationListeners());
+		LinkedHashSet<ApplicationListener<?>> ret = new LinkedHashSet<ApplicationListener<?>>(super.getApplicationListeners());
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (ApplicationListener<?> item : ((AbstractApplicationContext) ctx).getApplicationListeners()) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
 
-		return set;
+		return ret;
 	}
 
 	@Override
@@ -85,20 +77,19 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeanNamesForType(type);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<String> set = new LinkedHashSet<String>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				Collections.addAll(set, ((AbstractApplicationContext) appctx).getBeanNamesForType(type));
+		LinkedHashSet<String> ret = new LinkedHashSet<String>();
+		Collections.addAll(ret, super.getBeanNamesForType(type));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type)) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
 
-		return set.toArray(new String[set.size()]);
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
@@ -107,20 +98,19 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeanNamesForType(type);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<String> set = new LinkedHashSet<String>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				Collections.addAll(set, ((AbstractApplicationContext) appctx).getBeanNamesForType(type));
+		LinkedHashSet<String> ret = new LinkedHashSet<String>();
+		Collections.addAll(ret, super.getBeanNamesForType(type));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type)) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
 
-		return set.toArray(new String[set.size()]);
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
@@ -129,20 +119,19 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<String> set = new LinkedHashSet<String>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				Collections.addAll(set, ((AbstractApplicationContext) appctx).getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
+		LinkedHashSet<String> ret = new LinkedHashSet<String>();
+		Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForType(type, includeNonSingletons, allowEagerInit)) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
 
-		return set.toArray(new String[set.size()]);
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
@@ -151,20 +140,18 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeansOfType(type);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashMap<String, T> map = new LinkedHashMap<String, T>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				map.putAll(((AbstractApplicationContext) appctx).getBeansOfType(type));
+		LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (Map.Entry<String, T> entry : ((AbstractApplicationContext) ctx).getBeansOfType(type).entrySet()) {
+					if (!ret.containsKey(entry.getKey())) {
+						ret.put(entry.getKey(), entry.getValue());
+					}
+				}
 			}
 		}
 
-		return map;
+		return ret;
 	}
 
 	@Override
@@ -173,20 +160,18 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeansOfType(type, includeNonSingletons, allowEagerInit);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashMap<String, T> map = new LinkedHashMap<String, T>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				map.putAll(((AbstractApplicationContext) appctx).getBeansOfType(type, includeNonSingletons, allowEagerInit));
+		LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>(super.getBeansOfType(type, includeNonSingletons, allowEagerInit));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (Map.Entry<String, T> entry : ((AbstractApplicationContext) ctx).getBeansOfType(type, includeNonSingletons, allowEagerInit).entrySet()) {
+					if (!ret.containsKey(entry.getKey())) {
+						ret.put(entry.getKey(), entry.getValue());
+					}
+				}
 			}
 		}
 
-		return map;
+		return ret;
 	}
 
 	@Override
@@ -195,20 +180,19 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeanNamesForAnnotation(annotationType);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashSet<String> set = new LinkedHashSet<String>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				Collections.addAll(set, ((AbstractApplicationContext) appctx).getBeanNamesForAnnotation(annotationType));
+		LinkedHashSet<String> ret = new LinkedHashSet<String>();
+		Collections.addAll(ret, super.getBeanNamesForAnnotation(annotationType));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (String item : ((AbstractApplicationContext) ctx).getBeanNamesForAnnotation(annotationType)) {
+					if (!ret.contains(item)) {
+						ret.add(item);
+					}
+				}
 			}
 		}
 
-		return set.toArray(new String[set.size()]);
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	@Override
@@ -217,20 +201,18 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			return super.getBeansWithAnnotation(annotationType);
 		}
 
-		LinkedList<ApplicationContext> stack = new LinkedList<ApplicationContext>();
-		ApplicationContext appctx;
-		for (appctx = this; appctx != null; appctx = appctx.getParent()) {
-			stack.addFirst(appctx);
-		}
-
-		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-		while ((appctx = stack.removeFirst()) != null) {
-			if (appctx instanceof AbstractApplicationContext) {
-				map.putAll(((AbstractApplicationContext) appctx).getBeansWithAnnotation(annotationType));
+		LinkedHashMap<String, Object> ret = new LinkedHashMap<String, Object>(super.getBeansWithAnnotation(annotationType));
+		for (ApplicationContext ctx = this.getParent(); ctx != null; ctx = ctx.getParent()) {
+			if (ctx instanceof AbstractApplicationContext) {
+				for (Map.Entry<String, Object> entry : ((AbstractApplicationContext) ctx).getBeansWithAnnotation(annotationType).entrySet()) {
+					if (!ret.containsKey(entry.getKey())) {
+						ret.put(entry.getKey(), entry.getValue());
+					}
+				}
 			}
 		}
 
-		return map;
+		return ret;
 	}
 
 }
