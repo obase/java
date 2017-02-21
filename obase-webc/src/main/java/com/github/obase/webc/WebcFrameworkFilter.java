@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.GenericTypeResolver;
@@ -78,11 +77,6 @@ public abstract class WebcFrameworkFilter implements Filter {
 			@Override
 			protected final String[] getDefaultConfigLocations() {
 				return null; // ignore empty contextConfigLocation
-			}
-
-			@Override
-			protected BeanFactory getInternalParentBeanFactory() {
-				return getParent(); // FIXBUG: return parent as its beanFactory
 			}
 
 		};
