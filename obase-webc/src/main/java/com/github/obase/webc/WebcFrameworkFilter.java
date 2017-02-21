@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.GenericTypeResolver;
@@ -73,10 +74,17 @@ public abstract class WebcFrameworkFilter implements Filter {
 	protected final WebApplicationContext createAndRefreshWebApplicationContext(WebApplicationContext rootContext) {
 
 		XmlWebApplicationContext wac = new XmlWebApplicationContext() {
+
 			@Override
 			protected final String[] getDefaultConfigLocations() {
 				return null; // ignore empty contextConfigLocation
 			}
+
+			@Override
+			protected BeanFactory getInternalParentBeanFactory() {
+				return getParent(); // FIXBUG: return parent as its beanFactory
+			}
+
 		};
 
 		wac.setParent(rootContext);
@@ -150,8 +158,8 @@ public abstract class WebcFrameworkFilter implements Filter {
 			Class<?> initializerContextClass = GenericTypeResolver.resolveTypeArgument(initializerClass, ApplicationContextInitializer.class);
 			if (initializerContextClass != null) {
 				Assert.isAssignable(initializerContextClass, wac.getClass(),
-						String.format("Could not add context initializer [%s] since its generic parameter [%s] " + "is not assignable from the type of application context used by this " + "framework servlet [%s]: ", initializerClass.getName(),
-								initializerContextClass.getName(), wac.getClass().getName()));
+						String.format("Could not add context initializer [%s] since its generic parameter [%s] " + "is not assignable from the type of application context used by this "
+								+ "framework servlet [%s]: ", initializerClass.getName(), initializerContextClass.getName(), wac.getClass().getName()));
 			}
 			return BeanUtils.instantiateClass(initializerClass, ApplicationContextInitializer.class);
 		} catch (Exception ex) {

@@ -145,7 +145,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 				parser = new SpelExpressionParser();
 			}
 			Expression expr = parser.parseExpression(value.substring(2, value.length() - 1));
-			return expr.getExpressionString();
+			Object obj = expr.getValue();
+			return obj == null ? null : obj.toString();
 		} else {
 			return value;
 		}
