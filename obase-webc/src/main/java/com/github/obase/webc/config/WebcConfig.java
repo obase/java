@@ -6,43 +6,38 @@ import java.util.List;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 
-import org.springframework.web.context.ContextLoader;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.github.obase.WrappedException;
 import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.AuthType;
 
-@JacksonXmlRootElement(localName = WebcConfig.ROOT)
 public class WebcConfig {
 
-	public static final String ROOT = "webc";
-	public static final String NAMESPACE = "namespace";
-	public static final String CONTEXT_CONFIG_LOCATION = ContextLoader.CONFIG_LOCATION_PARAM;
-	public static final String ASYNC_LISTENER = "asyncListener";
-	public static final String TIMEOUT_SECOND = "timeoutSecond"; // seconds
-	public static final String SEND_ERROR = "sendError";
-	public static final String CONTROL_PREFIX = "controlPrefix";
-	public static final String CONTROL_SUFFIX = "controlSuffix";
-	public static final String CONTROL_PROCESSOR = "controlProcessor";
-	public static final String WSID_TOKEN_BASE = "wsidTokenBase";
-	public static final String DEFAULT_AUTH_TYPE = "defaultAuthType";
-	public static final String REFERER_DOMAIN = "refererDomain";
+	public static interface Props {
+		String webc = "webc";
+		String withoutApplicationContext = "withoutApplicationContext";
+		String withoutServletContext = "withoutServletContext";
+		String withoutServiceContext = "withoutServiceContext";
+		String contextConfigLocation = "contextConfigLocation";
+		String servlet = "servlet";
+		String service = "service";
+		String namespace = "namespace";
+		String asyncListener = "asyncListener";
+		String timeoutSecond = "timeoutSecond";
+		String sendError = "sendError";
+		String controlProcessor = "controlProcessor";
+		String controlPrefix = "controlPrefix";
+		String controlSuffix = "controlSuffix";
+		String wsidTokenBase = "wsidTokenBase";
+		String defaultAuthType = "defaultAuthType";
+		String refererDomain = "refererDomain";
+	}
 
 	public boolean withoutApplicationContext;
 	public boolean withoutServletContext;
 	public boolean withoutServiceContext;
 	public String contextConfigLocation;
-
-	@JacksonXmlElementWrapper(useWrapping = false)
-	@JsonProperty(value = "servlet")
 	public final List<FilterInitParam> servlets = new LinkedList<FilterInitParam>();
-
-	@JacksonXmlElementWrapper(useWrapping = false)
-	@JsonProperty(value = "service")
 	public final List<FilterInitParam> services = new LinkedList<FilterInitParam>();
 
 	public static class FilterInitParam {
@@ -61,7 +56,7 @@ public class WebcConfig {
 
 	public static void encodeContextInitParam(ServletContext servletContext, WebcConfig config) {
 		if (StringKit.isNotEmpty(config.contextConfigLocation)) {
-			servletContext.setInitParameter(CONTEXT_CONFIG_LOCATION, config.contextConfigLocation);
+			servletContext.setInitParameter(Props.contextConfigLocation, config.contextConfigLocation);
 		}
 	}
 
@@ -71,20 +66,20 @@ public class WebcConfig {
 	public static FilterInitParam decodeFilterInitParam(javax.servlet.FilterConfig filterConfig) {
 
 		FilterInitParam ret = new FilterInitParam();
-		ret.namespace = getStringParam(filterConfig, NAMESPACE, null);
-		ret.contextConfigLocation = getStringParam(filterConfig, CONTEXT_CONFIG_LOCATION, null);
-		ret.asyncListener = getStringParam(filterConfig, ASYNC_LISTENER, null);
-		ret.timeoutSecond = getIntParam(filterConfig, TIMEOUT_SECOND, 0);
-		ret.sendError = getBooleanParam(filterConfig, SEND_ERROR, false);
-		ret.controlProcessor = getStringParam(filterConfig, CONTROL_PROCESSOR, null);
-		ret.controlPrefix = getStringParam(filterConfig, CONTROL_PREFIX, null);
-		ret.controlSuffix = getStringParam(filterConfig, CONTROL_SUFFIX, null);
-		ret.wsidTokenBase = getIntParam(filterConfig, WSID_TOKEN_BASE, 0);
-		String authTypeStr = getStringParam(filterConfig, DEFAULT_AUTH_TYPE, null);
+		ret.namespace = getStringParam(filterConfig, Props.namespace, null);
+		ret.contextConfigLocation = getStringParam(filterConfig, Props.contextConfigLocation, null);
+		ret.asyncListener = getStringParam(filterConfig, Props.asyncListener, null);
+		ret.timeoutSecond = getIntParam(filterConfig, Props.timeoutSecond, 0);
+		ret.sendError = getBooleanParam(filterConfig, Props.sendError, false);
+		ret.controlProcessor = getStringParam(filterConfig, Props.controlProcessor, null);
+		ret.controlPrefix = getStringParam(filterConfig, Props.controlPrefix, null);
+		ret.controlSuffix = getStringParam(filterConfig, Props.controlSuffix, null);
+		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
+		String authTypeStr = getStringParam(filterConfig, Props.asyncListener, null);
 		if (authTypeStr != null) {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
 		}
-		ret.refererDomain = getStringParam(filterConfig, REFERER_DOMAIN, null);
+		ret.refererDomain = getStringParam(filterConfig, Props.refererDomain, null);
 
 		return ret;
 	}
@@ -92,46 +87,46 @@ public class WebcConfig {
 	public static void encodeFilterInitParam(FilterRegistration.Dynamic dynamic, FilterInitParam param) {
 
 		if (StringKit.isNotEmpty(param.namespace)) {
-			dynamic.setInitParameter(NAMESPACE, param.namespace);
+			dynamic.setInitParameter(Props.namespace, param.namespace);
 		}
 
 		if (StringKit.isNotEmpty(param.contextConfigLocation)) {
-			dynamic.setInitParameter(CONTEXT_CONFIG_LOCATION, param.contextConfigLocation);
+			dynamic.setInitParameter(Props.contextConfigLocation, param.contextConfigLocation);
 		}
 
 		if (param.asyncListener != null) {
-			dynamic.setInitParameter(ASYNC_LISTENER, param.asyncListener);
+			dynamic.setInitParameter(Props.asyncListener, param.asyncListener);
 		}
 
 		if (param.timeoutSecond != 0) {
-			dynamic.setInitParameter(TIMEOUT_SECOND, String.valueOf(param.timeoutSecond));
+			dynamic.setInitParameter(Props.timeoutSecond, String.valueOf(param.timeoutSecond));
 		}
 
 		if (param.sendError) {
-			dynamic.setInitParameter(SEND_ERROR, String.valueOf(param.sendError));
+			dynamic.setInitParameter(Props.sendError, String.valueOf(param.sendError));
 		}
 
 		if (param.controlProcessor != null) {
-			dynamic.setInitParameter(CONTROL_PROCESSOR, param.controlProcessor);
+			dynamic.setInitParameter(Props.controlProcessor, param.controlProcessor);
 		}
 
 		if (StringKit.isNotEmpty(param.controlPrefix)) {
-			dynamic.setInitParameter(CONTROL_PREFIX, param.controlPrefix);
+			dynamic.setInitParameter(Props.controlPrefix, param.controlPrefix);
 		}
 
 		if (StringKit.isNotEmpty(param.controlSuffix)) {
-			dynamic.setInitParameter(CONTROL_PREFIX, param.controlSuffix);
+			dynamic.setInitParameter(Props.controlSuffix, param.controlSuffix);
 		}
 
 		if (param.wsidTokenBase != 0) {
-			dynamic.setInitParameter(WSID_TOKEN_BASE, String.valueOf(param.wsidTokenBase));
+			dynamic.setInitParameter(Props.wsidTokenBase, String.valueOf(param.wsidTokenBase));
 		}
 
 		if (param.defaultAuthType != null) {
-			dynamic.setInitParameter(DEFAULT_AUTH_TYPE, param.defaultAuthType.name());
+			dynamic.setInitParameter(Props.defaultAuthType, param.defaultAuthType.name());
 		}
 		if (param.refererDomain != null) {
-			dynamic.setInitParameter(REFERER_DOMAIN, param.refererDomain);
+			dynamic.setInitParameter(Props.refererDomain, param.refererDomain);
 		}
 	}
 
