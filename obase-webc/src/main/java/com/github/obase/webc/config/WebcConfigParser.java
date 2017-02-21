@@ -9,10 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.xml.sax.Attributes;
-<<<<<<< HEAD
 import org.xml.sax.InputSource;
-=======
->>>>>>> branch 'master' of ssh://git@github.com/obase/java.git
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
