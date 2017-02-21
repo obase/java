@@ -16,7 +16,6 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 
 /**
  * Override the BeanFactory methods to cascade the corresponding logical.
- *
  */
 class WebcApplicationContext extends XmlWebApplicationContext {
 
