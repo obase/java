@@ -72,7 +72,7 @@ public abstract class WebcFrameworkFilter implements Filter {
 
 	protected final WebApplicationContext createAndRefreshWebApplicationContext(WebApplicationContext rootContext) {
 
-		XmlWebApplicationContext wac = new WebcApplicationContext(); // use custom application context
+		XmlWebApplicationContext wac = new WebcProxyApplicationContext(); // use custom application context
 
 		wac.setParent(rootContext);
 		wac.setConfigLocation(this.filterConfig.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM)); // contextConfigLocation
