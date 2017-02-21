@@ -91,7 +91,7 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			BeanFactory parent = super.getParentBeanFactory();
 			if (parent instanceof ListableBeanFactory) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type));
+				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				return ret.toArray(new String[ret.size()]);
 			} else {
