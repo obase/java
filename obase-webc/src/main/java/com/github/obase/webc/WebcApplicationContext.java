@@ -37,7 +37,7 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public boolean containsBeanDefinition(String beanName) {
-			boolean ret = super.containsBean(beanName);
+			boolean ret = super.containsBeanDefinition(beanName);
 			if (!ret) {
 				BeanFactory parent = super.getParentBeanFactory();
 				if (parent instanceof ListableBeanFactory) {
@@ -91,7 +91,7 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 			BeanFactory parent = super.getParentBeanFactory();
 			if (parent instanceof ListableBeanFactory) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type));
+				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				return ret.toArray(new String[ret.size()]);
 			} else {
