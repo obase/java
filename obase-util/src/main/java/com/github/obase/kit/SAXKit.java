@@ -55,11 +55,19 @@ public final class SAXKit {
 		}
 	}
 
+<<<<<<< HEAD
 	public static boolean parse(String uri, DefaultHandler handler) {
 
 		try {
 			SAXParser parser = parser();
 			parser.parse(uri, handler);
+=======
+	public static boolean parse(String xml, DefaultHandler handler) {
+
+		try {
+			SAXParser parser = parser();
+			parser.parse(xml, handler);
+>>>>>>> branch 'master' of ssh://git@github.com/obase/java.git
 			return true;
 		} catch (Exception e) {
 			throw new WrappedException("Parse xml with handler failed: " + handler, e);
