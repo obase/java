@@ -36,31 +36,6 @@ class WebcApplicationContext extends XmlWebApplicationContext {
 		}
 
 		@Override
-		public boolean containsBeanDefinition(String beanName) {
-			boolean ret = super.containsBeanDefinition(beanName);
-			if (!ret) {
-				BeanFactory parent = super.getParentBeanFactory();
-				if (parent instanceof ListableBeanFactory) {
-					ret = ((ListableBeanFactory) parent).containsBeanDefinition(beanName);
-				}
-			}
-			return ret;
-		}
-
-		@Override
-		public String[] getBeanDefinitionNames() {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
-				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, super.getBeanDefinitionNames());
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanDefinitionNames());
-				return ret.toArray(new String[ret.size()]);
-			} else {
-				return super.getBeanDefinitionNames();
-			}
-		}
-
-		@Override
 		public String[] getBeanNamesForType(ResolvableType type) {
 			BeanFactory parent = super.getParentBeanFactory();
 			if (parent instanceof ListableBeanFactory) {
