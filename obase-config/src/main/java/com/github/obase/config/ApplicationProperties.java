@@ -31,6 +31,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -131,7 +132,7 @@ import redis.clients.jedis.JedisPool;
  * 
  * </pre>
  */
-public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, ApplicationListener<ContextRefreshedEvent>, DisposableBean {
+public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, DisposableBean {
 
 	private static final Log logger = LogFactory.getLog(ApplicationProperties.class);
 
@@ -283,9 +284,11 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		propertyChangeListenerMap.remove(propertyName);
 	}
 
-	// 静态配置处理
+	/**
+	 * Initial component
+	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void afterPropertiesSet() throws Exception {
 
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		// 先解析
@@ -373,6 +376,12 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				}
 			}
 		}
+
+	}
+
+	// 静态配置处理
+	@Override
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
 		// 替换配置${...}
 		if (!ignorePropertyPlaceholder) {

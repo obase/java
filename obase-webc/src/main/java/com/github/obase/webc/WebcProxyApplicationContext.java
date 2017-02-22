@@ -31,16 +31,18 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 	static class WebcDefaultListableBeanFactory extends DefaultListableBeanFactory {
 
+		final boolean parentIsListable;
+
 		WebcDefaultListableBeanFactory(BeanFactory parentBeanFactory) {
 			super(parentBeanFactory);
+			parentIsListable = parentBeanFactory instanceof ListableBeanFactory;
 		}
 
 		@Override
 		public String[] getBeanNamesForType(ResolvableType type) {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type));
+				Collections.addAll(ret, ((ListableBeanFactory) super.getParentBeanFactory()).getBeanNamesForType(type));
 				Collections.addAll(ret, super.getBeanNamesForType(type));
 				return ret.toArray(new String[ret.size()]);
 			} else {
@@ -50,10 +52,9 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public String[] getBeanNamesForType(Class<?> type) {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type));
+				Collections.addAll(ret, ((ListableBeanFactory) super.getParentBeanFactory()).getBeanNamesForType(type));
 				Collections.addAll(ret, super.getBeanNamesForType(type));
 				return ret.toArray(new String[ret.size()]);
 			} else {
@@ -63,10 +64,9 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public String[] getBeanNamesForType(Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
+				Collections.addAll(ret, ((ListableBeanFactory) super.getParentBeanFactory()).getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				return ret.toArray(new String[ret.size()]);
 			} else {
@@ -76,10 +76,9 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>();
-				ret.putAll(((ListableBeanFactory) parent).getBeansOfType(type));
+				ret.putAll(((ListableBeanFactory) super.getParentBeanFactory()).getBeansOfType(type));
 				ret.putAll(super.getBeansOfType(type));
 				return ret;
 			} else {
@@ -90,10 +89,9 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public <T> Map<String, T> getBeansOfType(Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) throws BeansException {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashMap<String, T> ret = new LinkedHashMap<String, T>();
-				ret.putAll(((ListableBeanFactory) parent).getBeansOfType(type, includeNonSingletons, allowEagerInit));
+				ret.putAll(((ListableBeanFactory) super.getParentBeanFactory()).getBeansOfType(type, includeNonSingletons, allowEagerInit));
 				ret.putAll(super.getBeansOfType(type, includeNonSingletons, allowEagerInit));
 				return ret;
 			} else {
@@ -104,10 +102,9 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 		@Override
 		public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
 
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+			if (parentIsListable) {
 				LinkedHashSet<String> ret = new LinkedHashSet<String>();
-				Collections.addAll(ret, ((ListableBeanFactory) parent).getBeanNamesForAnnotation(annotationType));
+				Collections.addAll(ret, ((ListableBeanFactory) super.getParentBeanFactory()).getBeanNamesForAnnotation(annotationType));
 				Collections.addAll(ret, super.getBeanNamesForAnnotation(annotationType));
 				return ret.toArray(new String[ret.size()]);
 			} else {
@@ -117,10 +114,10 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 
 		@Override
 		public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException {
-			BeanFactory parent = super.getParentBeanFactory();
-			if (parent instanceof ListableBeanFactory) {
+
+			if (parentIsListable) {
 				LinkedHashMap<String, Object> ret = new LinkedHashMap<String, Object>();
-				ret.putAll(((ListableBeanFactory) parent).getBeansWithAnnotation(annotationType));
+				ret.putAll(((ListableBeanFactory) super.getParentBeanFactory()).getBeansWithAnnotation(annotationType));
 				ret.putAll(super.getBeansWithAnnotation(annotationType));
 				return ret;
 			} else {
