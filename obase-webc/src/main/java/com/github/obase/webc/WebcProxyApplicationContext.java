@@ -70,7 +70,7 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 				Collections.addAll(ret, super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit));
 				return ret.toArray(new String[ret.size()]);
 			} else {
-				return super.getBeanNamesForType(type);
+				return super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
 			}
 		}
 
@@ -95,7 +95,7 @@ class WebcProxyApplicationContext extends XmlWebApplicationContext {
 				ret.putAll(super.getBeansOfType(type, includeNonSingletons, allowEagerInit));
 				return ret;
 			} else {
-				return super.getBeansOfType(type);
+				return super.getBeansOfType(type, includeNonSingletons, allowEagerInit);
 			}
 		}
 
