@@ -27,7 +27,6 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.github.obase.webc.config.WebcConfig;
 
@@ -45,7 +44,7 @@ public abstract class WebcFrameworkFilter implements Filter {
 
 	protected FilterConfig filterConfig;
 	protected ServletContext servletContext;
-	protected WebApplicationContext applicationContext;
+	protected WebcProxyApplicationContext applicationContext;
 
 	protected com.github.obase.webc.config.WebcConfig.FilterInitParam params;
 
@@ -60,7 +59,7 @@ public abstract class WebcFrameworkFilter implements Filter {
 
 		// init application context
 		String ctxAttrName = getFilterContextAttributeName();
-		this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(this.servletContext, ctxAttrName);
+		this.applicationContext = (WebcProxyApplicationContext) WebApplicationContextUtils.getWebApplicationContext(this.servletContext, ctxAttrName);
 		if (this.applicationContext == null) {
 			this.applicationContext = createAndRefreshWebApplicationContext(WebApplicationContextUtils.getWebApplicationContext(this.servletContext));
 			this.servletContext.setAttribute(ctxAttrName, this.applicationContext);
@@ -70,9 +69,9 @@ public abstract class WebcFrameworkFilter implements Filter {
 		initFrameworkFilter();
 	}
 
-	protected final WebApplicationContext createAndRefreshWebApplicationContext(WebApplicationContext rootContext) {
+	protected final WebcProxyApplicationContext createAndRefreshWebApplicationContext(WebApplicationContext rootContext) {
 
-		XmlWebApplicationContext wac = new WebcProxyApplicationContext(); // use custom application context
+		WebcProxyApplicationContext wac = new WebcProxyApplicationContext(); // use custom application context
 
 		wac.setParent(rootContext);
 		wac.setConfigLocation(this.filterConfig.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM)); // contextConfigLocation
