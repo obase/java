@@ -210,7 +210,6 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	}
 
 	public ServletMethodHandler newServletMethodHandler(DelegateClassLoader loader, Method method, Object bean, ServletMethodFilter... filters) {
-
 		String className = bean.getClass().getCanonicalName() + "__" + method.getName();
 		Class<?> c;
 		try {
