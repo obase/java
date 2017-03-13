@@ -50,7 +50,7 @@ public abstract class CryptoClassLoader extends ClassLoader implements BeanFacto
 		} catch (ClassNotFoundException e) {
 			InputStream in = null;
 			try {
-				in = ClassKit.getResourceAsStream(ClassKit.getClassPathFromClassName(getEncryptClassName(name)));
+				in = ClassKit.getResourceAsStream(getEncryptClassPath(name));
 				if (in != null) {
 					byte[] bytes = decrptBytes(passwd, readStreamBytes(in));
 					return super.defineClass(name, bytes, 0, bytes.length);
@@ -90,7 +90,7 @@ public abstract class CryptoClassLoader extends ClassLoader implements BeanFacto
 					byte[] buf = readStreamBytes(zis);
 					if (ze.getName().endsWith(".class")) {
 						buf = encrptBytes(passwd, buf);
-						ze = new ZipEntry(getEncryptEntryName(ze));
+						ze = new ZipEntry(getEncryptEntryPath(ze));
 					}
 					zos.putNextEntry(ze);
 					zos.write(buf);
@@ -118,15 +118,12 @@ public abstract class CryptoClassLoader extends ClassLoader implements BeanFacto
 		return baos.toByteArray();
 	}
 
-	protected static String getEncryptEntryName(ZipEntry ze) {
-		StringBuilder sb = new StringBuilder(ze.getName());
-		int pos = sb.lastIndexOf(".class");
-		sb.insert(pos, ENCRY_CLASS_SUFFIX);
-		return sb.toString();
+	protected static String getEncryptEntryPath(ZipEntry ze) {
+		return new StringBuilder(128).append(ze.getName()).append(ENCRY_CLASS_SUFFIX).toString();
 	}
 
-	protected static String getEncryptClassName(String className) {
-		return className + ENCRY_CLASS_SUFFIX;
+	protected static String getEncryptClassPath(String className) {
+		return new StringBuilder(128).append("/").append(className.replace('.', '/')).append(".class").append(ENCRY_CLASS_SUFFIX).toString();
 	}
 
 	protected abstract byte[] encrptBytes(String passwd, byte[] bytes) throws Exception;
