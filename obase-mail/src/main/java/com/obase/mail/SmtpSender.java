@@ -29,42 +29,43 @@ public class SmtpSender {
 	static final String Encoding = "B";
 	static final String HtmlContentType = "text/html;charset=utf8";
 
-	private static Properties getCommonProperties() {
-		Properties props = new Properties();
-		// props.setProperty("mail.transport.protocol", "smtp");
-		// props.setProperty("mail.smtp.host", "smtp.163.com");
-		// props.setProperty("mail.smtp.port", "25");
-		// props.setProperty("mail.smtp.auth", "true");
-		// props.setProperty("mail.smtp.user", "xxxx@163.com");
-		// props.setProperty("mail.smtp.pass", "xxxx");
-		// props.setProperty("mail.smtp.from", "xxxx@163.com");
-		// props.setProperty("mail.smtp.personal", "升龙系统");
-
-		props.setProperty("mail.transport.protocol", "smtp");
-		props.setProperty("mail.smtp.host", "smtp.game.yy.com");
-		props.setProperty("mail.smtp.port", "25");
-		props.setProperty("mail.smtp.auth", "false");
-		return props;
-	}
-
 	/**
 	 * 获取发信Session.
 	 * 
 	 * @return
 	 */
-	public static Session getSession(String from, String personal) {
-		Properties props = getCommonProperties();
-		props.setProperty("mail.smtp.from", from);
-		props.setProperty("mail.smtp.personal", personal);
-		return Session.getInstance(props);
-	}
-
-	public static Session getSession(String from, String[] replyTo, String personal) {
-		Properties props = getCommonProperties();
-		props.setProperty("mail.smtp.from", from);
-		props.setProperty("mail.smtp.personal", personal);
-		if (replyTo != null) {
-			props.setProperty("mail.smtp.reply-to", join(replyTo));
+	public static Session getSession(Envelope env) {
+		Properties props = new Properties();
+		props.setProperty("mail.transport.protocol", "smtp");
+		if (env.host != null) {
+			props.setProperty("mail.smtp.host", env.host);
+		}
+		if (env.port != null) {
+			props.setProperty("mail.smtp.port", env.port.toString());
+		}
+		if (env.auth != null) {
+			props.setProperty("mail.smtp.auth", env.auth.toString());
+		}
+		if (env.user != null) {
+			props.setProperty("mail.smtp.user", env.user);
+		}
+		if (env.pass != null) {
+			props.setProperty("mail.smtp.pass", env.pass);
+		}
+		if (env.from != null) {
+			props.setProperty("mail.smtp.from", env.from);
+		}
+		if (env.personal != null) {
+			props.setProperty("mail.smtp.personal", env.personal);
+		}
+		if (env.from != null) {
+			props.setProperty("mail.smtp.from", env.from);
+		}
+		if (env.personal != null) {
+			props.setProperty("mail.smtp.personal", env.personal);
+		}
+		if (env.replyTo != null) {
+			props.setProperty("mail.smtp.reply-to", join(env.replyTo));
 		}
 		return Session.getInstance(props);
 	}
