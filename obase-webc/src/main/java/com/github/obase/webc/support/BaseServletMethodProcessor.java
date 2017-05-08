@@ -113,7 +113,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	 * uniform lookup path rule
 	 */
 	@Override
-	public final String lookup(Controller classAnnotation, Class<?> targetClass, ServletMethod methodAnnotation, String methodName) {
+	public String lookup(Controller classAnnotation, Class<?> targetClass, ServletMethod methodAnnotation, String methodName) {
 
 		StringBuilder sb = new StringBuilder(512);
 		if (!Webc.$.equals(classAnnotation.value())) {
@@ -148,35 +148,44 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 					}
 				}
 
-				int pos = sb.lastIndexOf(".") + 1;
-				char ch = sb.charAt(pos);
-				if (ch >= 'A' && ch <= 'Z') {
-					ch -= ('A' - 'a');
-					sb.setCharAt(pos, ch);
+				int pos = -1;
+				for (int i = 0, n = sb.length(); i < n; i++) {
+					if (sb.charAt(i) == '.') {
+						pos = i;
+						sb.setCharAt(i, '/');
+					}
+				}
+				if (pos != -1) {
+					pos++;
+					char ch = sb.charAt(pos);
+					if (ch >= 'A' && ch <= 'Z') {
+						ch -= ('A' - 'a');
+						sb.setCharAt(pos, ch);
+					}
 				}
 
 			} else {
 				sb.append(classAnnotation.value());
 			}
 
-			if (sb.charAt(0) != '.') {
-				sb.insert(0, '.');
+			if (sb.charAt(0) != '/') {
+				sb.insert(0, '/');
 			}
 
-			if (sb.charAt(sb.length() - 1) == '.') {
+			if (sb.charAt(sb.length() - 1) == '/') {
 				sb.deleteCharAt(sb.length() - 1);
 			}
 		}
 
 		if (!Webc.$.equals(methodAnnotation.value())) {
 			if (StringKit.isEmpty(methodAnnotation.value())) {
-				sb.append('.').append(methodName);
+				sb.append('/').append(methodName);
 			} else {
-				sb.append('.').append(methodAnnotation.value());
+				sb.append('/').append(methodAnnotation.value());
 			}
 		}
 
-		return sb.toString().replace('.', '/');
+		return sb.toString();
 	}
 
 	/**
