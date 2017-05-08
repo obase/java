@@ -12,9 +12,11 @@ import java.util.Set;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -34,7 +36,7 @@ public class SmtpSender {
 	 * 
 	 * @return
 	 */
-	public static Session getSession(Envelope env) {
+	public static Session getSession(final Envelope env) {
 		Properties props = new Properties();
 		props.setProperty("mail.transport.protocol", "smtp");
 		if (env.host != null) {
@@ -46,18 +48,6 @@ public class SmtpSender {
 		if (env.auth != null) {
 			props.setProperty("mail.smtp.auth", env.auth.toString());
 		}
-		if (env.user != null) {
-			props.setProperty("mail.smtp.user", env.user);
-		}
-		if (env.pass != null) {
-			props.setProperty("mail.smtp.pass", env.pass);
-		}
-		if (env.from != null) {
-			props.setProperty("mail.smtp.from", env.from);
-		}
-		if (env.personal != null) {
-			props.setProperty("mail.smtp.personal", env.personal);
-		}
 		if (env.from != null) {
 			props.setProperty("mail.smtp.from", env.from);
 		}
@@ -67,6 +57,15 @@ public class SmtpSender {
 		if (env.replyTo != null) {
 			props.setProperty("mail.smtp.reply-to", join(env.replyTo));
 		}
+
+		if (Boolean.TRUE.equals(env.auth)) {
+			return Session.getInstance(props, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(env.user, env.pass);
+				}
+			});
+		}
+
 		return Session.getInstance(props);
 	}
 
