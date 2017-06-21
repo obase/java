@@ -4,36 +4,20 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Random;
 
+import com.github.obase.kit.StringKit;
+import com.github.obase.kit.StringKit.Split;
+
 public class CreateRndInteger {
 
 	/**
 	 * 王海平
 	 */
 	public static void main(String[] args) {
-
-		System.out.println(2L << 31 - 1);
-		// TODO 自动生成的方法存根
-		try {
-			System.out.println("随机产生一个长整数!!");
-			System.out.println("请输入一个1到63中间的任意一个整数：");
-			BufferedReader br1 = new BufferedReader(new InputStreamReader(System.in));
-			int num1 = Integer.parseInt(br1.readLine());
-			long RndInteger;
-			if (num1 >= 0 || num1 < 64) {
-				for (int i = 0;; i++) {
-					RndInteger = CreateRndInteger(num1);
-					if (isPrime1(RndInteger) == 1) {
-						break;
-					}
-
-				}
-				System.out.println("随机产生" + num1 + "bit的质数是：" + RndInteger);
-
-			} else {
-				System.out.print("输入的数不再正确的区间");
-			}
-		} catch (Exception e) {
-			System.out.print("输入的不是正确的数据");
+		String str = "0b0c0";
+		System.out.println(StringKit.split2List(str, "0c", false));
+		Split s = Split.wrap(str, '0');
+		for (String i = null; (i = s.next()) != null;) {
+			System.out.println(">>" + i);
 		}
 	}
 
