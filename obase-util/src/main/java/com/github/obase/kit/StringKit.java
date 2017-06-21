@@ -1,6 +1,5 @@
 package com.github.obase.kit;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,59 +54,56 @@ public class StringKit {
 		return st < len;
 	}
 
-	static final String[] EMPTY_ARRAY = new String[0];
-	static final List<String> EMPTY_LIST = Collections.emptyList();
-
 	public static String[] split(String val, char sep, boolean ignoreEmptyTokens) {
-		if (val.length() > 0) {
-			List<String> list = split2List(val, sep, ignoreEmptyTokens);
-			return list.toArray(new String[list.size()]);
-		}
-		return EMPTY_ARRAY;
+		List<String> list = split2List(val, sep, ignoreEmptyTokens);
+		return list == null ? null : list.toArray(new String[list.size()]);
 	}
 
 	public static List<String> split2List(String val, char sep, boolean ignoreEmptyTokens) {
-		if (val.length() > 0) {
-			LinkedList<String> list = new LinkedList<String>();
-			int vlen = val.length(), mark = 0, pos = 0;
-			while (pos < vlen && (pos = val.indexOf(sep, mark)) != -1) {
-				if (mark < pos || !ignoreEmptyTokens) {
-					list.add(val.substring(mark, pos));
+
+		LinkedList<String> list = new LinkedList<String>();
+		for (int vlen = val.length(), mark = 0, next = 0; true;) {
+			next = val.indexOf(sep, mark);
+			if (next != -1) {
+				if (mark < next || !ignoreEmptyTokens) {
+					list.add(val.substring(mark, next));
 				}
-				pos = mark = pos + 1;
+				mark = next + 1;
+			} else {
+				if (mark < vlen || !ignoreEmptyTokens) {
+					list.add(val.substring(mark));
+				}
+				break;
 			}
-			if (mark < vlen) {
-				list.add(val.substring(mark));
-			}
-			return list;
 		}
-		return EMPTY_LIST;
+
+		return list;
 	}
 
 	public static String[] split(String val, String sep, boolean ignoreEmptyTokens) {
-		if (val.length() > 0) {
-			List<String> list = split2List(val, sep, ignoreEmptyTokens);
-			return list.toArray(new String[list.size()]);
-		}
-		return EMPTY_ARRAY;
+		List<String> list = split2List(val, sep, ignoreEmptyTokens);
+		return list == null ? null : list.toArray(new String[list.size()]);
 	}
 
 	public static List<String> split2List(String val, String sep, boolean ignoreEmptyTokens) {
-		if (val.length() > 0) {
-			LinkedList<String> list = new LinkedList<String>();
-			int vlen = val.length(), slen = sep.length(), mark = 0, pos = 0;
-			while (pos < vlen && (pos = val.indexOf(sep, mark)) != -1) {
-				if (mark < pos || !ignoreEmptyTokens) {
-					list.add(val.substring(mark, pos));
+
+		LinkedList<String> list = new LinkedList<String>();
+		for (int vlen = val.length(), slen = sep.length(), mark = 0, next = 0; true;) {
+			next = val.indexOf(sep, mark);
+			if (next == -1) {
+				if (mark < vlen || !ignoreEmptyTokens) {
+					list.add(val.substring(mark));
 				}
-				pos = mark = pos + slen;
+				break;
+			} else {
+				if (mark < vlen || !ignoreEmptyTokens) {
+					list.add(val.substring(mark, next));
+				}
+				mark = next + slen;
 			}
-			if (mark < vlen) {
-				list.add(val.substring(mark));
-			}
-			return list;
 		}
-		return EMPTY_LIST;
+
+		return list;
 	}
 
 	public static String join(String[] val, char sep, boolean ignoreEmptyTokens) {
@@ -209,16 +205,14 @@ public class StringKit {
 	public static class Join {
 
 		final char sep;
-		final String nil;
 		final LinkedList<String> list = new LinkedList<String>();
 
-		Join(char sep, String nil) {
+		Join(char sep) {
 			this.sep = sep;
-			this.nil = nil;
 		}
 
-		public static Join one(char sep, String nil) {
-			return new Join(sep, nil);
+		public static Join build(char sep) {
+			return new Join(sep);
 		}
 
 		public Join join(String val) {
@@ -230,13 +224,9 @@ public class StringKit {
 			if (list.isEmpty()) {
 				return "";
 			}
-			int len = 0;
+			StringBuilder sb = new StringBuilder(list.size() * 64 + 8);
 			for (String itm : list) {
-				len += (itm == null) ? nil.length() : itm.length();
-			}
-			StringBuilder sb = new StringBuilder(len + list.size() + 16);
-			for (String itm : list) {
-				sb.append(itm == null ? nil : itm).append(sep);
+				sb.append(itm).append(sep);
 			}
 			sb.setLength(sb.length() - 1);
 			return sb.toString();
@@ -246,34 +236,32 @@ public class StringKit {
 	public static class Split {
 
 		final char sep;
-		final String nil;
 		final String text;
 		int mark;
 
-		Split(char sep, String nil, String text) {
+		Split(String text, char sep) {
 			this.sep = sep;
-			this.nil = nil;
 			this.text = text;
 		}
 
-		public static Split one(char sep, String nil, String text) {
-			return new Split(sep, nil, text);
+		public static Split wrap(String text, char sep) {
+			return new Split(text, sep);
 		}
 
 		public String next() {
-			if (mark < text.length()) {
-				String val;
-				int pos = text.indexOf(sep, mark);
-				if (pos == -1) {
-					val = text.substring(mark);
-					mark = text.length();
+
+			String ret = null;
+			if (mark != -1) {
+				int next = text.indexOf(sep, mark);
+				if (next != -1) {
+					ret = text.substring(mark, next);
+					mark = next + 1;
 				} else {
-					val = text.substring(mark, pos);
-					mark = pos + 1;
+					ret = text.substring(mark);
+					mark = -1;
 				}
-				return StringKit.equals(val, nil) ? null : val;
 			}
-			return null;
+			return ret;
 		}
 	}
 

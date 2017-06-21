@@ -92,21 +92,21 @@ public class UserPrincipal implements Principal {
 
 	@Override
 	public String encode() {
-		Join j = Join.one('\001', "\002");
-		j.join(passport);
-		j.join(realname);
-		j.join(nickname);
-		j.join(deptname);
-		j.join(email);
-		j.join(phone);
-		j.join(jobCode);
+		Join j = Join.build('\001');
+		j.join(nvlv(passport));
+		j.join(nvlv(realname));
+		j.join(nvlv(nickname));
+		j.join(nvlv(deptname));
+		j.join(nvlv(email));
+		j.join(nvlv(phone));
+		j.join(nvlv(jobCode));
 		j.join(Integer.toString(level));
 		return j.toString();
 	}
 
 	@Override
 	public Principal decode(String text) {
-		Split s = Split.one('\001', "\002", text);
+		Split s = Split.wrap(text, '\001');
 		passport = s.next();
 		realname = s.next();
 		nickname = s.next();
@@ -118,4 +118,7 @@ public class UserPrincipal implements Principal {
 		return this;
 	}
 
+	private String nvlv(String val) {
+		return val == null ? "" : val;
+	}
 }
