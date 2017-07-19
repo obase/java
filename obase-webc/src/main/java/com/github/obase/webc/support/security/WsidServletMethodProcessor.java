@@ -84,7 +84,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			String tk = Kits.readCookie(request, Wsid.COOKIE_NAME);
 			Wsid wsid;
 			if (tk == null || (wsid = Wsid.decode(tk)) == null) {
-				wsid = tryOssLogin(request);
+				wsid = tryOssLogin(request, response);
 				if (wsid == null) {
 					redirectLoginPage(request, response);
 					return null;
@@ -138,7 +138,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	/**
 	 * Override for subclass
 	 */
-	protected Wsid tryOssLogin(HttpServletRequest request) throws ServletException, IOException {
+	protected Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		return null;
 	}
 
