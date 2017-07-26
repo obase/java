@@ -29,9 +29,9 @@ public class WebcConfig {
 		String controlPrefix = "controlPrefix";
 		String controlSuffix = "controlSuffix";
 		String wsidTokenBase = "wsidTokenBase";
+		String wsidDomain = "wsidDomain"; // For shared by multiple domain
 		String defaultAuthType = "defaultAuthType";
 		String refererDomain = "refererDomain";
-		String cookieDomain = "cookieDomain"; // For shared by multiple domain
 	}
 
 	public boolean withoutApplicationContext;
@@ -51,9 +51,9 @@ public class WebcConfig {
 		public String controlPrefix; // multi values by comma
 		public String controlSuffix;// multi values by comma
 		public int wsidTokenBase; // BKDRHash的base,默认为0
+		public String wsidDomain;
 		public AuthType defaultAuthType;
 		public String refererDomain; // multi values by comma
-		public String cookieDomain;
 	}
 
 	public static void encodeContextInitParam(ServletContext servletContext, WebcConfig config) {
@@ -77,12 +77,12 @@ public class WebcConfig {
 		ret.controlPrefix = getStringParam(filterConfig, Props.controlPrefix, null);
 		ret.controlSuffix = getStringParam(filterConfig, Props.controlSuffix, null);
 		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
+		ret.wsidDomain = getStringParam(filterConfig, Props.wsidDomain, null);
 		String authTypeStr = getStringParam(filterConfig, Props.asyncListener, null);
 		if (authTypeStr != null) {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
 		}
 		ret.refererDomain = getStringParam(filterConfig, Props.refererDomain, null);
-		ret.cookieDomain = getStringParam(filterConfig, Props.cookieDomain, null);
 
 		return ret;
 	}
@@ -124,6 +124,9 @@ public class WebcConfig {
 		if (param.wsidTokenBase != 0) {
 			dynamic.setInitParameter(Props.wsidTokenBase, String.valueOf(param.wsidTokenBase));
 		}
+		if (param.wsidDomain != null) {
+			dynamic.setInitParameter(Props.wsidDomain, param.wsidDomain);
+		}
 
 		if (param.defaultAuthType != null) {
 			dynamic.setInitParameter(Props.defaultAuthType, param.defaultAuthType.name());
@@ -132,9 +135,6 @@ public class WebcConfig {
 			dynamic.setInitParameter(Props.refererDomain, param.refererDomain);
 		}
 
-		if (param.cookieDomain != null) {
-			dynamic.setInitParameter(Props.cookieDomain, param.cookieDomain);
-		}
 	}
 
 	public static final boolean getBooleanParam(javax.servlet.FilterConfig filterConfig, String name, boolean def) {

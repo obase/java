@@ -59,11 +59,11 @@ public class WebcConfigParser extends DefaultHandler2 {
 
 		} else if (Props.wsidTokenBase.equals(localName)) {
 
+		} else if (Props.wsidDomain.equals(localName)) {
+
 		} else if (Props.defaultAuthType.equals(localName)) {
 
 		} else if (Props.refererDomain.equals(localName)) {
-
-		} else if (Props.cookieDomain.equals(localName)) {
 
 		}
 	}
@@ -111,12 +111,12 @@ public class WebcConfigParser extends DefaultHandler2 {
 			param.controlSuffix = cleanContentAsString(null);
 		} else if (Props.wsidTokenBase.equals(localName)) {
 			param.wsidTokenBase = cleanContentAsInt(Webc.DEFAULT_WSID_TOKEN_BASE);
+		} else if (Props.wsidDomain.equals(localName)) {
+			param.wsidDomain = cleanContentAsString(null);
 		} else if (Props.defaultAuthType.equals(localName)) {
 			param.defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
 		} else if (Props.refererDomain.equals(localName)) {
 			param.refererDomain = cleanContentAsString(null);
-		} else if (Props.cookieDomain.equals(localName)) {
-			param.cookieDomain = cleanContentAsString(null);
 		}
 		content.setLength(0);
 	}
