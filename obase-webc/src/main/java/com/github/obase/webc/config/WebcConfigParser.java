@@ -63,6 +63,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 
 		} else if (Props.refererDomain.equals(localName)) {
 
+		} else if (Props.cookieDomain.equals(localName)) {
+
 		}
 	}
 
@@ -113,6 +115,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 			param.defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
 		} else if (Props.refererDomain.equals(localName)) {
 			param.refererDomain = cleanContentAsString(null);
+		} else if (Props.cookieDomain.equals(localName)) {
+			param.cookieDomain = cleanContentAsString(null);
 		}
 		content.setLength(0);
 	}

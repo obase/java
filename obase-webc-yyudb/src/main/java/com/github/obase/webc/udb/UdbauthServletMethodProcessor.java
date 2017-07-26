@@ -140,7 +140,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 		request.setAttribute(Webc.ATTR_WSID, wsid);
 		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
-		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), Wsid.COOKIE_TEMPORY_EXPIRE);
+		Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid), cookieDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
 
 		return true;
 	}
@@ -164,7 +164,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			}
 		}
 
-		Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);
+		Kits.writeCookie(response, Wsid.COOKIE_NAME, "", cookieDomain, Wsid.COOKIE_PATH, 0);
 	}
 
 	@Override

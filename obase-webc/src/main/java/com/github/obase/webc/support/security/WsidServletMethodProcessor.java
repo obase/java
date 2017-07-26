@@ -35,6 +35,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	protected long timeoutMillis;
 	protected AuthType defaultAuthType;
 	protected final Set<String> refererDomainSet = new HashSet<String>();
+	protected String cookieDomain;
 
 	@Override
 	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
@@ -54,6 +55,9 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 		if (params.refererDomain != null) {
 			Collections.addAll(refererDomainSet, StringKit.split(params.refererDomain, COMMA, true));
+		}
+		if (params.cookieDomain != null) {
+			cookieDomain = params.cookieDomain;
 		}
 
 		// set object authType
@@ -97,7 +101,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 					if (logger.isDebugEnabled()) {
 						logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
 					}
-					Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);// 转发前销毁cookie
+					Kits.writeCookie(response, Wsid.COOKIE_NAME, "", cookieDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 					redirectLoginPage(request, response);
 					return null;
 				}
@@ -115,14 +119,14 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			// step1.3: validate and extend principal timeout
 			principal = validateAndExtendPrincipal(wsid);
 			if (principal == null) {
-				Kits.writeCookie(response, Wsid.COOKIE_NAME, "", 0);// 转发前销毁cookie
+				Kits.writeCookie(response, Wsid.COOKIE_NAME, "", cookieDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 				redirectLoginPage(request, response);
 				return null;
 			}
 
 			request.setAttribute(ATTR_WSID, wsid);
 			request.setAttribute(ATTR_PRINCIPAL, principal);
-			Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid.resetToken(wsidTokenBase)), Wsid.COOKIE_TEMPORY_EXPIRE);
+			Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid.resetToken(wsidTokenBase)), cookieDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
 		}
 		// step2: check permission
 		if (object.authType == AuthType.PERMISSION) {

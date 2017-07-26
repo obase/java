@@ -11,6 +11,7 @@ public final class Wsid implements Serializable {
 	public static final String COOKIE_NAME = "wsid";
 	public static final int COOKIE_TEMPORY_EXPIRE = -1;
 	public static final char COOKIE_MARKER = '-';
+	public static final String COOKIE_PATH = "/";
 
 	public final String id; // 16bytes for uuid or other
 	public long ts; // 8bytes for timestamp

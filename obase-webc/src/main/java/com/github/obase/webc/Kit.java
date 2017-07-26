@@ -272,12 +272,8 @@ public final class Kit extends Kits {
 		Kits.setGlobalAttribute(jedisPool, name, value, expireSeconds);
 	}
 
-	public void writeCookie(String name, String value, int expiry) {
-		Kits.writeCookie(response, name, value, expiry);
-	}
-
-	public void writeCookie(String name, String value, String path, int expiry) {
-		Kits.writeCookie(response, name, value, path, expiry);
+	public void writeCookie(String name, String value, String domain, String path, int expiry) {
+		Kits.writeCookie(response, name, value, domain, path, expiry);
 	}
 
 	public String getClientIp() {

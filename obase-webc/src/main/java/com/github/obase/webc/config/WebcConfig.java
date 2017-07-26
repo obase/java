@@ -31,6 +31,7 @@ public class WebcConfig {
 		String wsidTokenBase = "wsidTokenBase";
 		String defaultAuthType = "defaultAuthType";
 		String refererDomain = "refererDomain";
+		String cookieDomain = "cookieDomain"; // For shared by multiple domain
 	}
 
 	public boolean withoutApplicationContext;
@@ -52,6 +53,7 @@ public class WebcConfig {
 		public int wsidTokenBase; // BKDRHash的base,默认为0
 		public AuthType defaultAuthType;
 		public String refererDomain; // multi values by comma
+		public String cookieDomain;
 	}
 
 	public static void encodeContextInitParam(ServletContext servletContext, WebcConfig config) {
@@ -80,6 +82,7 @@ public class WebcConfig {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
 		}
 		ret.refererDomain = getStringParam(filterConfig, Props.refererDomain, null);
+		ret.cookieDomain = getStringParam(filterConfig, Props.cookieDomain, null);
 
 		return ret;
 	}
@@ -127,6 +130,10 @@ public class WebcConfig {
 		}
 		if (param.refererDomain != null) {
 			dynamic.setInitParameter(Props.refererDomain, param.refererDomain);
+		}
+
+		if (param.cookieDomain != null) {
+			dynamic.setInitParameter(Props.cookieDomain, param.cookieDomain);
 		}
 	}
 

@@ -647,13 +647,12 @@ public abstract class Kits {
 		}
 	}
 
-	public static void writeCookie(HttpServletResponse response, String name, String value, int expiry) {
-		writeCookie(response, name, value, "/", expiry);
-	}
-
-	public static void writeCookie(HttpServletResponse response, String name, String value, String path, int expiry) {
+	public static void writeCookie(HttpServletResponse response, String name, String value, String domain, String path, int expiry) {
 		Cookie ck = new Cookie(name, value);
 		ck.setHttpOnly(true);
+		if (domain != null) {
+			ck.setDomain(domain);
+		}
 		ck.setPath(path);
 		ck.setMaxAge(expiry);
 		response.addCookie(ck);
