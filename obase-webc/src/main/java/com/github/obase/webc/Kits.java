@@ -490,7 +490,7 @@ public abstract class Kits {
 	public static Map<String, String> readParamMap(HttpServletRequest request) {
 		Map<String, String> map = new HashMap<String, String>();
 		Map<String, String[]> params = request.getParameterMap();
-		if (MapKit.isEmpty(params)) {
+		if (MapKit.isNotEmpty(params)) {
 			String val;
 			for (Map.Entry<String, String[]> entry : params.entrySet()) {
 				val = null;
@@ -509,7 +509,7 @@ public abstract class Kits {
 
 	public static Map<String, String[]> readParamMap2(HttpServletRequest request) {
 		Map<String, String[]> params = request.getParameterMap();
-		if (MapKit.isEmpty(params)) {
+		if (MapKit.isNotEmpty(params)) {
 			for (Map.Entry<String, String[]> entry : params.entrySet()) {
 				String[] vals = entry.getValue();
 				for (int i = 0; i < vals.length; i++) {
