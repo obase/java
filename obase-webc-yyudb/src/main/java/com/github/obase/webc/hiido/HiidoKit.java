@@ -18,7 +18,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,12 +83,6 @@ public final class HiidoKit {
 		INVALID = Collections.unmodifiableMap(map2);
 	}
 
-	private static Map<String, Map<String, Boolean>> as(String user, Map<String, Boolean> val) {
-		Map<String, Map<String, Boolean>> rt = new HashMap<String, Map<String, Boolean>>(1);
-		rt.put(user, val);
-		return rt;
-	}
-
 	public static UserPrincipal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object> asList(token));
 		if (RpcKit.code(result) != 1) {
@@ -146,12 +139,12 @@ public final class HiidoKit {
 		if (users == null || users.length == 0) {
 			return;
 		}
-		List<Map<String, Map<String, Boolean>>> updUserMap = new ArrayList<Map<String, Map<String, Boolean>>>(users.length);
+		Map<String, Map<String, Boolean>> map = new HashMap<String, Map<String, Boolean>>();
 		for (String user : users) {
-			updUserMap.add(as(user, valid ? VALID : INVALID));
+			map.put(user, valid ? VALID : INVALID);
 		}
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", updUserMap);
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", Arrays.asList(map));
 		if (RpcKit.code(result) != 1) {
 			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
 		}
@@ -161,12 +154,12 @@ public final class HiidoKit {
 		if (users == null || users.size() == 0) {
 			return;
 		}
-		List<Map<String, Map<String, Boolean>>> updUserMap = new ArrayList<Map<String, Map<String, Boolean>>>(users.size());
+		Map<String, Map<String, Boolean>> map = new HashMap<String, Map<String, Boolean>>(users.size());
 		for (Map.Entry<String, Boolean> entry : users.entrySet()) {
-			updUserMap.add(as(entry.getKey(), Boolean.TRUE.equals(entry.getValue()) ? VALID : INVALID));
+			map.put(entry.getKey(), Boolean.TRUE.equals(entry.getValue()) ? VALID : INVALID);
 		}
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
-		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", updUserMap);
+		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "updateMyStaffAgentInfo", Arrays.asList(map));
 		if (RpcKit.code(result) != 1) {
 			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
 		}
