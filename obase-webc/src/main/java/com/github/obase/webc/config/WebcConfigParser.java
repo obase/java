@@ -144,7 +144,10 @@ public class WebcConfigParser extends DefaultHandler2 {
 			return defval;
 		}
 
-		if (value.startsWith("#{") || value.endsWith("}")) {// Spring EL expression
+		if (value.startsWith("${") && value.endsWith("}")) {// Properties or environment
+			String var = value.substring(2, value.length() - 1).trim();
+			return System.getProperty(var, System.getenv(var));
+		} else if (value.startsWith("#{") && value.endsWith("}")) {// Spring EL expression
 			if (parser == null) {
 				parser = new SpelExpressionParser();
 			}
