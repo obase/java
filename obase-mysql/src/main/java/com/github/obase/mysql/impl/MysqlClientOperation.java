@@ -1236,8 +1236,10 @@ abstract class MysqlClientOperation {
 			}
 		}
 
-		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getRows().size() < count)) {
-			page.setResults(page.getRows().size() + offset);
+		int size = page.getRows().size();
+		if ((offset == 0 && count == Integer.MAX_VALUE) || (size > 0 && size < count)) {
+			// FIXBUG: total is zero
+			page.setResults(size + offset);
 		} else {
 			try {
 				pstmt = conn.prepareStatement(SqlMetaKit.modifyPsqlForPageTotal(meta));
@@ -1423,8 +1425,8 @@ abstract class MysqlClientOperation {
 									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 								}
 								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:"
-											+ classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
+											"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 								}
 							}
 						}
@@ -1451,8 +1453,8 @@ abstract class MysqlClientOperation {
 											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 										}
 										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName
-													+ ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
+													"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 										}
 									}
 								}
@@ -1622,7 +1624,8 @@ abstract class MysqlClientOperation {
 			SoftReference<JdbcAction> ref = tempoJdbcActionCache.get(type);
 			if (ref == null || (action = ref.get()) == null) {
 				if (type.isArray() || type.isEnum() || type.isInterface() || type.isAnnotation()) {
-					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_ACTION_NOT_SUPPORTED, "JdbcAction don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_ACTION_NOT_SUPPORTED,
+							"JdbcAction don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
 				}
 				synchronized (tempoJdbcActionCache) {
 					ref = tempoJdbcActionCache.get(type);
@@ -1974,8 +1977,10 @@ abstract class MysqlClientOperation {
 			}
 		}
 
-		if ((offset == 0 && count == Integer.MAX_VALUE) || (page.getRows().size() < count)) {
-			page.setResults(page.getRows().size() + offset);
+		int size = page.getRows().size();
+		if ((offset == 0 && count == Integer.MAX_VALUE) || (size > 0 && size < count)) {
+			// FIXBUG: total is zero
+			page.setResults(size + offset);
 		} else {
 			try {
 				pstmt = conn.prepareStatement(SqlMetaKit.modifyPsqlForPageTotal(meta));
