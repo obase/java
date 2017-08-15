@@ -12,7 +12,7 @@ public class SHA256 {
 		@Override
 		protected MessageDigest initialValue() {
 			try {
-				return MessageDigest.getInstance("SHA256");
+				return MessageDigest.getInstance("SHA-256");
 			} catch (NoSuchAlgorithmException e) {
 				throw new IllegalStateException("algorythm unsupported SHA256");
 			}
