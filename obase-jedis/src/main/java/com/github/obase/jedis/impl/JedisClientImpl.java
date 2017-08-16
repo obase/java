@@ -1,23 +1,17 @@
 package com.github.obase.jedis.impl;
 
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.github.obase.WrappedException;
-import com.github.obase.coding.Hex;
 import com.github.obase.jedis.JedisCallback;
 import com.github.obase.jedis.JedisClient;
 import com.github.obase.jedis.PipelineCallback;
 import com.github.obase.jedis.TransactionCallback;
+import com.github.obase.kit.HostKit;
 
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -4726,15 +4720,15 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	@Override
-	public boolean tryReenLock(String key, int expireSeconds) {
+	public boolean tryHostLock(String key, int expireSeconds) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			String val = jedis.get(key);
 			if (val == null) {
-				jedis.setex(key, expireSeconds, Holder.VALUE);
+				jedis.setex(key, expireSeconds, HostKit.HOSTID);
 				return true;
-			} else if (Holder.VALUE.equals(val)) {
+			} else if (HostKit.HOSTID.equals(val)) {
 				jedis.expire(key, expireSeconds);
 				return true;
 			} else {
@@ -4743,31 +4737,6 @@ public class JedisClientImpl implements JedisClient {
 		} finally {
 			if (jedis != null) {
 				jedis.close();
-			}
-		}
-	}
-
-	static class Holder {
-		static final String VALUE = joinAllMacaddr();
-
-		// Join all not null mac addrs
-		static String joinAllMacaddr() {
-			try {
-				List<String> list = new LinkedList<String>();
-				for (Enumeration<NetworkInterface> iter = NetworkInterface.getNetworkInterfaces(); iter.hasMoreElements();) {
-					byte[] bs = iter.nextElement().getHardwareAddress();
-					if (bs != null) {
-						list.add(Hex.encode(bs));
-					}
-				}
-				Collections.sort(list);
-				StringBuilder sb = new StringBuilder(17 * list.size());
-				for (String it : list) {
-					sb.append(it);
-				}
-				return sb.toString();
-			} catch (SocketException se) {
-				throw new WrappedException(se);
 			}
 		}
 	}
