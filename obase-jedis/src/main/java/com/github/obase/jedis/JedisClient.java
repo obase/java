@@ -29,6 +29,8 @@ public interface JedisClient extends BinaryJedisCommands, MultiKeyBinaryCommands
 
 	void unlock(String key);
 
+	boolean tryReenLock(String key, int expireSeconds);
+
 	byte[] getex(byte[] key, int expirs);
 
 }
