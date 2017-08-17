@@ -8,6 +8,11 @@ import java.io.Serializable;
 public interface Principal extends Serializable {
 
 	/**
+	 * 获取标识
+	 */
+	String key();
+
+	/**
 	 * 自身序列化
 	 */
 	String encode();

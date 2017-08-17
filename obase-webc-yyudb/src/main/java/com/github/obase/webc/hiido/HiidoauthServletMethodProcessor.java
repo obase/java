@@ -89,7 +89,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		}
 
 		if (data != null) {
-			return new UserPrincipal().decode(data);
+			 return createPrincipal().decode(data);
 		}
 		return null;
 	}
@@ -100,12 +100,12 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		if (StringKit.isEmpty(token)) {
 			return false;
 		}
-		UserPrincipal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), token));
+		Principal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), token));
 		if (principal == null) {
 			return false;
 		}
 
-		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
+		Wsid wsid = Wsid.valueOf(principal.key()).resetToken(wsidTokenBase); // csrf
 
 		String data = principal.encode();
 		Jedis jedis = null;
@@ -136,7 +136,12 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	}
 
 	// for subclass override
-	protected UserPrincipal validatePrincipal(UserPrincipal staffInfoByToken) {
+	public Principal createPrincipal() {
+		return new UserPrincipal();
+	}
+
+	// for subclass override
+	protected Principal validatePrincipal(Principal staffInfoByToken) {
 		return staffInfoByToken;
 	}
 

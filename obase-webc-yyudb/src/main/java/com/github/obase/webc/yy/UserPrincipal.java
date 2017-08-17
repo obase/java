@@ -91,6 +91,11 @@ public class UserPrincipal implements Principal {
 	}
 
 	@Override
+	public String key() {
+		return passport;
+	}
+
+	@Override
 	public String encode() {
 		Join j = Join.build('\001');
 		j.join(nvlv(passport));
@@ -121,4 +126,5 @@ public class UserPrincipal implements Principal {
 	private String nvlv(String val) {
 		return val == null ? "" : val;
 	}
+
 }

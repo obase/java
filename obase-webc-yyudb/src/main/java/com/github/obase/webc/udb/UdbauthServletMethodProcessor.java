@@ -113,7 +113,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		if (data != null) {
-			return new UserPrincipal().decode(data);
+			return createPrincipal().decode(data);
 		}
 		return null;
 	}
@@ -121,12 +121,12 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	@Override
 	public boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException {
 
-		UserPrincipal principal = validatePrincipal(yyuid, uProfile);
+		Principal principal = validatePrincipal(yyuid, uProfile);
 		if (principal == null) {
 			return false;
 		}
 
-		Wsid wsid = Wsid.valueOf(principal.getPassport()).resetToken(wsidTokenBase); // csrf
+		Wsid wsid = Wsid.valueOf(principal.key()).resetToken(wsidTokenBase); // csrf
 
 		String data = principal.encode();
 		Jedis jedis = null;
@@ -185,7 +185,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	// for subclass override
-	protected UserPrincipal validatePrincipal(String yyuid, String[] uProfile) {
+	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
 		UserPrincipal principal = new UserPrincipal();
 		principal.setYyuid(yyuid);
 		principal.setPassport(uProfile[0]);
@@ -197,6 +197,11 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	@Override
 	protected boolean validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
 		return true;
+	}
+
+	// for subclass override
+	public Principal createPrincipal() {
+		return new UserPrincipal();
 	}
 
 }
