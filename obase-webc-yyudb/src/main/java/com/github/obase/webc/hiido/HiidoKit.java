@@ -29,9 +29,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -43,7 +40,6 @@ import com.github.obase.WrappedException;
 import com.github.obase.kit.CollectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
-import com.github.obase.webc.Wsid;
 import com.github.obase.webc.YyudbErrno;
 import com.github.obase.webc.yy.UserPrincipal;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Error;
@@ -591,12 +587,4 @@ public final class HiidoKit {
 
 	}
 
-	public static interface Callback {
-
-		boolean postHiidoLogin(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException;
-
-		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
-
-		void sendError(HttpServletResponse resp, int sc, int errno, String errmsg) throws IOException;
-	}
 }

@@ -13,11 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Response;
-import redis.clients.jedis.Transaction;
-
 import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
@@ -27,11 +22,15 @@ import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.webc.hiido.HiidoKit.Callback;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
 import com.github.obase.webc.yy.UserPrincipal;
 
-public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Response;
+import redis.clients.jedis.Transaction;
+
+public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor {
 
 	protected abstract String getUdbApi();
 
@@ -89,12 +88,11 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		}
 
 		if (data != null) {
-			 return createPrincipal().decode(data);
+			return createPrincipal().decode(data);
 		}
 		return null;
 	}
 
-	@Override
 	public boolean postHiidoLogin(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException {
 
 		if (StringKit.isEmpty(token)) {
@@ -141,7 +139,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(Principal staffInfoByToken) {
+	protected Principal validatePrincipal(UserPrincipal staffInfoByToken) {
 		return staffInfoByToken;
 	}
 

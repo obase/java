@@ -30,9 +30,7 @@ import com.duowan.universal.login.client.UniversalLoginClient;
 import com.duowan.universal.login.client.UniversalLoginClient.CookieDomainEnum;
 import com.duowan.universal.login.client.YYSecCenterOpenWSInvoker;
 import com.github.obase.kit.StringKit;
-import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
-import com.github.obase.webc.Wsid;
 
 public final class UdbKit {
 
@@ -252,8 +250,6 @@ public final class UdbKit {
 		boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException;
 
 		void preUdbLogout(HttpServletRequest request, HttpServletResponse response) throws IOException;
-
-		Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 
 		void sendError(HttpServletResponse resp, int sc, int errno, String errmsg) throws IOException;
 	}
