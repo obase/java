@@ -113,7 +113,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		if (data != null) {
-			return createPrincipal().decode(data);
+			return activatePrincipal().decode(data);
 		}
 		return null;
 	}
@@ -200,7 +200,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	}
 
 	// for subclass override
-	public Principal createPrincipal() {
+	public Principal activatePrincipal() {
 		return new UserPrincipal();
 	}
 

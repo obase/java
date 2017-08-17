@@ -88,7 +88,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		}
 
 		if (data != null) {
-			return createPrincipal().decode(data);
+			return activatePrincipal().decode(data);
 		}
 		return null;
 	}
@@ -134,7 +134,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	}
 
 	// for subclass override
-	public Principal createPrincipal() {
+	public Principal activatePrincipal() {
 		return new UserPrincipal();
 	}
 
