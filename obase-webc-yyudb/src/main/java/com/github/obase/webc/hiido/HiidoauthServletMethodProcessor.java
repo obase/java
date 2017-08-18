@@ -71,14 +71,13 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	@Override
 	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
-		byte[] data = null;
+		String data = null;
 		Jedis jedis = null;
 		try {
-			byte[] key = wsid.id.getBytes();
 			jedis = getJedisPool().getResource();
 			Transaction tx = jedis.multi();
-			Response<byte[]> resp = tx.get(key);
-			tx.pexpire(key, timeoutMillis);
+			Response<String> resp = tx.get(wsid.id);
+			tx.pexpire(wsid.id, timeoutMillis);
 			tx.exec();
 
 			data = resp.get();
@@ -106,11 +105,11 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 
 		Wsid wsid = Wsid.valueOf(principal.key()).resetToken(wsidTokenBase); // csrf
 
-		byte[] data = persistPrincipal(principal);
+		String data = persistPrincipal(principal);
 		Jedis jedis = null;
 		try {
 			jedis = getJedisPool().getResource();
-			jedis.psetex(wsid.id.getBytes(), timeoutMillis, data);
+			jedis.psetex(wsid.id, timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -135,13 +134,13 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	}
 
 	// for subclass override
-	protected byte[] persistPrincipal(Principal principal) {
-		return null;
+	protected String persistPrincipal(Principal principal) {
+		return ((UserPrincipal) principal).encode();
 	}
 
 	// for subclass override
-	public Principal activatePrincipal(byte[] data) {
-		return new UserPrincipal();
+	public Principal activatePrincipal(String data) {
+		return new UserPrincipal().decode(data);
 	}
 
 	// for subclass override

@@ -1,7 +1,6 @@
 package com.github.obase.webc.yy;
 
-import com.github.obase.kit.StringKit.Join;
-import com.github.obase.kit.StringKit.Split;
+import com.github.obase.kit.Spliter;
 import com.github.obase.security.Principal;
 
 public class UserPrincipal implements Principal {
@@ -95,23 +94,21 @@ public class UserPrincipal implements Principal {
 		return passport;
 	}
 
-	@Override
 	public String encode() {
-		Join j = Join.build('\001');
-		j.join(nvlv(passport));
-		j.join(nvlv(realname));
-		j.join(nvlv(nickname));
-		j.join(nvlv(deptname));
-		j.join(nvlv(email));
-		j.join(nvlv(phone));
-		j.join(nvlv(jobCode));
-		j.join(Integer.toString(level));
-		return j.toString();
+		StringBuilder sb = new StringBuilder(1024);
+		sb.append(nvlv(passport)).append('\001');
+		sb.append(nvlv(realname)).append('\001');
+		sb.append(nvlv(nickname)).append('\001');
+		sb.append(nvlv(deptname)).append('\001');
+		sb.append(nvlv(email)).append('\001');
+		sb.append(nvlv(phone)).append('\001');
+		sb.append(nvlv(jobCode)).append('\001');
+		sb.append(Integer.toString(level));
+		return sb.toString();
 	}
 
-	@Override
 	public Principal decode(String text) {
-		Split s = Split.wrap(text, '\001');
+		Spliter s = new Spliter('\001', text);
 		passport = s.next();
 		realname = s.next();
 		nickname = s.next();
@@ -126,5 +123,4 @@ public class UserPrincipal implements Principal {
 	private String nvlv(String val) {
 		return val == null ? "" : val;
 	}
-
 }
