@@ -4693,13 +4693,11 @@ public class JedisClientImpl implements JedisClient {
 	}
 
 	/*
-	 * @Override FOR 2.9.0 public List<byte[]> bitfield(byte[] key, byte[]... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally {
-	 * if (jedis != null) { jedis.close(); } } }
+	 * @Override FOR 2.9.0 public List<byte[]> bitfield(byte[] key, byte[]... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally { if (jedis != null) { jedis.close(); } } }
 	 */
 
 	/*
-	 * @Override FOR: 2.9.0 public List<Long> bitfield(String key, String... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally {
-	 * if (jedis != null) { jedis.close(); } } }
+	 * @Override FOR: 2.9.0 public List<Long> bitfield(String key, String... arguments) { Jedis jedis = null; try { jedis = jedisPool.getResource(); return jedis.bitfield(key, arguments); } finally { if (jedis != null) { jedis.close(); } } }
 	 */
 
 	@Override
@@ -4734,6 +4732,32 @@ public class JedisClientImpl implements JedisClient {
 			} else {
 				return false;
 			}
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public List<byte[]> bitfield(byte[] key, byte[]... arguments) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.bitfield(key, arguments);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public List<Long> bitfield(String key, String... arguments) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.bitfield(key, arguments);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
