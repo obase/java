@@ -96,13 +96,14 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 	@Override
 	public Principal validateAndExtendPrincipal(Wsid wsid) {
 
-		String data = null;
+		byte[] data = null;
 		Jedis jedis = null;
 		try {
+			byte[] key = wsid.id.getBytes();
 			jedis = getJedisPool().getResource();
 			Transaction tx = jedis.multi();
-			Response<String> resp = tx.get(wsid.id);
-			tx.pexpire(wsid.id, timeoutMillis);
+			Response<byte[]> resp = tx.get(key);
+			tx.pexpire(key, timeoutMillis);
 			tx.exec();
 
 			data = resp.get();
@@ -113,7 +114,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		if (data != null) {
-			return activatePrincipal().decode(data);
+			return activatePrincipal(data);
 		}
 		return null;
 	}
@@ -128,11 +129,11 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 		Wsid wsid = Wsid.valueOf(principal.key()).resetToken(wsidTokenBase); // csrf
 
-		String data = principal.encode();
+		byte[] data = persistPrincipal(principal);
 		Jedis jedis = null;
 		try {
 			jedis = getJedisPool().getResource();
-			jedis.psetex(wsid.id, timeoutMillis, data);
+			jedis.psetex(wsid.id.getBytes(), timeoutMillis, data);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -156,7 +157,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			Jedis jedis = null;
 			try {
 				jedis = getJedisPool().getResource();
-				jedis.del(wsid.id);
+				jedis.del(wsid.id.getBytes());
 			} finally {
 				if (jedis != null) {
 					jedis.close();
@@ -182,6 +183,16 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		sb.append("?").append(UdbKit.PARAM_URL).append("=").append(URLEncoder.encode(psb.toString(), Webc.CHARSET_NAME));
 
 		Kits.sendRedirect(response, sb.toString());
+	}
+
+	// for subclass override
+	protected byte[] persistPrincipal(Principal principal) {
+		return null;
+	}
+
+	// for subclass override
+	public Principal activatePrincipal(byte[] data) {
+		return new UserPrincipal();
 	}
 
 	// for subclass override
