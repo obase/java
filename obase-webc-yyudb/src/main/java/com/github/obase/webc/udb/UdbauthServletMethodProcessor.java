@@ -209,9 +209,4 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		return true;
 	}
 
-	// for subclass override
-	public Principal activatePrincipal() {
-		return new UserPrincipal();
-	}
-
 }
