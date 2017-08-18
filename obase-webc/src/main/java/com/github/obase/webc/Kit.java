@@ -14,18 +14,14 @@ import org.springframework.http.HttpMethod;
 import com.github.obase.Page;
 import com.github.obase.security.Principal;
 
-import redis.clients.jedis.JedisPool;
-
 public final class Kit extends Kits {
 
 	final HttpServletRequest request;
 	final HttpServletResponse response;
-	final JedisPool jedisPool;
 
-	Kit(HttpServletRequest request, HttpServletResponse response, JedisPool jedisPool) {
+	Kit(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
-		this.jedisPool = jedisPool;
 	}
 
 	/*********************************** 实例方法列表 ***********************************/
@@ -248,10 +244,6 @@ public final class Kit extends Kits {
 		return Kits.getApplicationAttribute(request, name);
 	}
 
-	public <T> T getGlobalAttribute(String name) {
-		return Kits.getGlobalAttribute(jedisPool, name);
-	}
-
 	public void setAttribute(String name, Object value) {
 		Kits.setAttribute(request, name, value);
 	}
@@ -266,10 +258,6 @@ public final class Kit extends Kits {
 
 	public void setApplicationAttribute(String name, Object value) {
 		Kits.setApplicationAttribute(request, name, value);
-	}
-
-	public void setGlobalAttribute(String name, Object value, int expireSeconds) {
-		Kits.setGlobalAttribute(jedisPool, name, value, expireSeconds);
 	}
 
 	public void writeCookie(String name, String value, String domain, String path, int expiry) {

@@ -1,16 +1,15 @@
 package com.github.obase.webc;
 
-import java.io.Serializable;
+import com.github.obase.coding.Hex;
 
 /**
  * 该类的fromHexs与toHexs是一组对称方法!必须保证二者的对称性.
  */
-public final class Wsid implements Serializable {
+public final class Wsid {
 
-	private static final long serialVersionUID = 1L;
 	public static final String COOKIE_NAME = "wsid";
 	public static final int COOKIE_TEMPORY_EXPIRE = -1;
-	public static final char COOKIE_MARKER = '-';
+	public static final char COOKIE_MARKER = '.';
 	public static final String COOKIE_PATH = "/";
 
 	public final String id; // 16bytes for uuid or other
@@ -33,14 +32,14 @@ public final class Wsid implements Serializable {
 	 * Used for any text id
 	 */
 	public static Wsid valueOf(String uid) {
-		return new Wsid(new StringBuilder(uid.length() + 32).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
+		return new Wsid(new StringBuilder(uid.length() + 32).append(COOKIE_MARKER).append(Hex.encode(uid.getBytes())).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
 	}
 
 	/**
 	 * Used for uuid or increment id
 	 */
 	public static Wsid valueOf(long uid) {
-		return new Wsid(new StringBuilder(36).append(uid).append(COOKIE_MARKER).append(Long.toHexString(System.nanoTime())).toString());
+		return valueOf(Long.toHexString(uid));
 	}
 
 	public Wsid resetToken(long base) {
@@ -51,7 +50,7 @@ public final class Wsid implements Serializable {
 
 	public boolean validate(int base, long timeoutMillis) {
 		long diff = System.currentTimeMillis() - ts;
-		if ((diff > 0 && diff >= timeoutMillis) || (diff < 0 && -2 * diff > timeoutMillis)) {
+		if (diff > timeoutMillis || diff < -timeoutMillis / 2) {
 			return false;
 		}
 		int tk = signature(id, ts, base);

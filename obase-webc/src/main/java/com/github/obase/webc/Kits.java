@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.SerializationUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import com.github.obase.Message;
@@ -36,20 +35,13 @@ import com.github.obase.kit.StringKit;
 import com.github.obase.kit.TimeKit;
 import com.github.obase.security.Principal;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-
 public abstract class Kits {
 
 	Kits() {
 	}
 
 	public static Kit bind(HttpServletRequest request, HttpServletResponse response) {
-		return new Kit(request, response, null);
-	}
-
-	public static Kit bind(HttpServletRequest request, HttpServletResponse response, JedisPool jedisPool) {
-		return new Kit(request, response, jedisPool);
+		return new Kit(request, response);
 	}
 
 	public static interface PropertyConverter<T> {
@@ -594,25 +586,6 @@ public abstract class Kits {
 		return (T) request.getServletContext().getAttribute(name);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T getGlobalAttribute(JedisPool jedisPool, String name) {
-
-		byte[] data = null;
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			data = jedis.get((Webc.GLOBAL_ATTRIBUTE_PREFFIX + name).getBytes());
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
-		if (data == null) {
-			return null;
-		}
-		return (T) SerializationUtils.deserialize(data);
-	}
-
 	public static void setAttribute(HttpServletRequest request, String name, Object value) {
 		request.setAttribute(name, value);
 	}
@@ -627,24 +600,6 @@ public abstract class Kits {
 
 	public static void setApplicationAttribute(HttpServletRequest request, String name, Object value) {
 		request.getServletContext().setAttribute(name, value);
-	}
-
-	public static void setGlobalAttribute(JedisPool jedisPool, String name, Object value, int expireSeconds) {
-
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			if (value == null) {
-				jedis.del((Webc.GLOBAL_ATTRIBUTE_PREFFIX + name).getBytes());
-			} else {
-				byte[] data = SerializationUtils.serialize(value);
-				jedis.setex((Webc.GLOBAL_ATTRIBUTE_PREFFIX + name).getBytes(), expireSeconds, data);
-			}
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
 	}
 
 	public static void writeCookie(HttpServletResponse response, String name, String value, String domain, String path, int expiry) {
