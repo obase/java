@@ -55,10 +55,10 @@ final class SimplePropertyResolver extends AbstractPropertyResolver {
 		if (value != null) {
 			value = resolveNestedPlaceholders(value);
 
-			if (!this.conversionService.canConvert(String.class, targetType)) {
+			if (!getConversionService().canConvert(String.class, targetType)) {
 				throw new IllegalArgumentException(String.format("Cannot convert value [%s] from source type [%s] to target type [%s]", value, String.class.getSimpleName(), targetType.getSimpleName()));
 			}
-			return this.conversionService.convert(value, targetType);
+			return getConversionService().convert(value, targetType);
 		}
 		return null;
 	}
