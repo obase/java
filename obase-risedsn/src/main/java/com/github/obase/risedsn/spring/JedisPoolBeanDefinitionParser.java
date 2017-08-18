@@ -47,7 +47,7 @@ public final class JedisPoolBeanDefinitionParser extends RedisBaseBeanDefinition
 		}
 
 		/*************************************************
-		 * 基于构造函数: JedisPool(final GenericObjectPoolConfig poolConfig, final String host, int port, final int connectionTimeout, final int soTimeout, final String password, final int database, final String clientName)
+		 * 基于构造函数: JedisPool(final GenericObjectPoolConfig poolConfig, final String host, int port, final int connectionTimeout, final int soTimeout, final String password, final int database, final String clientName, final boolean ssl, final SSLSocketFactory sslSocketFactory, final SSLParameters sslParameters, final HostnameVerifier hostnameVerifier)
 		 *************************************************/
 		// ref, not value
 		builder.addConstructorArgValue(poolConfig == null ? new GenericObjectPoolConfig() : poolConfig);
@@ -58,6 +58,10 @@ public final class JedisPoolBeanDefinitionParser extends RedisBaseBeanDefinition
 		builder.addConstructorArgValue(pass);
 		builder.addConstructorArgValue(database);
 		builder.addConstructorArgValue(clientName);
+		builder.addConstructorArgValue(false);
+		builder.addConstructorArgValue(null);
+		builder.addConstructorArgValue(null);
+		builder.addConstructorArgValue(null);
 
 		builder.setDestroyMethodName("close");
 	}
