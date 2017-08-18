@@ -1,11 +1,9 @@
 package test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Random;
 
+import com.github.obase.kit.Spliter;
 import com.github.obase.kit.StringKit;
-import com.github.obase.kit.StringKit.Split;
 
 public class CreateRndInteger {
 
@@ -15,7 +13,7 @@ public class CreateRndInteger {
 	public static void main(String[] args) {
 		String str = "0b0c0";
 		System.out.println(StringKit.split2List(str, "0c", false));
-		Split s = Split.wrap(str, '0');
+		Spliter s = new Spliter('0', str);
 		for (String i = null; (i = s.next()) != null;) {
 			System.out.println(">>" + i);
 		}

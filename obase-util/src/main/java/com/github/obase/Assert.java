@@ -3,106 +3,81 @@ package com.github.obase;
 import java.util.Collection;
 import java.util.Map;
 
-import com.github.obase.kit.CollectKit;
-import com.github.obase.kit.MapKit;
-import com.github.obase.kit.ObjectKit;
-import com.github.obase.kit.StringKit;
-
 public class Assert {
 
-	public static void isTrue(boolean obj, int errno, String errmsg) {
-		if (!obj) {
+	public static void isTrue(boolean val, int errno, String errmsg) throws MessageException {
+		if (!val) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void notTrue(boolean obj, int errno, String errmsg) {
-		if (obj) {
+	public static void notTrue(boolean val, int errno, String errmsg) throws MessageException {
+		if (val) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void isTrue(Boolean obj, int errno, String errmsg) {
+	public static void isNull(Object val, int errno, String errmsg) throws MessageException {
+		if (val == null) {
+			return;
+		}
+		throw new MessageException(errno, errmsg);
+	}
 
-		if (obj == null || !obj) {
+	public static void notNull(Object val, int errno, String errmsg) throws MessageException {
+		if (val == null) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void notTrue(Boolean obj, int errno, String errmsg) {
-		if (obj != null && obj) {
+	public static void isEmpty(String val, int errno, String errmsg) throws MessageException {
+		if (val != null && val.length() != 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void isNull(Object obj, int errno, String errmsg) {
-		if (obj != null) {
+	public static void notEmpty(String val, int errno, String errmsg) throws MessageException {
+		if (val == null || val.length() == 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void notNull(Object obj, int errno, String errmsg) {
-		if (obj == null) {
+	@SuppressWarnings("rawtypes")
+	public static void isEmpty(Collection val, int errno, String errmsg) throws MessageException {
+		if (val != null && val.size() != 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void isEmpty(String obj, int errno, String errmsg) {
-		if (StringKit.isNotEmpty(obj)) {
+	@SuppressWarnings("rawtypes")
+	public static void notEmpty(Collection val, int errno, String errmsg) throws MessageException {
+		if (val == null || val.size() == 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void notEmpty(String obj, int errno, String errmsg) {
-		if (StringKit.isEmpty(obj)) {
+	@SuppressWarnings("rawtypes")
+	public static void isEmpty(Map val, int errno, String errmsg) throws MessageException {
+		if (val != null && val.size() != 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void isBlank(String obj, int errno, String errmsg) {
-		if (StringKit.isNotBlank(obj)) {
+	@SuppressWarnings("rawtypes")
+	public static void notEmpty(Map val, int errno, String errmsg) throws MessageException {
+		if (val == null || val.size() == 0) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static void notBlank(String obj, int errno, String errmsg) {
-		if (StringKit.isBlank(obj)) {
+	public static void isEquals(Object val1, Object val2, int errno, String errmsg) throws MessageException {
+		if (val1 != val2 && (val1 == null || !val1.equals(val2))) {
 			throw new MessageException(errno, errmsg);
 		}
 	}
 
-	public static <T> void isEmpty(Collection<T> obj, int errno, String errmsg) {
-		if (CollectKit.isNotEmpty(obj)) {
-			throw new MessageException(errno, errmsg);
-		}
-	}
-
-	public static <T> void notEmpty(Collection<T> obj, int errno, String errmsg) {
-		if (CollectKit.isEmpty(obj)) {
-			throw new MessageException(errno, errmsg);
-		}
-	}
-
-	public static <K, T> void isEmpty(Map<K, T> obj, int errno, String errmsg) {
-		if (MapKit.isNotEmpty(obj)) {
-			throw new MessageException(errno, errmsg);
-		}
-	}
-
-	public static <K, T> void notEmpty(Map<K, T> obj, int errno, String errmsg) {
-		if (MapKit.isEmpty(obj)) {
-			throw new MessageException(errno, errmsg);
-		}
-	}
-
-	public static void equals(Object obj1, Object obj2, int errno, String errmsg) {
-		if (ObjectKit.notEquals(obj1, obj2)) {
-			throw new MessageException(errno, errmsg);
-		}
-	}
-
-	public static void notEquals(Object obj1, Object obj2, int errno, String errmsg) {
-		if (ObjectKit.equals(obj1, obj2)) {
+	public static void notEquals(Object val1, Object val2, int errno, String errmsg) throws MessageException {
+		if (val1 == val2 || (val1 != null && val1.equals(val2))) {
 			throw new MessageException(errno, errmsg);
 		}
 	}

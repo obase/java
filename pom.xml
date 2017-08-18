@@ -1,27 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+	<properties>
+		<spring.version>4.3.10.RELEASE</spring.version>
+		<server.version>3.1.0</server.version>
+		<jsp.version>2.3.1</jsp.version>
+		<java.version>1.8</java.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<logback.version>1.2.3</logback.version>
+	</properties>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<packaging>pom</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/obase/java</url>
 	<description>
-		技术支撑:Spring4.3.4+/JDK7+/JavaEE6/Servlet3.0+/JSP2.2+. 
+		技术支撑:Spring4.3.4+/JDK8+/JavaEE6+/Servlet3.1+/JSP2.3+. 
 		具体参见:http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/index.html#6
 	</description>
-
-	<!-- ================================ -->
-	<!-- 属性变量 -->
-	<!-- ================================ -->
-	<properties>
-		<!-- 第三方版本 -->
-		<spring.version>4.3.4.RELEASE</spring.version>
-		<server.version>3.1.0</server.version>
-		<jsp.version>2.3.1</jsp.version>
-		<tomcat.version>8.5.9</tomcat.version>
-	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -42,72 +40,27 @@
 			</dependency>
 
 			<!-- =============================== -->
-			<!-- embedded tomcat -->
-			<!-- =============================== -->
-			<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-core</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-jasper</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-websocket</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jasper</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jasper-el</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jsp-api</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-
-			<!-- =============================== -->
-			<!-- embedded tomcat -->
-			<!-- =============================== -->
-			<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-core</artifactId>
-				<version>7.0.72</version>
-			</dependency>
-
-			<!-- =============================== -->
 			<!-- logging -->
 			<!-- =============================== -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.12</version>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>1.7.12</version>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-core</artifactId>
-				<version>1.1.3</version>
+				<version>${logback.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.1.3</version>
+				<version>${logback.version}</version>
 			</dependency>
 
 			<!-- ================================ -->
@@ -183,17 +136,17 @@
 				<!-- compiler plugin -->
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.6.2</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
 				<!-- source plugin -->
 				<plugin>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.0.1</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -206,7 +159,7 @@
 				<!-- javadoc plugin -->
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9.1</version>
+					<version>2.10.4</version>
 					<executions>
 						<execution>
 							<phase>package</phase>
@@ -225,7 +178,7 @@
 				<!-- jar plugin -->
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.0.2</version>
 					<executions>
 						<execution>
 							<phase>package</phase>
@@ -243,7 +196,7 @@
 				<!-- war plugin -->
 				<plugin>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.2</version>
+					<version>3.1.0</version>
 					<configuration>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
@@ -264,24 +217,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<!-- uniform setting for sub project -->
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-gpg-plugin</artifactId>
-			</plugin>
-		</plugins>
 	</build>
 
 	<licenses>
@@ -295,13 +230,7 @@
 		<developer>
 			<name>jasonhe</name>
 			<email>jasonhe.hzw@foxmail.com</email>
-			<organization>YYGame</organization>
-			<organizationUrl>http://github.com/obase</organizationUrl>
-		</developer>
-		<developer>
-			<name>dongbing</name>
-			<email>dongbing@yy.com</email>
-			<organization>YYGame</organization>
+			<organization>huya.com</organization>
 			<organizationUrl>http://github.com/obase</organizationUrl>
 		</developer>
 	</developers>
@@ -310,7 +239,7 @@
 		<connection>scm:git:https://github.com/obase/java.git</connection>
 		<developerConnection>scm:git:https://github.com/obase/java.git</developerConnection>
 		<url>https://github.com/obase/java</url>
-		<tag>1.0.0</tag>
+		<tag>1.1.0</tag>
 	</scm>
 
 </project>
