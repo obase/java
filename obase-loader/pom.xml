@@ -2,7 +2,6 @@
 
 	<properties>
 		<obase.version>1.1.0-SNAPSHOT</obase.version>
-		<jedis.version>2.9.0</jedis.version>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
