@@ -21,11 +21,11 @@ public final class Wsid {
 	}
 
 	public static String keysPattern(String uid) {
-		return new StringBuilder(uid.length() + 8).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
+		return new StringBuilder(uid.length() + 64).append(COOKIE_MARKER).append(Hex.encode(uid.getBytes())).append(COOKIE_MARKER).append('*').toString();
 	}
 
 	public static String keysPattern(long uid) {
-		return new StringBuilder(32).append(COOKIE_MARKER).append(uid).append(COOKIE_MARKER).append('*').toString();
+		return new StringBuilder(64).append(COOKIE_MARKER).append(Hex.encode(Long.toHexString(uid).getBytes())).append(COOKIE_MARKER).append('*').toString();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public final class Wsid {
 	}
 
 	public static String encode(Wsid wsid) {
-		return new StringBuilder(wsid.id.length() + 44).append(wsid.id).append(COOKIE_MARKER).append(Long.toHexString(wsid.ts)).append(COOKIE_MARKER).append(Integer.toHexString(wsid.tk)).toString();
+		return new StringBuilder(wsid.id.length() + 64).append(wsid.id).append(COOKIE_MARKER).append(Long.toHexString(wsid.ts)).append(COOKIE_MARKER).append(Integer.toHexString(wsid.tk)).toString();
 	}
 
 }

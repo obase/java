@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 
 import com.github.obase.WrappedException;
+import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.ClassKit.DelegateClassLoader;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
@@ -79,7 +80,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 				}
 
 				if (annotations.size() > 0) {
-					DelegateClassLoader loader = new DelegateClassLoader(applicationContext.getBeanFactory().getBeanClassLoader());
+					// DelegateClassLoader loader = new DelegateClassLoader(applicationContext.getBeanFactory().getBeanClassLoader());
 					for (Map.Entry<Method, ServletMethod> entry : annotations.entrySet()) {
 
 						Method method = entry.getKey();
@@ -89,7 +90,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 						String lookupPath = processor.lookup(controller, userClass, annotation, methodName);
 
-						ServletMethodHandler obj = newServletMethodHandler(loader, method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
+						ServletMethodHandler obj = newServletMethodHandler(ClassKit.ContextClassLoader, method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
 
 						ServletMethodObject rules = map.get(lookupPath);
 						if (rules == null) {

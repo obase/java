@@ -334,7 +334,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchInsert(List<T> tableObject) throws SQLException;
+
 	<T> int[] batchInsert(T[] tableObject) throws SQLException;
+
+	<T> int[] batchInsert(Class<?> tableType, List<T> tableObject) throws SQLException;
 
 	<T> int[] batchInsert(Class<?> tableType, T[] tableObject) throws SQLException;
 
@@ -350,7 +354,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchInsertIgnore(List<T> tableObject) throws SQLException;
+
 	<T> int[] batchInsertIgnore(T[] tableObject) throws SQLException;
+
+	<T> int[] batchInsertIgnore(Class<?> tableType, List<T> tableObject) throws SQLException;
 
 	<T> int[] batchInsertIgnore(Class<?> tableType, T[] tableObject) throws SQLException;
 
@@ -368,7 +376,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T, R> R[] batchInsert(List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	<T, R> R[] batchInsert(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
+	<T, R> R[] batchInsert(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
 
 	<T, R> R[] batchInsert(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
@@ -386,7 +398,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T, R> R[] batchInsertIgnore(List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	<T, R> R[] batchInsertIgnore(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
+	<T, R> R[] batchInsertIgnore(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
 
 	<T, R> R[] batchInsertIgnore(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
@@ -402,7 +418,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchUpdate(List<T> tableObject) throws SQLException;
+
 	<T> int[] batchUpdate(T[] tableObject) throws SQLException;
+
+	<T> int[] batchUpdate(Class<?> tableType, List<T> tableObject) throws SQLException;
 
 	<T> int[] batchUpdate(Class<?> tableType, T[] tableObject) throws SQLException;
 
@@ -418,7 +438,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchReplace(List<T> tableObject) throws SQLException;
+
 	<T> int[] batchReplace(T[] tableObject) throws SQLException;
+
+	<T> int[] batchReplace(Class<?> tableType, List<T> tableObject) throws SQLException;
 
 	<T> int[] batchReplace(Class<?> tableType, T[] tableObject) throws SQLException;
 
@@ -436,7 +460,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T, R> R[] batchReplace(List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	<T, R> R[] batchReplace(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
+	<T, R> R[] batchReplace(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
 
 	<T, R> R[] batchReplace(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
@@ -452,7 +480,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchMerge(List<T> tableObject) throws SQLException;
+
 	<T> int[] batchMerge(T[] tableObject) throws SQLException;
+
+	<T> int[] batchMerge(Class<?> tableType, List<T> tableObject) throws SQLException;
 
 	<T> int[] batchMerge(Class<?> tableType, T[] tableObject) throws SQLException;
 
@@ -470,7 +502,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T, R> R[] batchMerge(List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
+
 	<T, R> R[] batchMerge(T[] tableObject, Class<R> generatedKeyType) throws SQLException;
+
+	<T, R> R[] batchMerge(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
 
 	<T, R> R[] batchMerge(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException;
 
@@ -486,7 +522,11 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchDelete(List<T> tableObjects) throws SQLException;
+
 	<T> int[] batchDelete(T[] tableObjects) throws SQLException;
+
+	<T> int[] batchDelete(Class<?> tableType, List<T> tableObjects) throws SQLException;
 
 	<T> int[] batchDelete(Class<?> tableType, T[] tableObjects) throws SQLException;
 
@@ -504,6 +544,8 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T> int[] batchDeleteByKey(Class<T> tableType, List<Object[]> keys) throws SQLException;
+
 	<T> int[] batchDeleteByKey(Class<T> tableType, Object[][] keys) throws SQLException;
 
 	/**
@@ -627,6 +669,8 @@ public interface MysqlClient {
 	 * @throws SQLException
 	 *             if there are any database access error or statement execution failed
 	 */
+	<T> int[] batchExecute(String updateId, List<T> params) throws SQLException;
+
 	<T> int[] batchExecute(String updateId, T[] params) throws SQLException;
 
 	/**
@@ -645,6 +689,8 @@ public interface MysqlClient {
 	 * @author hezhaowu
 	 * @since 0.9.1
 	 */
+	<T, R> R[] batchExecute(String updateId, List<T> params, Class<R> generatedKeyType) throws SQLException;
+
 	<T, R> R[] batchExecute(String updateId, T[] params, Class<R> generatedKeyType) throws SQLException;
 
 	<T> List<T> queryWithCollects(String queryId, Class<T> elemType, Map<String, Object> params) throws SQLException;

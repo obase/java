@@ -3,6 +3,7 @@ package com.github.obase.mysql.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -117,56 +118,111 @@ final class TransactionImpl implements Transaction {
 
 	@Override
 	public <T> int[] batchInsert(Class<?> tableType, T[] tableObject) throws SQLException {
+		return proxy.batchInsert(conn, tableType, Arrays.asList(tableObject));
+	}
+
+	@Override
+	public <T> int[] batchInsert(Class<?> tableType, List<T> tableObject) throws SQLException {
 		return proxy.batchInsert(conn, tableType, tableObject);
 	}
 
 	@Override
 	public <T> int[] batchInsertIgnore(Class<?> tableType, T[] tableObject) throws SQLException {
+		return proxy.batchInsertIgnore(conn, tableType, Arrays.asList(tableObject));
+	}
+
+	@Override
+	public <T> int[] batchInsertIgnore(Class<?> tableType, List<T> tableObject) throws SQLException {
 		return proxy.batchInsertIgnore(conn, tableType, tableObject);
 	}
 
 	@Override
 	public <T, R> R[] batchInsert(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+		return proxy.batchInsert(conn, tableType, Arrays.asList(tableObject), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchInsert(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException {
 		return proxy.batchInsert(conn, tableType, tableObject, generatedKeyType);
 	}
 
 	@Override
 	public <T, R> R[] batchInsertIgnore(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+		return proxy.batchInsertIgnore(conn, tableType, Arrays.asList(tableObject), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchInsertIgnore(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException {
 		return proxy.batchInsertIgnore(conn, tableType, tableObject, generatedKeyType);
 	}
 
 	@Override
 	public <T> int[] batchUpdate(Class<?> tableType, T[] tableObject) throws SQLException {
+		return proxy.batchUpdate(conn, tableType, Arrays.asList(tableObject));
+	}
+
+	@Override
+	public <T> int[] batchUpdate(Class<?> tableType, List<T> tableObject) throws SQLException {
 		return proxy.batchUpdate(conn, tableType, tableObject);
 	}
 
 	@Override
 	public <T> int[] batchReplace(Class<?> tableType, T[] tableObject) throws SQLException {
+		return proxy.batchReplace(conn, tableType, Arrays.asList(tableObject));
+	}
+
+	@Override
+	public <T> int[] batchReplace(Class<?> tableType, List<T> tableObject) throws SQLException {
 		return proxy.batchReplace(conn, tableType, tableObject);
 	}
 
 	@Override
 	public <T, R> R[] batchReplace(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+		return proxy.batchReplace(conn, tableType, Arrays.asList(tableObject), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchReplace(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException {
 		return proxy.batchReplace(conn, tableType, tableObject, generatedKeyType);
 	}
 
 	@Override
 	public <T> int[] batchMerge(Class<?> tableType, T[] tableObject) throws SQLException {
+		return proxy.batchMerge(conn, tableType, Arrays.asList(tableObject));
+	}
+
+	@Override
+	public <T> int[] batchMerge(Class<?> tableType, List<T> tableObject) throws SQLException {
 		return proxy.batchMerge(conn, tableType, tableObject);
 	}
 
 	@Override
 	public <T, R> R[] batchMerge(Class<?> tableType, T[] tableObject, Class<R> generatedKeyType) throws SQLException {
+		return proxy.batchMerge(conn, tableType, Arrays.asList(tableObject), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchMerge(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException {
 		return proxy.batchMerge(conn, tableType, tableObject, generatedKeyType);
 	}
 
 	@Override
 	public <T> int[] batchDelete(Class<?> tableType, T[] tableObjects) throws SQLException {
+		return proxy.batchDelete(conn, tableType, Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T> int[] batchDelete(Class<?> tableType, List<T> tableObjects) throws SQLException {
 		return proxy.batchDelete(conn, tableType, tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchDeleteByKey(Class<T> tableType, Object[][] tableObjects) throws SQLException {
+		return proxy.batchDeleteByKey(conn, tableType, Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T> int[] batchDeleteByKey(Class<T> tableType, List<Object[]> tableObjects) throws SQLException {
 		return proxy.batchDeleteByKey(conn, tableType, tableObjects);
 	}
 
@@ -201,12 +257,22 @@ final class TransactionImpl implements Transaction {
 	}
 
 	@Override
-	public int[] batchExecute(String updateId, Object[] params) throws SQLException {
+	public <T> int[] batchExecute(String updateId, T[] params) throws SQLException {
+		return proxy.batchExecute(conn, updateId, Arrays.asList(params));
+	}
+
+	@Override
+	public <T> int[] batchExecute(String updateId, List<T> params) throws SQLException {
 		return proxy.batchExecute(conn, updateId, params);
 	}
 
 	@Override
 	public <T, R> R[] batchExecute(String updateId, T[] params, Class<R> generatedKeyType) throws SQLException {
+		return proxy.batchExecute(conn, updateId, Arrays.asList(params), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchExecute(String updateId, List<T> params, Class<R> generatedKeyType) throws SQLException {
 		return proxy.batchExecute(conn, updateId, params, generatedKeyType);
 	}
 
@@ -315,52 +381,102 @@ final class TransactionImpl implements Transaction {
 
 	@Override
 	public <T> int[] batchInsert(T[] tableObjects) throws SQLException {
-		return batchInsert(tableObjects[0].getClass(), tableObjects);
+		return batchInsert(tableObjects[0].getClass(), Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T> int[] batchInsert(List<T> tableObjects) throws SQLException {
+		return batchInsert(tableObjects.get(0).getClass(), tableObjects);
+	}
+
+	@Override
+	public <T> int[] batchInsertIgnore(List<T> tableObjects) throws SQLException {
+		return batchInsertIgnore(tableObjects.get(0).getClass(), tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchInsertIgnore(T[] tableObjects) throws SQLException {
-		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects);
+		return batchInsertIgnore(tableObjects[0].getClass(), Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T, R> R[] batchInsert(List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsert(tableObjects.get(0).getClass(), tableObjects, generatedKeyType);
 	}
 
 	@Override
 	public <T, R> R[] batchInsert(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
-		return batchInsert(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+		return batchInsert(tableObjects[0].getClass(), Arrays.asList(tableObjects), generatedKeyType);
+	}
+
+	@Override
+	public <T, R> R[] batchInsertIgnore(List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchInsertIgnore(tableObjects.get(0).getClass(), tableObjects, generatedKeyType);
 	}
 
 	@Override
 	public <T, R> R[] batchInsertIgnore(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
-		return batchInsertIgnore(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+		return batchInsertIgnore(tableObjects[0].getClass(), Arrays.asList(tableObjects), generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchUpdate(List<T> tableObjects) throws SQLException {
+		return batchUpdate(tableObjects.get(0).getClass(), tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchUpdate(T[] tableObjects) throws SQLException {
-		return batchUpdate(tableObjects[0].getClass(), tableObjects);
+		return batchUpdate(tableObjects[0].getClass(), Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T> int[] batchReplace(List<T> tableObjects) throws SQLException {
+		return batchReplace(tableObjects.get(0).getClass(), tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchReplace(T[] tableObjects) throws SQLException {
-		return batchReplace(tableObjects[0].getClass(), tableObjects);
+		return batchReplace(tableObjects[0].getClass(), Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T, R> R[] batchReplace(List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchReplace(tableObjects.get(0).getClass(), tableObjects, generatedKeyType);
 	}
 
 	@Override
 	public <T, R> R[] batchReplace(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
-		return batchReplace(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+		return batchReplace(tableObjects[0].getClass(), Arrays.asList(tableObjects), generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchMerge(List<T> tableObjects) throws SQLException {
+		return batchMerge(tableObjects.get(0).getClass(), tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchMerge(T[] tableObjects) throws SQLException {
-		return batchMerge(tableObjects[0].getClass(), tableObjects);
+		return batchMerge(tableObjects[0].getClass(), Arrays.asList(tableObjects));
+	}
+
+	@Override
+	public <T, R> R[] batchMerge(List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
+		return batchMerge(tableObjects.get(0).getClass(), tableObjects, generatedKeyType);
 	}
 
 	@Override
 	public <T, R> R[] batchMerge(T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
-		return batchMerge(tableObjects[0].getClass(), tableObjects, generatedKeyType);
+		return batchMerge(tableObjects[0].getClass(), Arrays.asList(tableObjects), generatedKeyType);
+	}
+
+	@Override
+	public <T> int[] batchDelete(List<T> tableObjects) throws SQLException {
+		return batchDelete(tableObjects.get(0).getClass(), tableObjects);
 	}
 
 	@Override
 	public <T> int[] batchDelete(T[] tableObjects) throws SQLException {
-		return batchDelete(tableObjects[0].getClass(), tableObjects);
+		return batchDelete(tableObjects[0].getClass(), Arrays.asList(tableObjects));
 	}
 
 	@Override

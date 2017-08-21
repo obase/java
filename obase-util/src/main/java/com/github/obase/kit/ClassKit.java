@@ -11,7 +11,7 @@ public final class ClassKit {
 	private ClassKit() {
 	}
 
-	private static final DelegateClassLoader ContextClassLoader = new DelegateClassLoader(contextClassLoader());
+	public static final DelegateClassLoader ContextClassLoader = new DelegateClassLoader(contextClassLoader());
 
 	public static class DelegateClassLoader extends ClassLoader {
 

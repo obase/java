@@ -684,7 +684,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchInsert(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchInsert(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -697,7 +697,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsert");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -713,7 +713,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchInsertIgnore(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchInsertIgnore(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -729,7 +729,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsertIgnore");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(psql);
@@ -745,7 +745,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchInsert(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchInsert(Connection conn, Class<?> tableType, List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -758,7 +758,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsert");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -788,7 +788,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchInsertIgnore(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchInsertIgnore(Connection conn, Class<?> tableType, List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		SqlMeta meta = insertSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -804,7 +804,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchInsertIgnore");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -834,7 +834,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchUpdate(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchUpdate(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = updateSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -847,7 +847,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchUpdate");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -863,7 +863,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchReplace(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchReplace(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -876,7 +876,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchReplace");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -892,7 +892,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchReplace(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchReplace(Connection conn, Class<?> tableType, List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		SqlMeta meta = replaceSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -905,7 +905,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchReplace");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -935,7 +935,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchMerge(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchMerge(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -948,7 +948,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchMerge");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -964,7 +964,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T, R> R[] batchMerge(Connection conn, Class<?> tableType, T[] tableObjects, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchMerge(Connection conn, Class<?> tableType, List<T> tableObjects, Class<R> generatedKeyType) throws SQLException {
 
 		SqlMeta meta = mergeSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -977,7 +977,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchMerge");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -1006,7 +1006,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchDelete(Connection conn, Class<?> tableType, T[] tableObjects) throws SQLException {
+	protected <T> int[] batchDelete(Connection conn, Class<?> tableType, List<T> tableObjects) throws SQLException {
 
 		SqlMeta meta = deleteSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -1019,7 +1019,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchDelete");
 		}
 
-		JdbcAction action = getJdbcAction(tableObjects[0].getClass());
+		JdbcAction action = getJdbcAction(tableObjects.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -1035,7 +1035,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <T> int[] batchDeleteByKey(Connection conn, Class<T> tableType, Object[][] tableObjects) throws SQLException {
+	protected <T> int[] batchDeleteByKey(Connection conn, Class<T> tableType, List<Object[]> tableObjects) throws SQLException {
 
 		SqlMeta meta = deleteSqlMetaCache.get(tableType);
 		if (meta == null) {
@@ -1321,7 +1321,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected int[] batchExecute(Connection conn, String updateId, Object[] params) throws SQLException {
+	protected <T> int[] batchExecute(Connection conn, String updateId, List<T> params) throws SQLException {
 
 		SqlMeta meta = configSqlMetaCache.get(updateId);
 		if (meta == null) {
@@ -1334,7 +1334,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchExecute");
 		}
 
-		JdbcAction setAction = getJdbcAction(params[0].getClass());
+		JdbcAction setAction = getJdbcAction(params.get(0).getClass());
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(meta.psql);
@@ -1350,7 +1350,7 @@ abstract class MysqlClientOperation {
 		}
 	}
 
-	protected <R> R[] batchExecute(Connection conn, String updateId, Object[] params, Class<R> generatedKeyType) throws SQLException {
+	protected <T, R> R[] batchExecute(Connection conn, String updateId, List<T> params, Class<R> generatedKeyType) throws SQLException {
 
 		SqlMeta meta = configSqlMetaCache.get(updateId);
 		if (meta == null) {
@@ -1363,7 +1363,7 @@ abstract class MysqlClientOperation {
 			logger.warn("Not setAutoCommit(false) before executing batchExecute");
 		}
 
-		JdbcAction setAction = getJdbcAction(params[0].getClass());
+		JdbcAction setAction = getJdbcAction(params.get(0).getClass());
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -1624,8 +1624,7 @@ abstract class MysqlClientOperation {
 			SoftReference<JdbcAction> ref = tempoJdbcActionCache.get(type);
 			if (ref == null || (action = ref.get()) == null) {
 				if (type.isArray() || type.isEnum() || type.isInterface() || type.isAnnotation()) {
-					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_ACTION_NOT_SUPPORTED,
-							"JdbcAction don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_ACTION_NOT_SUPPORTED, "JdbcAction don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
 				}
 				synchronized (tempoJdbcActionCache) {
 					ref = tempoJdbcActionCache.get(type);
