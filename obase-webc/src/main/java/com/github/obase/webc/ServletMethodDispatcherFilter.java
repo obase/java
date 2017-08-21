@@ -25,7 +25,6 @@ import org.springframework.util.ClassUtils;
 
 import com.github.obase.WrappedException;
 import com.github.obase.kit.ClassKit;
-import com.github.obase.kit.ClassKit.DelegateClassLoader;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletMethod;
@@ -80,7 +79,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 				}
 
 				if (annotations.size() > 0) {
-					// DelegateClassLoader loader = new DelegateClassLoader(applicationContext.getBeanFactory().getBeanClassLoader());
+
 					for (Map.Entry<Method, ServletMethod> entry : annotations.entrySet()) {
 
 						Method method = entry.getKey();
@@ -90,7 +89,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 						String lookupPath = processor.lookup(controller, userClass, annotation, methodName);
 
-						ServletMethodHandler obj = newServletMethodHandler(ClassKit.ContextClassLoader, method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
+						ServletMethodHandler obj = newServletMethodHandler(method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
 
 						ServletMethodObject rules = map.get(lookupPath);
 						if (rules == null) {
@@ -210,14 +209,14 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		return ret.toArray(new ServletMethodFilter[ret.size()]);
 	}
 
-	public ServletMethodHandler newServletMethodHandler(DelegateClassLoader loader, Method method, Object bean, ServletMethodFilter... filters) {
+	public ServletMethodHandler newServletMethodHandler(Method method, Object bean, ServletMethodFilter... filters) {
 		String className = bean.getClass().getCanonicalName() + "__" + method.getName();
 		Class<?> c;
 		try {
-			c = loader.loadClass(className);
+			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			byte[] data = Webc.Util.dumpServletMethodObject(className, ClassUtils.getUserClass(bean), method);
-			c = loader.defineClass(className, data);
+			c = ClassKit.defineClass(className, data);
 		}
 
 		SoftReference<ServletMethodHandler> ref = ServletMethodHandlerRefs.get(c);
