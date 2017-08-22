@@ -130,10 +130,12 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 		// step2: check permission
 		if (object.authType == AuthType.PERMISSION) {
-			if (!validatePermission(principal, Kits.getHttpMethod(request), object)) {
+			principal = validatePermission(principal, Kits.getHttpMethod(request), object);
+			if (principal == null) {
 				sendError(response, SC_PERMISSION_DENIED, SC_PERMISSION_DENIED, "Permission denied!");
 				return null;
 			}
+			request.setAttribute(ATTR_PRINCIPAL, principal);
 		}
 
 		return request;
@@ -151,7 +153,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	 */
 	protected abstract Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
 
-	protected abstract boolean validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException;
+	protected abstract Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException;
 
 	protected abstract void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 

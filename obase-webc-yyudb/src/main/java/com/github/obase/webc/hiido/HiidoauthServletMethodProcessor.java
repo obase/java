@@ -149,8 +149,8 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 	}
 
 	// for subclass override
-	protected boolean validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
-		return true;
+	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
+		return principal;
 	}
 
 	public final List<Principal> getMyAgentStaffInfo() {
