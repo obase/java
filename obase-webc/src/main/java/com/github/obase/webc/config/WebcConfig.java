@@ -78,7 +78,7 @@ public class WebcConfig {
 		ret.controlSuffix = getStringParam(filterConfig, Props.controlSuffix, null);
 		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
 		ret.wsidDomain = getStringParam(filterConfig, Props.wsidDomain, null);
-		String authTypeStr = getStringParam(filterConfig, Props.asyncListener, null);
+		String authTypeStr = getStringParam(filterConfig, Props.defaultAuthType, null);
 		if (authTypeStr != null) {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
 		}

@@ -15,6 +15,7 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.github.obase.kit.SAXKit;
 import com.github.obase.kit.StringKit;
+import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Webc;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.config.WebcConfig.Props;
@@ -114,7 +115,10 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.wsidDomain.equals(localName)) {
 			param.wsidDomain = cleanContentAsString(null);
 		} else if (Props.defaultAuthType.equals(localName)) {
-			param.defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
+			String str = cleanContentAsString(null);
+			if (str != null) {
+				param.defaultAuthType = AuthType.valueOf(str);
+			}
 		} else if (Props.refererDomain.equals(localName)) {
 			param.refererDomain = cleanContentAsString(null);
 		}
