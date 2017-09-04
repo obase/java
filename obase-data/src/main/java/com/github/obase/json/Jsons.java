@@ -234,4 +234,23 @@ public final class Jsons {
 		}
 	}
 
+	public static final <T> T conertValue(Object fromValue, Class<T> toValueType) {
+		return OM.convertValue(fromValue, toValueType);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> T convertGeneric(Object fromValue, Class<?> parametrized, Class<?>... parameterClasses) {
+		if (parameterClasses != null && parameterClasses.length > 0) {
+			int idx = parameterClasses.length - 1;
+			JavaType type = TF.constructType(parameterClasses[idx]);
+			for (Class<?> clazz = null; --idx >= 0;) {
+				clazz = parameterClasses[idx];
+				type = TF.constructSimpleType(clazz, new JavaType[] { type });
+			}
+			return OM.convertValue(fromValue, TF.constructSimpleType(parametrized, new JavaType[] { type }));
+		} else {
+			return (T) OM.convertValue(fromValue, TF.constructType(parametrized));
+		}
+	}
+
 }
