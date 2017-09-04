@@ -234,7 +234,7 @@ public final class Jsons {
 		}
 	}
 
-	public static final <T> T conertValue(Object fromValue, Class<T> toValueType) {
+	public static final <T> T convertValue(Object fromValue, Class<T> toValueType) {
 		return OM.convertValue(fromValue, toValueType);
 	}
 
