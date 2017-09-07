@@ -71,7 +71,7 @@ public interface Webc {
 	String DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2 = "/META-INF/serviceContext.xml";
 	String DEFAULT_NAMESPACE_FOR_SERVLET = null;
 	String DEFAULT_NAMESPACE_FOR_SERVICE = "service";
-	int DEFAULT_TIMEOUT_SECOND = 30 * 60; // default 1 hour timeout
+	int DEFAULT_TIMEOUT_SECOND = 60 * 60; // default 1 hour timeout
 
 	String DEFAULT_CONTROL_PREFIX = "controller.";
 	String DEFAULT_CONTROL_SUFFIX = "Controller";
