@@ -57,7 +57,7 @@ public final class Wsid {
 		return this.tk == tk;
 	}
 
-	private static int signature(String sid, long nonce, long base) {
+	public static int signature(String sid, long nonce, long base) {
 		int hash = 31 * (int) (base ^ (base >>> 32));
 		for (int i = 0, n = sid.length(); i < n; i++) {
 			hash = 31 * hash + sid.charAt(i);
