@@ -629,7 +629,7 @@ public class GenericService {
 
     <见上
 
-# spring-mysqlclient高级应用
+## obase-mysql 高级应用
 
 * 灵活的乐观锁定制
 
@@ -637,7 +637,7 @@ public class GenericService {
 
 * 支持灵活多变的数据返回接口
 
-# spring-mysqlclient定制扩展
+##  obase-mysql 定制扩展
 
 * 扩展JdbcAction
     
