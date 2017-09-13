@@ -1,14 +1,618 @@
-# Summary
+# obase-webc
+## obase-webcÊÇÊ²Ã´?
+obase-webcÊÇ»ùÓÚservlet 3.0+µÄAsyncContextÊµÏÖµÄÎŞweb.xml¿ª·¢Ä£Ê½.ÔÚFilter²ãÃæÊµÏÖÁËSpring MVCµÄ¹¦ÄÜ, ²¢ÒÆ³ıÁËHandlerMappingÓëViewResolver, ÒÔCOC¼ò»¯Spring MVCµÄ·³ÈËÅäÖÃ. ÓÅµãÓĞÊ²Ã´? ÊÔÏÂßÂ.
 
-ç¡®å®šobaseæ‰€ç”¨spring, servlet, jsp, jdkç­‰æ˜ç¡®ç‰ˆæœ¬
+# obase-jedis
 
-# Maven dependency
+# obase-test
+## obase-testÊÇÊ²Ã´?
+·â×°ÁËembedded tomcat 8Óëjunit4, ¼òµ¥¼´¿ÉÊµÏÖhttpsµÄ²âÊÔ, ÒÔ¼°Spring ContextÉÏÏÂÎÄµ¥Ôª²âÊÔ. ÎªÊ²Ã´²»ÓÃJetty9? ÓÃ¹ıÄã¾ÍÖªµÀjetty9 ¶ÔÓÚServlet 3.0+µÄÖ§³ÖÓĞ¶à·³!
 
-```
+# obase-config
+## obase-configÊÇÊ²Ã´?
+»ùÓÚSpring, ÊµÏÖPropertySourceConfigurerµÄ¹¦ÄÜ, ¸ü¶àµØ... Ö§³ÖredisÓëmysqlµÄ¶¯Ì¬ÅäÖÃ»ñÈ¡Óë¶¨Ê±¸üĞÂ, »¹ÓĞ... ¼ÓÃÜÅäÖÃÏî, Õâ¸ö¶ÔÓÚÃô¸ĞÊı¾İÀ´ËµÊÇÒ»ÖÖ¼ò½àµÄ´¦Àí·½Ê½.
+
+# obase-loader
+## obase-loaderÊÇÊ²Ã´?
+ÄãµÄjarĞèÒª¼ÓÃÜ·¢²¼Ã´? obase-loader»ùÓÚspring contextµÄclassloader»úÖÆ, ÊµÏÖ¼ÓÔØÊ±½âÃÜ×Ö½ÚÂë¹¦ÄÜ.
+
+# obase-mysql
+
+* spring-mysqlclient×îĞÂ°æ±¾
+```xml
 <dependency>
-  <groupId>com.github.obase</groupId>
-  <artifactId>spring-parent</artifactId>
-  <version>1.0.0</version>
-  <type>pom</type>
+	<groupId>com.github.obase</groupId>
+	<artifactId>obase-mysql</artifactId>
+	<version>0.8.1</version>
 </dependency>
 ```
+
+## obase-mysqlÊÇÊ²Ã´?
+¹ËÃûË¼Òé, obase-mysqlÊÇÕë¶ÔmysqlµÄÒ»¸öjdbc·â×°¹¤¾ß.ÔÚÊµ¼ÊÏîÄ¿Ê¹ÓÃÁË¼¸ÄêµÄhibernate, mybatis, spring-jdbcºó·¢ÏÖÃ¿ÖÖ¿ò¼Ü¸÷ÓĞÌØµã,Í¬Ê±´æÔÚÒ»Ğ©²»¾¡ÈËÒâµÄµØ·½:
+
+¹ØÓÚHibernate: 
+* Hibernate·â×°Entity(ÅäÖÃhibernate.hbm2ddl.auto»¹ÄÜ×Ô¶¯¹ÜÀí±í½á¹¹),µ¥±í²Ù×÷²»ĞèĞ´ÈÎºÎSQL,ÕâµãºÜË¬. µ«¶à±í²Ù×÷ÄØ? HibernateµÄHQLÌ«ÖÂÃü,²»Ö§³Ö×Ó²éÑ¯,ÍâÁ¬½Ó(left join, right join)²éÑ¯±ØĞëÅäÖÃ@OneToMany, @ManyToMany µÈ¹ØÁª×¢½â. ºÜ¶àÍ¬Ñ§»áËµHibernateÖ§³ÖNative SQLÑ½. àÅ,»ùÓÚ±¾µØSQL½Ó¿Ú¿ÉÒÔĞ´ÈÎºÎSQL,µ«ÊÇÒªÇó¿ª·¢×Ô¼ºÈ¥·â×°Object[]½á¹û. Èç¹ûÕâÑùµÄÇé¾°¶àÁË, ÎªÊ²Ã´²»µ¹»ØÈ¥ÓÃSpring-jdbcµÄRowMapperÄØ? »òĞíÄãÓÖ»á±§Ô¹, ÄÄÃ¿ÕÅ±íÓÖÒªÈ¥Ğ´Ò»Ğ©À×Í¬µÄCRUD SQLÁË!!!
+* HibernateµÄHQL¾­¹ıantlrÓï·¨½âÎö³ÉADT(³éÏóÓï·¨Ê÷),×îºó½áºÏDialectÅäÖÃ×ª³É¾ßÌåÊı¾İ¿âµÄSQLÓï·¨, ÀıÈçºÜ¶àÏ²»¶µÄ·ÖÒ³²éÑ¯, ÔÚmysql×ª³Élimit clause, ÔÚoracleÔòÅäºÏrownum½øĞĞ¹ıÂË. ÕâÖĞ¼ä¾­¹ı2²ã×ª»», ĞÔÄÜÃ´? Ò»Ö±ÊÇºÜ¶à¿ª·¢±§Ô¹µÄ½¹µã.
+* HibernateÌá¹©ÁËÒ»¼¶»º´æ,ÉõÖÁÄã¿ÉÒÔÅäÖÃ¶ş¼¶´æ¼õÉÙÊı¾İ¿â²éÑ¯ÆµÂÊ,Ìá¸ßÊı¾İ²éÑ¯ĞÔÄÜ.Ä³ÖÖ²ãÃæ,ÕâÖÖcache¹ÜÀíµÄ¸ß³¬¼¼ÇÉÊµÔÚÁîÈËÉÍĞÄÔÃÄ¿,Ì¾Îª¹ÛÖ¹. µ«ÊÇ...µ«ÊÇ...¶ÔÓÚ´ó¶àÊı¾İµÄ»¥ÁªÍøÓ¦ÓÃÎªÁËHA(¸ß¿ÉÓÃ)ºÍLB(¸ºÔØ¾ùºâ), ¶¼»á²ÉÓÃ¶à»ú²¿ÊğÄ£Ê½. ÔÚÕâÖÖÇé¿öÏÂ, ¸÷É«µ¥»úµÄ»º´æ¾ø¶ÔÄÜÈÃÄã·¢·èÔÙ·¢ãÂ, ÖøÃûµÄCAPÀíÂÛµÃµ½×îÇĞÊµµÄÑéÖ¤. ×îºó,ÎªÁËÈÆ¹ı»º´æ,Ã¿´Î²Ù×÷Íêºó±ØĞëµ÷ÓÃflush(), clear()...ºÎ±ØÄØ? ÎÒÓÃmybatis, spring-jdbc²»ÊÇ¸üÊ¡ÊÂÃ´? µ«ÊÇ...µ¥±í²Ù×÷µÄĞèÇóÓÖ"µ°ÌÛ"ÁË.
+* Hibernate×ÜÌå¶øÑÔ,ÓĞ3¸öÊ¹ÓÃ²ã´Î, Ñ§Ï°ÄÑ¶ÈÖğ²ã·­±¶: 
+    1. ±íÓ³Éä, °üÀ¨µ¥×Ö¶ÎÓ³Éä,¶à×Ö¶ÎÓ³Éä. ´ó¶àÊı¿ª·¢¶¼Í£ÁôÔÚÕâ¸ö½×¶Î.
+    2. ±í¹ØÁª, °üÀ¨Ò»¶ÔÒ»¹ØÁª,Ò»¶Ô¶à¹ØÁª,¶à¶Ô¶à¹ØÁª. ¹ØÁª¶Ô²éÑ¯ĞÔÄÜµÄÓ°ÏìºÜ´ó, ÓÅ»¯²ßÂÔ¾ÍÊÇ½¨ÒéÍâ¼ü²¿·Ö¾¡¿ÉÄÜÓÃlazy,ÉÙÓÃeager,µ«ÒªÊ®·ÖĞ¡ĞÄ"µ°ÌÛ"µÄLazyInitializationException. ÁíÍâ, Hibernate¹Ù·½ÌØ±ğÇ¿µ÷¹ØÁªÉî¶ÈÎÊÌâ,½¨Òé²»Òª³¬¹ı3²ã. »¹ÓĞ, ÍÆ¼öÓÃĞ¡±í×÷ÎªÖ÷±í¹ØÁª´ó±í...µÈµÈ. ÄÄĞ©Ã»¶ÔHibernate½øĞĞÏµÍ³ÑĞ¾¿µÄ¿ª·¢, ÎÒÖ»ÄÜ½¨ÒéÈçÎŞ±ØÒª,±ğÔÚÄãµÄÏîÄ¿ÖĞÊ¹ÓÃ±í¹ØÁª.
+    3. ±í¼Ì³Ğ, HibernateµÄ¼Ì³Ğ²ßÂÔÓĞ3ÖÖÊµÏÖ²ßÂÔ: µ¥±í¼Ì³Ğ²ßÂÔ(table per class), Íâ¼üJoined²ßÂÔ(table per subclass), ºÍ±êÊ¶×Ö¶Î²ßÂÔ(table per class). Ñ¡Ôñ²»Í¬²ßÂÔ±ØĞë½÷É÷, Ó°Ïì×îÖÂÃüµÄ²»ÊÇ³ÌĞò, ¶øÊÇ±í½á¹¹ÓëÊı¾İ´æ´¢. ±Ï¾¹´úÂëµÄ¶«Î÷´ó²»ÁËÖØĞ´, µ«Êı¾İÂÒÁË, Äã»¹ÄÜ"µ°¶¨"µØÇáÃèµ­Ğ´ËµÒ»Éù: "´ó²»ÁËÖØĞÂÉú³ÉÊı¾İ"Ã´? ¹ûÕæÓ¢ĞÛ! 
+
+ÒÔÉÏÊÇÎÒ´Ó2009Äê¿ªÊ¼Ê¹ÓÃHibernateÒÔÀ´µÄÒ»Ğ©ÕæÊµ¸ĞÊÜ! ¼òµ¥×Ü½á: Ö»ÓÃhibernateµÄ±íÓ³Éä, ÉÙÁ¿Ê¹ÓÃ±í¹ØÁª,¶øÇÒ²ã¼¶<2. ´òËÀ²»ÓÃ±í¼Ì³Ğ...ÁíÍâ,¸ß²¢·¢ĞÔÄÜµÄ²éÑ¯½Ó¿ÚÊ¹ÓÃNative SQL. ±ØÒªÊ±Ê¹ÓÃprocedure.
+
+¹ØÓÚMybatis(ibatis):
+* mybatisµÄºËĞÄ¾ÍÊÇSqlMap, ¹»¼òµ¥, ÎŞĞè×¸Êö, Èç¹ûmybatis¶¼¿´²»¶®ÄØ? 
+* mybatisµÄ¶¯Ì¬SQL±êÇ©, ¿´ÆğÀ´ÊÇ¹¦ÄÜ¹»Ç¿µÄ! ¶ÔÓÚ¶¯Ì¬Æ´½Ó,Ö»ÄÜËµÊÇ"É½ÓëË®µÄ¹ØÏµ", ÈÊÕßÀÖÉ½, ÖÇÕßÀÖË®. ¶¯Ì¬ÌØĞÔÂú×ãÁËÄÄĞ©Ï²»¶Æ´½ÓSQLµÄ¿ª·¢ĞÄÀí, ÌØ±ğÊÇÊ¹ÓÃ$²ÎÊıµÄ¾²Ì¬Ìæ»». Ö»Òª´æÔÚ¶¯Ì¬Æ´½Ó²ÎÊı, ¾ÍÓĞSQL×¢ÈëµÄ·çÏÕ! 
+* mybatisÖ§³ÖSQL²ÎÊıÓë½á¹ûµÄ×Ô¶¯Ó³Éä,Õâµã±ÈÆğhibenrateÁé»îºÜ¶à. µ«ÕâÖÖÊµÏÖÊÇ»ùÓÚ·´ÉäµÄ,Ö±½ÓµÄ½á¹û¾ÍÊÇµ¼ÖÂmybatis±Èhibernate native sqlÃ»ÓĞÌ«¶àµÄĞÔÄÜÓÅÊÆ.
+
+ÒÔÉÏÊÇÎÒÕâ¼¸ÄêÊ¹ÓÃmybatisÒÔÀ´µÄÒ»Ğ©Ìå»á, ´ÓÄ³ÖÖ²ãÃæÀ´Ëµ, mybatisÄÜ¹»·ûºÏ´ó¶àÊı¿ª·¢ĞèÇó! ÄÑ¹ÖÌÔ±¦ÏµµÄ»ù´¡¼¼ÊõÖĞ¾ÍÓĞibatis. µ«ÊÇmybatisÃ»ÓĞÅúÁ¿²Ù×÷µÄ½Ó¿Ú, ÒÔ¼°²»ÄÜÏñhibernateÄÄÑù×Ô¶¯¹ÜÀíÊı¾İ±í½á¹¹, ÉõÖÁ·ÖÒ³Ò²ĞèÒª½èÖúµÚÈı·½²å¼ş...²»ÃâÓĞĞ©Ê§Âä.
+
+ºÜ¶àÏîÄ¿Í¬Ê±Ó¦ÓÃÁËhibernateÓëmybatis,È¡³¤²¹¶Ì,±¾À´Ë¼Â·ºÜ²»´í! µ«ÊÇ¶¼ºöÂÔÁËÒ»¸ö»îÉúÉúµÄÊÂÊµ: hibernateÓëmybatisÓëspringÊÂÎñµÄ¼¯³É½Ó¿Ú²»Í¬! »»ÑÔÖ®, ÏîÄ¿ÀïÃæµÄ´úÂë, ÒªÃ´ÓÃhibernate, ÒªÃ´ÓÃmybatis. »ìÓÃ¶şÕß, ÊÂÎñ»á³ÉºÜ´óµÄÎÊÌâ. 
+
+ÑóÑóÈ÷È÷³¶ÁËÕâÃ´¶à, ´ó¼ÒÓ¦¸ÃÃ÷°×spring-mysqlclientµÄÉè¼Æ³õÖÔÁË°É. Ëµ°×ÁË¾ÍÊÇ×ÛºÏÁËhibernateÓëmybatisµÄºÃÓÃÌØĞÔ, Í¬Ê±Ê¹ÓÃASM×Ö½ÚÂë¼¼ÊõÌæ´ú¶¯Ì¬·´Éä, ÌáÉı²éÑ¯¹ı³ÌµÄĞÔÄÜ.
+
+# spring-mysqlclientÓĞÄÄĞ©¹¦ÄÜ
+
+* mysqlclient¿ªÆôupdateTableÌØĞÔ, ÔÊĞí×Ô¶¯¸ù¾İ@TableÀà¸üĞÂÊı¾İ±í½á¹¹. µ«½öÏŞÓÚ"Ôö¼Ó"²Ù×÷. ¾ßÌå¹æÔò:
+    1. Èç¹û±í²»´æÔÚ, Ôò×Ô¶¯´´½¨±í, ÒÔ¼°¶¨ÒåÖ÷¼ü, Íâ¼ü, Ë÷Òı.
+    2. Èç¹û±í´æÔÚ, Ôò¼ì²é±í½á¹¹:
+        1. ±È½Ï×Ö¶Î, Èç¹û´æÔÚÍ¬Ãû×Ö¶Î, Ôò²»ÔÙĞŞ¸Ä.
+        1. ±È½ÏÖ÷¼ü, Èç¹û´æÔÚÖ÷¼üÔò²»ÔÙĞŞ¸Ä. µ«»á¼ì²éÖ÷¼ü×Ö¶ÎÊÇ·ñÏàÍ¬, ²¢ÏÔÊ¾Ïà¹Ø¾¯¸æĞÅÏ¢.
+        1. ±È½ÏÍâ¼ü, Èç¹û´æÔÚÍ¬ÃûÍâÃû, Ôò²»ÔÙĞŞ¸Ä.
+        1. ±È½ÏË÷Òı, Èç¹û´æÔÚÍ¬ÃûË÷Òı, Ôò²»ÔÙĞŞ¸Ä.
+        
+        ÏêÏ¸¹ı³Ì, ¿ÉÒÔ²é¿´ **com.github.risedragon.mysql.jdbc.SqlDdlKit.processUpdateTable()** ·½·¨.
+        
+* mysqlclientÌá¹©µ¥±í¼ÇÂ¼µÄinsert, update, replace, merge, delete, batchInsert, batchUpdate, batchReplace, batchMerge, batchDelete, select, select2, selectFirst, selectRange, selectPage²Ù×÷. ÕâĞ©²Ù×÷Ö»ĞèÅäÖÃ@Table, @Column×¢½â¼´¿É, ²»ÓÃĞ´ÈÎºÎSQL. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+
+* mysqlclientÌá¹©ÃüÃûSQLÖ§³Ö, ²¢¶Ô²ÎÊıÓë½á¹ûµÄÌáÈ¡×Ô¶¯·â×°. ³ıÁËÔ¤¶¨ÒåµÄSqlTypeÓëJavaTypeÀàÔ¤¶¨µÄscalarÀàĞÍ, ÓÃ»§¿ÉÒÔ»ùÓÚActionMeta½Ó¿Ú¶¨ÖÆÊµÏÖ, Í¨¹ı **JdbcAction.markSqlType()** ×¢²áµ½¿ò¼Ü, ×î³£¼û¾ÍÊÇÖ§³Ö¸´ºÏ²ÎÊıIN(:list). ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+
+* mysqlclientÌá¹©SQLµÄ³£¼û²éÑ¯½Ó¿Ú: query, queryFist, queryRange, queryPage. ÆäÖĞ·ÖÒ³½Ó¿ÚPage, »¹Ìá¹©×Ö¶ÎÅÅĞò¹¦ÄÜ. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+
+* mysqlclientÌá¹©SQLµÄ³£¼û²Ù×÷½Ó¿Ú: execute, batchExecute. 
+
+* ÁíÍâ, mysqlclientÌá¹©¶ÀÁ¢ÊÂÎñ¹ÜÀí½Ó¿ÚMysqlClientExtÂú×ã²»ĞèÒªSpringµÄPlatformTransactionManager¹ÜÀíÊÂÎñµÄÓ¦ÓÃ, ÍêÈ«±à³ÌÏ¸Á£¶È¿ØÖÆÊÂÎñµÄÌá½»Óë»Ø¹ö. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>
+
+## obase-mysql¿ìËÙÉÏÊÖ
+
+* ¶¨ÒåÊµÌå
+   
+Ê¹ÓÃ@Table×¢½â
+```java
+    @OptimisticLock(column = "version")
+public abstract class Base {
+
+	@Column(key = true, autoIncrement = true, comment = "×ÔÔöÖ÷¼ü")
+	Long id;
+
+	@Column(length = 16)
+	String createBy;
+
+	@Column
+	Date createTime;
+
+	@Column(length = 16)
+	String modifyBy;
+
+	@Column
+	Date modifyTime;
+
+	@Column
+	Long version;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getModifyBy() {
+		return modifyBy;
+	}
+
+	public void setModifyBy(String modifyBy) {
+		this.modifyBy = modifyBy;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+}
+
+@Table(engine=Engine.InnoDB, characterSet="UTF8")
+public class Employee extends Base {
+
+	@Column(length = 64, comment = "¹¤ºÅ")
+	String cardNo;
+	@Column(length = 16, comment = "ÀàĞÍ")
+	String type;
+	@Column(length = 16, comment = "ĞÕÃû")
+	String name;
+	@Column(length = 8, comment = "ĞÔ±ğ")
+	String gender;
+	@Column(length = 16, comment = "²¿ÃÅ")
+	String groupName;
+	@Column(length = 16, comment = "ÊÖ»úºÅÂë")
+	String phone;
+	@Column(length = 18, comment = "Éí·İÖ¤ºÅÂë", unique = true)
+	String sid;
+	@Column(length = 18, comment = "»¤ÕÕºÅÂë", unique = true)
+	String passportNo;
+	@Column(length = 18, comment = "»¤ÕÕºº×ÖÆ´Òô")
+	String passportAbbr;
+	@Column(length = 8, comment = "ĞéÄâ·¿¼äºÅ")
+	String room;
+	@Column(comment = "´øĞ½ÂÃÓÎ¼ÙÆÚ")
+	Date paidHoliday;
+	@Column(length = 8, defaultValue = "Äê¼Ù", comment = "µÖ¿Û¼ÙÆÚ")
+	String holidayType;
+	@Column(length = 18, comment = "°ì¹«µØµã")
+	String officeLocation;
+
+	@Column
+	BigDecimal other;
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getSid() {
+		return sid;
+	}
+
+	public void setSid(String sid) {
+		this.sid = sid;
+	}
+
+	public String getPassportNo() {
+		return passportNo;
+	}
+
+	public void setPassportNo(String passportNo) {
+		this.passportNo = passportNo;
+	}
+
+	public String getPassportAbbr() {
+		return passportAbbr;
+	}
+
+	public void setPassportAbbr(String passportAbbr) {
+		this.passportAbbr = passportAbbr;
+	}
+
+	public String getRoom() {
+		return room;
+	}
+
+	public void setRoom(String room) {
+		this.room = room;
+	}
+
+	public Date getPaidHoliday() {
+		return paidHoliday;
+	}
+
+	public void setPaidHoliday(Date paidHoliday) {
+		this.paidHoliday = paidHoliday;
+	}
+
+	public String getHolidayType() {
+		return holidayType;
+	}
+
+	public void setHolidayType(String holidayType) {
+		this.holidayType = holidayType;
+	}
+
+	public String getOfficeLocation() {
+		return officeLocation;
+	}
+
+	public void setOfficeLocation(String officeLocation) {
+		this.officeLocation = officeLocation;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public BigDecimal getOther() {
+		return other;
+	}
+
+	public void setOther(BigDecimal other) {
+		this.other = other;
+	}
+
+	public String toString() {
+		return JsonUtils.writeValueAsString(this);
+	}
+}
+
+```
+
+Ê¹ÓÃ\<table\>±êÇ©
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mysql>
+    <table>com.yy.risedev.myweb.entity.Employee</table>
+    ...
+</mysql>
+```
+* ¶¨Òå³Ö¾ÃÓëÁÙÊ±µÄJdbcAction
+    
+    JdbcAction½Ó¿ÚÊµÏÖSQL²ÎÊıÉèÖÃÓë½á¹ûÌáÈ¡µÄ·â×°. mysqlclient»ùÓÚASM×Ô¶¯Éú³ÉÏà¹ØµÄ´úÀíÀàĞÍ. 
+    
+    **×¢Òâ: @Table×¢½â»ò<table>±êÇ©¶¨ÒåµÄÊµÌåÒÑ¾­ÊÇ¸öMeta, ÎŞĞèÔÙÖØ¸´¶¨Òå!**
+
+Ê¹ÓÃ@Meta×¢½â
+```java
+@Meta
+public class EmpPart {
+	Long id;
+	Long version;
+	String cardNo;
+	String groupName;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String toString() {
+		return JsonUtils.writeValueAsString(this);
+	}
+}
+```
+
+Ê¹ÓÃ\<meta\>±êÇ©
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mysql>
+    <table>com.yy.risedev.myweb.model.EmpPart</table>
+    ...
+</mysql>
+```
+
+* ¶¨Òåsql
+Ê¹ÓÃ\<sql\>±êÇ©
+
+ **×¢Òâ:namespaceÊÇ¿ÉÑ¡µÄ,Ò»µ©¶¨Òå,Ê¹ÓÃSQLÊ±±ØĞë´øÉÏ,ÀıÈçÏÂÊöxmlÖĞÎªtest.insertPartEmployee**
+[ÍêÕûschema¶¨Òå](https://github.com/risedragon/schema/blob/master/risedev-mysql-1.0.xsd)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mysql namespace="test">
+    <sql id="insertPartEmployee">
+	<![CDATA[INSERT INTO Employee (id,version,cardNo,groupName) VALUES(:id,:version,:cardNo,:groupName) ON DUPLICATE KEY UPDATE version=version+1, cardNo=:cardNo, groupName=:groupName]]>
+    </sql>
+    ...
+</mysql>
+```
+
+* ÔÚspringÖĞÅäÖÃmysqlclient
+
+    ÈİÆ÷¹ÜÀíÊÂÎñµÄÊµÏÖ **MysqlClientPlatformTransactionImpl**
+    ```xml
+    	<bean id="mysqlClient" class="com.github.risedragon.mysql.impl.MysqlClientPlatformTransactionImpl" init-method="init">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.yy.risedev.myweb.entity,com.yy.risedev.myweb.model" />
+		<property name="configLocations" value="classpath:config/*.xml" />
+		<property name="showSql" value="true" />
+		<property name="updateTable" value="true" />
+	</bean>
+
+    ```
+    ±à³Ì¹ÜÀíÊÂÎñµÄÊµÏÖ **MysqlClientConnectTransactionImpl**
+    ```xml
+    	<bean id="mysqlClient" class="com.github.risedragon.mysql.impl.MysqlClientConnectTransactionImpl" init-method="init">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.yy.risedev.myweb.entity,com.yy.risedev.myweb.model" />
+		<property name="configLocations" value="classpath:config/*.xml" />
+		<property name="showSql" value="true" />
+		<property name="updateTable" value="true" />
+	</bean>
+
+    ```   
+    ¸÷¸öÊôĞÔËµÃ÷£º
+    
+
+    ÊôĞÔ | ¹¦ÄÜ | Ä¬ÈÏÖµ
+    ---|---|---
+    dataSource | Êı¾İÔ´ÒıÓÃ£¬ÈÎºÎjava.sql.DataSourceÊµÀı | ÎŞ
+    packagesToScan | É¨Ãè@Table»ò@MetaÀàµÄÆğÊ¼°ü£¬¶àÖµÓÃ¶ººÅ·Ö¸ô£¬ÀıÈç"a.b.c,a.b.d" | ÎŞ
+    configLocations | ¼ÓÔØsql xmlµÄSpring Resource Pattern, ¶àÖµÓÃ¶ººÅ·Ö¸ô£¬ÀıÈç¡°classpath:a/b/c/\*.xml,classpath:a/b/d/\*.xml¡± | ÎŞ
+    showSql | ÏÔÊ¾²Ù×÷µÄSQL. ½¨Òé²âÊÔ»·¾³´ò¿ª£¬Éú²ú»·¾³¹Ø±Õ | false, Ä¬ÈÏ¹Ø±Õ
+    updateTable | ÊÇ·ñ¸üĞÂ±í½á¹¹. Èç¹ûÎªtrue, Ôò¸ù¾İ@TableÓë@ColumnµÄ¶¨Òå¸üĞÂ±í½á¹¹. ÏêÏ¸¹æÔò²Î¼û<mysqlclient¿ªÆôupdateTableÌØĞÔ>. | false, Ä¬ÈÏ¹Ø±Õ´ËÌØĞÔ!
+
+    
+* ÔÚspringÖĞÖ§³ÖÈİÆ÷ÊÂÎñ
+
+    »ùÓÚ×¢½â@Transactional
+    ```xml
+    <bean id="transactionManager" class="com.github.risedragon.spring.transaction.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+    ```
+    »ùÓÚTransactionTemplate
+    ```xml
+    <bean id="transactionManager" class="com.github.risedragon.spring.transaction.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<constructor-arg ref="transactionManager"/>
+	</bean>
+    ```
+
+* ÊµÌå²Ù×÷: insert, insertIgnore, replace, update, merge, delete, select, select2, batchInsert, batchInsertIgnore, batchReplace, batchUpdate, batchMerge, batchDelete, selectFirst, selectRange, selectPageµÈ
+```java
+@Service
+@Transactional
+public class GenericService {
+
+	@Autowired
+	MysqlClient mysqlClient;
+
+	public void insret() throws SQLException {
+		Employee emp = new Employee();
+		emp.setGroupName("²âÊÔ²¿ÃÅ");
+		emp.setCardNo("135-137");
+		Long id = mysqlClient.insert(emp, Long.class);
+
+		System.out.println(id);
+		throw new SQLException();
+	}
+
+	public void update() throws SQLException {
+		Employee emp = mysqlClient.selectByKey(Employee.class, 3);
+		emp.setPaidHoliday(new Date());
+
+		System.out.println(mysqlClient.update(emp));
+	}
+
+	public void replace() throws SQLException {
+		Employee emp = new Employee();
+		emp.setId(4L);
+		mysqlClient.select2(emp);
+		emp.setCardNo("111-222-333");
+		emp.setPaidHoliday(new Date());
+		System.out.println(mysqlClient.replace(emp));
+	}
+
+	public void merge() throws SQLException {
+		Employee emp = new Employee();
+		emp.setCardNo("999-666-333");
+		emp.setPaidHoliday(new Date());
+		System.out.println(mysqlClient.merge(emp, BigDecimal.class));
+	}
+
+	public void delete() throws SQLException {
+		Employee emp = mysqlClient.selectByKey(Employee.class, 5L);
+		System.out.println(emp);
+		System.out.println(mysqlClient.deleteByKey(Employee.class, 6L));
+	}
+
+	public void selectPage() throws SQLException {
+		Page<Employee> page = new Page<>(2, 0, "id", true);
+		mysqlClient.selectPage(Employee.class, page);
+		System.out.format("total=%d,data=%s", page.getTotal(), page.getData());
+
+	}
+
+	public void showTables() throws SQLException {
+		List<Object> list = mysqlClient.query("test.showTables", null, null);
+		System.out.println(list);
+	}
+
+	public void selectBySql() throws SQLException {
+		// List<EmpPart> list = mysqlClient.queryRange("test.selectPartEmployee", EmpPart.class, 0, 2, Arrays.asList(5, "%666%"));
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 100000; i++) {
+			Page<EmpPart> page = new Page<>(0, 0, "id", true);
+			mysqlClient.queryPage("test.selectPartEmployee", EmpPart.class, page, Arrays.asList(5, "%"));
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("used time:" + (end - start));
+		// System.out.println(JsonUtils.writeValueAsString(page));
+	}
+
+	public void insertBySql() throws SQLException {
+
+		long start = System.currentTimeMillis();
+		int base = 1000;
+		EmpPart[] array = new EmpPart[1000];
+		for (int i = 0; i < 1000; i++) {
+			EmpPart part = new EmpPart();
+			part.setCardNo(String.format("000-001-%05d", i + 2000));
+			part.setId(i * 1L + base);
+			part.setGroupName("²âÊÔSQL·Ö×é");
+			part.setVersion(null);
+			array[i] = part;
+		}
+		Long[] result = mysqlClient.batchExecute("test.insertPartEmployee", array, Long.class);
+		long end = System.currentTimeMillis();
+		System.out.println("used time:" + (end - start));
+		System.out.println(Arrays.asList(result));
+	}
+
+	public void executeCallback() throws SQLException {
+		mysqlClient.callback(new ConnectionCallback<Void>() {
+
+			@Override
+			public Void doInConnection(Connection conn) throws SQLException {
+				for (int i = 0; i < 10000 * 10; i++) {
+					Statement stmt = conn.prepareStatement("show tables");
+				}
+				return null;
+			}
+		});
+	}
+
+	public void insertIgnore() throws SQLException {
+		long start = System.currentTimeMillis();
+		List<Employee> list = new LinkedList<Employee>();
+		for (int i = 0; i < 10000; i++) {
+			Employee emp = new Employee();
+			emp.setId(i * 1L + 1);
+			emp.setCardNo(String.format("000-001-%05d", i + 3000));
+			emp.setGroupName("group " + i);
+			emp.setOther(BigDecimal.valueOf(i));
+			mysqlClient.merge(emp, Long.class);
+		}
+		// Long[] result = mysqlClient.batchInsertIgnore(list.toArray(), Long.class);
+		long end = System.currentTimeMillis();
+		System.out.println("used time:" + (end - start));
+		// System.out.println(Arrays.toString(result));
+	}
+
+	public void selectRange() throws SQLException {
+		List<Employee> list = mysqlClient.selectRange(Employee.class, 0, 1000);
+		for (Employee item : list) {
+			System.out.println(item);
+		}
+	}
+}
+```
+
+* SQL²Ù×÷: query, queryFirst, queryRange, queryPage, execute, batchExecute
+
+    <¼ûÉÏ
+
+# spring-mysqlclient¸ß¼¶Ó¦ÓÃ
+
+* Áé»îµÄÀÖ¹ÛËø¶¨ÖÆ
+
+* ½áºÏJAVA¼Ì³ĞÌåÏµ£¬ÊµÏÖÒıÇæÊı¾İ²Ù×÷µÄÁé»îĞÔ
+
+* Ö§³ÖÁé»î¶à±äµÄÊı¾İ·µ»Ø½Ó¿Ú
+
+# spring-mysqlclient¶¨ÖÆÀ©Õ¹
+
+* À©Õ¹JdbcAction
+    
+    ¼ÙÉèÒª¶ÔEmpPart×Ô¶¨ÒåJdbcActionÊµÏÖ, Ö»ĞèÒª°´ÕÕÃüÃû¹æ·¶<targetClass>$JdbcActionÊµÏÖ×ÓÀà¼´¿É. ÀıÈç
+```java
+    public class EmpPart$JdbcAction extends JdbcAction{
+      ...
+    }
+```
+    Í¨¹ıAsmKit.newJdbcAction()¾Í¿ÉÒÔ¼ÓÔØ´´½¨ÊµÀı.
+
+* À©Õ¹ActionMeta
+    
+    Èç¹û¶ÔÄ³¸ö×Ö¶ÎÀàĞÍÒªÌØ±ğ¶¨ÖÆ, ÇëÊµÏÖActionMeta, ²¢ÓÉJdbcAction.markSqlType()×¢²á, ºóÃæÓöµ½¸ÃÀàĞÍµÄ×Ö¶Îºó»á×Ô¶¯µ÷ÓÃ¸ÃActionMetaÉèÖÃ²ÎÊı»òÌáÈ¡½á¹û. ÀıÈç¼¯ºÏ²ÎÊıµÄ´¦Àí.
+
+
+# ÁªÏµ·½Ê½
+    
+¿ª·¢Õß | ÁªÏµ·½Ê½
+---|---
+jasonhe | jasonhe.hzw@foxmail.com, QQ:1255422783
