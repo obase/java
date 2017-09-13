@@ -95,7 +95,7 @@ obase-webc是基于servlet 3.0+的AsyncContext实现的无web.xml开发模式.在Filter层面实
 
 洋洋洒洒扯了这么多, 大家应该明白spring-mysqlclient的设计初衷了吧. 说白了就是综合了hibernate与mybatis的好用特性, 同时使用ASM字节码技术替代动态反射, 提升查询过程的性能.
 
-# spring-mysqlclient有哪些功能
+## obase-mysql有哪些功能
 
 * mysqlclient开启updateTable特性, 允许自动根据@Table类更新数据表结构. 但仅限于"增加"操作. 具体规则:
     1. 如果表不存在, 则自动创建表, 以及定义主键, 外键, 索引.
@@ -659,4 +659,3 @@ public class GenericService {
 开发者 | 联系方式
 ---|---
 jasonhe | jasonhe.hzw@foxmail.com, QQ:1255422783
-dongbing | dongbing@yy.com
