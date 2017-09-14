@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<obase-mysql namespace="Database" xmlns="http://obase.github.io/schema/mysql" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://obase.github.io/schema/mysql https://obase.github.io/schema/obase-mysql-1.0.xsd">
+	<statement id="fuzzySelect">
+	<![CDATA[
+	SELECT pi.*, p.name projectname, i.name instancename
+	FROM Proinstan pi INNER JOIN Project p ON pi.projectid=p.id INNER JOIN Instance i ON pi.instanceid=i.id
+	WHERE (:projectname IS NULL OR p.name LIKE CONCAT('%',:projectname,'%')) 
+	AND (:instancename IS NULL OR i.name LIKE CONCAT('%',:instancename,'%')) 
+	AND (:dbname IS NULL OR pi.dbname LIKE CONCAT('%',:dbname,'%')) 
+	]]>
+	</statement>
+	<statement id="select">
+	<![CDATA[
+	SELECT pi.*, p.name projectname, i.name instancename
+	FROM Proinstan pi INNER JOIN Project p ON pi.projectid=p.id INNER JOIN Instance i ON pi.instanceid=i.id
+	WHERE pi.projectid=:projectid AND pi.instanceid=:instanceid AND pi.dbname=:dbname
+	]]>
+	</statement>
+</obase-mysql>

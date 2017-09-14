@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webc xmlns="http://obase.github.io/schema/webc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://obase.github.io/schema/webc
+	https://obase.github.io/schema/obase-webc-1.0.xsd">
+
+	<contextConfigLocation>classpath*:/META-INF/applicationContext-service.xml</contextConfigLocation>
+	<servlet>
+		<namespace>console</namespace>
+	</servlet>
+
+</webc>

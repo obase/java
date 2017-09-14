@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.huya.dbms</groupId>
+		<artifactId>dbms-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>dbms-service</artifactId>
+	<dependencies>
+
+		<dependency>
+			<groupId>com.huya.dbms</groupId>
+			<artifactId>dbms-model</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-jedis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-data</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+	</dependencies>
+</project>

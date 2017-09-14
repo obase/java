@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:config="http://obase.github.io/schema/config" xmlns:risedsn="http://obase.github.io/schema/risedsn"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://obase.github.io/schema/config 
+	https://obase.github.io/schema/obase-config-1.0.xsd
+	http://obase.github.io/schema/risedsn
+	https://obase.github.io/schema/obase-risedsn-1.0.xsd">
+
+	<!-- 升龙配置数据 -->
+	<config:application-properties id="applicationProperties" locations="classpath*:app.properties" />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${c3p0.driverClass}"></property>
+		<property name="jdbcUrl" value="${c3p0.url}"></property>
+		<property name="user" value="${c3p0.user}"></property>
+		<property name="password" value="${c3p0.password}"></property>
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}"></property>
+		<property name="initialPoolSize" value="${c3p0.initialPoolSize}"></property>
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}"></property>
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}"></property>
+		<property name="minPoolSize" value="${c3p0.minPoolSize}"></property>
+
+		<property name="acquireRetryDelay" value="1000"></property>
+		<property name="acquireRetryAttempts" value="60"></property>
+		<property name="breakAfterAcquireFailure" value="false"></property>
+	</bean>
+
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg value="${jedis.host}"/>
+		<constructor-arg value="${jedis.port}"/>
+	</bean>
+
+	<!-- 事务上下文 -->
+	<bean id="transactionManager" class="com.github.obase.spring.transaction.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- mysql客户端 -->
+	<bean id="mysqlClient" class="com.github.obase.mysql.impl.MysqlClientImpl" init-method="init">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.huya.dbms.entity,com.huya.dbms.model" />
+		<property name="configLocations" value="classpath*:/query/**/*.xml" />
+		<property name="showSql" value="true" /> <!-- 发布设置false -->
+		<property name="updateTable" value="true" /> <!-- 自动更新表结构(增) -->
+	</bean>
+
+	<!-- jedis客户端 -->
+	<bean id="jedisClient" class="com.github.obase.jedis.impl.JedisClientImpl">
+		<constructor-arg ref="jedisPool" />
+	</bean>
+
+	<!-- 服务与组件 -->
+	<context:component-scan base-package="com.huya.dbms.service" />
+	<context:component-scan base-package="com.huya.dbms.component" />
+
+</beans>

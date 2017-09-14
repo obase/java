@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<obase-mysql namespace="Common" xmlns="http://obase.github.io/schema/mysql" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://obase.github.io/schema/mysql https://obase.github.io/schema/obase-mysql-1.0.xsd">
+	<statement id="projectInfoList">
+	<![CDATA[
+	SELECT id,name,projectcode FROM Project
+	]]>
+	</statement>
+	<statement id="instanceInfoList">
+	<![CDATA[
+	SELECT id,name FROM Instance
+	]]>
+	</statement>
+</obase-mysql>

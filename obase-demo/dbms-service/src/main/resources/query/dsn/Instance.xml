@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<obase-mysql namespace="Instance" xmlns="http://obase.github.io/schema/mysql" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://obase.github.io/schema/mysql https://obase.github.io/schema/obase-mysql-1.0.xsd">
+	<statement id="fuzzySelect">
+	<![CDATA[
+	SELECT inst.*, ext.host, ext.vip, prj.name projectname, prj.projectcode
+	FROM Instance inst 
+	LEFT JOIN Instanext ext ON inst.id = ext.instanceid 
+	LEFT JOIN Project prj ON prj.id = inst.projectid
+	WHERE (:name IS NULL OR inst.name LIKE CONCAT('%',:name,'%') OR inst.remark LIKE CONCAT('%',:name,'%') OR inst.description LIKE CONCAT('%',:name,'%') ) 
+	AND (:ip IS NULL OR inst.ip LIKE CONCAT('%',:ip,'%') OR inst.masterip LIKE CONCAT('%',:ip,'%') OR ext.host LIKE CONCAT('%',:ip,'%') OR ext.vip LIKE CONCAT('%',:ip,'%'))
+	AND (:portStart IS NULL OR inst.port>=:portStart OR inst.masterport>=:portStart)
+	AND (:portEnd IS NULL OR inst.port<=:portEnd OR inst.masterport<=:portEnd)
+	AND (:role IS NULL OR inst.role=:role)
+	AND (:type IS NULL OR inst.type=:type)
+	AND (:dba IS NULL OR inst.mdba LIKE CONCAT('%',:dba,'%') OR inst.sdba LIKE CONCAT('%',:dba,'%'))
+	]]>
+	</statement>
+	<statement id="select">
+	<![CDATA[
+	SELECT inst.*, ext.host, ext.vip 
+	FROM Instance inst LEFT JOIN Instanext ext ON inst.id=ext.instanceid
+	WHERE inst.name=:name
+	]]>
+	</statement>
+</obase-mysql>
