@@ -10,6 +10,6 @@ public interface Principal extends Serializable {
 	/**
 	 * 获取标识
 	 */
-	String key();
+	String getKey();
 
 }

@@ -90,7 +90,7 @@ public class UserPrincipal implements Principal {
 	}
 
 	@Override
-	public String key() {
+	public String getKey() {
 		return passport;
 	}
 

@@ -126,7 +126,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			return false;
 		}
 
-		Wsid wsid = Wsid.valueOf(principal.key()).resetToken(wsidTokenBase); // csrf
+		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
 
 		String data = persistPrincipal(principal);
 		Jedis jedis = null;
