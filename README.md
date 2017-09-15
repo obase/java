@@ -1,3 +1,14 @@
+Obase系列是一套基于"spring+mysql+redis"的Java后端开发技术, 可以说是笔者多年开发经验沉湎.
+
+* obase-webc: 基于COC的MVC, 无web.xml启动, 很好支持前后端分离. 用户基于原生HttpServlet API开发. 
+* obase-mysql: 一套整合hibernate + mybatis的ORM框架. 自动封装, 一条SQL多种用途: 单值查询, 区间查询, 分页查询(支持字段排序),  
+* obase-jedis: 谈不上框架, 就是对JedisPool资源获取释放的封装.
+* obase-config: 实现PropertySourcePlaceholderConfiguer的功能, 并支持Redis, Mysql动态配置定期更新功能. 另外, 还支持配置项的AES128加密, 避免你的配置项明文存放.
+* obase-test: 嵌入式Tomcat8 + Junit4, 支持环境变量的动态注入. 可以容易测试https和spring bean.
+* obase-loader: 加密字节码发布时用的classloader. 对于商业代码比较实用!
+
+开源obase扎根"spring+mysql+redis", 框架思路可以扩展到其他... 如memcache, postsql. 在此就不做讨论了. 
+
 # obase-webc
 * obase-webc最新版本
 ```xml
@@ -9,6 +20,109 @@
 ```
 ## obase-webc是什么?
 obase-webc是基于servlet 3.0+的AsyncContext实现的无web.xml开发模式.在Filter层面实现了Spring MVC的功能, 并移除了HandlerMapping与ViewResolver, 以COC简化Spring MVC的烦人配置. 优点有什么? 试下呗.
+
+## obaes-webc怎么用?
+
+obase-webc的使用方法:
+
+源码maven目录结构参考: https://github.com/obase/java/tree/master/obase-demo, 用户需要继承obase-parent
+```
+<parent>
+	<groupId>com.github.obase</groupId>
+	<artifactId>obase-parent</artifactId>
+	<version>1.1.0</version>
+</parent>
+```
+里面定义了spring, servlet, jsp的核心版本.
+
++ 第1步: 创建/META-INF/webc.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<webc xmlns="http://obase.github.io/schema/webc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://obase.github.io/schema/webc
+	https://obase.github.io/schema/obase-webc-1.0.xsd">
+
+</webc>
+```
+
+/WEB-INF/webc.xml或/META-INF/webc.xml是obase-webc启用"阀门".  
+
++ 第2步: 创建/META-INF/servletContext.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="com.github.obase.demo.controller" />
+
+</beans>
+```
+
++ 第3步: 创建Controller
+```
+package com.github.obase.demo.controller;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+
+import com.github.obase.webc.Kits;
+import com.github.obase.webc.annotation.ServletMethod;
+
+@Controller
+public class TestController {
+
+	@ServletMethod
+	public void hello(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String name = Kits.readParam(request, "name");
+		Kits.writeSuccessMessage(response, "hello " + name);
+	}
+
+}
+
+```
+
++ 第4步: 创建HttpServer
+```
+package com.github.obase.test;
+
+public class HttpServer {
+
+	public static void main(String[] args) {
+		EmbedTomcat.start();
+	}
+
+}
+
+```
+
+启动HttpServer, 浏览器输入"http://localhost/test/hello?name=jason.he"
+```
+{"errno":0,"data":"hello jason.he"}
+```
+
+obase-webc的初衷: 抛弃spring-webmvc, 在spring-web + Servlet 3.0+ 基础结合COC打造一款全新的MVC. 
+
++ 前后端分离, 实现无web.xml启动, 把src/main/webapp目录完全交给前端团队.
++ 统一URL映射, 基于COC的映射规则.
++ 可简可烦, 简单时创建一个webc.xml即可使用, 不用再配置web.xml, 也不用再配置各种框架servlet;  复杂时可以细粒度控制API访问策略, 接管Spring Security的功能. 
++ 与servlet共存, 这样就能与spring-mvc无缝整合(历史遗留原因). --- 基于Filter技术实现.
++ 支持动态session cookie校验. --- 启用后cookie自带时间戳与hash指纹.
++ 支持类似restful的API, 支持UI与API共用相同的Controller. --- @Controller + @ServletMethod
++ 支持微服务框架. --- @Service + @InvokerService
++ 支持多机部署+分布式会话.
++ 没有反射损耗. reflect太out了, 基于ASM + ServletMethodFilter 自动组装拦截代码到@ServletMethod方法.
++ 保持最小侵入. 该点最关键, 也是最重要. 使用者只需知道@InvokerService, @ServletMethod, SerlvetMethodFilter, ServletMethodProcssor几个注解或API, 其他还是HttpServlet API, 或者Spring API.
+
+后面会具体一一介绍.
 
 # obase-jedis
 * obase-jedis 最新版本
@@ -659,3 +773,4 @@ public class GenericService {
 开发者 | 联系方式
 ---|---
 jasonhe | jasonhe.hzw@foxmail.com, QQ:1255422783
+dongbing | dongbing@yy.com
