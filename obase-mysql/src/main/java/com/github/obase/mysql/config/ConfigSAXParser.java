@@ -5,7 +5,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.github.obase.MessageException;
 import com.github.obase.kit.SAXKit;
+import com.github.obase.mysql.MysqlErrno;
 
 public class ConfigSAXParser extends DefaultHandler {
 
@@ -47,7 +49,9 @@ public class ConfigSAXParser extends DefaultHandler {
 			config.metas.add(filterWhiteSpaces(content));
 			content.setLength(0);
 		} else if (ELEM_SQL.equals(localName)) {
-			config.sqls.put(id, filterWhiteSpaces(content));
+			if (config.sqls.put(id, filterWhiteSpaces(content)) != null) {
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_DUPLICATE, "Duplicate sql id: " + config.namespace + '.' + id);
+			}
 			content.setLength(0);
 		}
 	}
