@@ -15,7 +15,7 @@ ObaseÏµÁĞÊÇÒ»Ì×»ùÓÚ"spring+mysql+redis"µÄJavaºó¶Ë¿ª·¢¼¼Êõ, ¿ÉÒÔËµÊÇ±ÊÕß¶àÄê¿ª·¢¾
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-webc</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependency>
 ```
 ## obase-webcÊÇÊ²Ã´?
@@ -109,6 +109,124 @@ public class HttpServer {
 {"errno":0,"data":"hello jason.he"}
 ```
 
+## obase-webcÓëspring-bootÕûºÏ
+
+- mavenÒÀÀµ
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.obase.boot</groupId>
+	<artifactId>obase-boot-demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<properties>
+		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+		<spring.version>4.3.10.RELEASE</spring.version>
+		<jackson.version>2.9.0</jackson.version>
+		<java.version>1.8</java.version>
+		<obase.version>1.1.0-SNAPSHOT</obase.version>
+	</properties>
+
+	<parent>
+		<groupId>com.github.obase</groupId>
+		<artifactId>obase-parent</artifactId>
+		<version>1.1.0</version>
+	</parent>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-webc</artifactId>
+			<version>${obase.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+```
+ÆäÖĞpropertiesµÄÖµÈ·±£obase-webcÓëspring-bootÊ¹ÓÃÏàÍ¬°æ±¾ÒÀÀµ.
+
+- java´úÂë
+
+```
+package test.main;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+
+import com.github.obase.webc.WebcServletContainerInitializer;
+
+@SpringBootApplication
+public class AppMain extends WebcServletContainerInitializer implements ServletContextInitializer {
+
+	public static void main(String[] args) {
+		SpringApplication.run(AppMain.class, args);
+	}
+
+}
+
+```
+Ö´ĞĞmvn clean packageÃüÁî¼´¿ÉµÃµ½Ö´ĞĞµÄwar.
+
 obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔìÒ»¿îÈ«ĞÂµÄMVC. 
 
 + Ç°ºó¶Ë·ÖÀë, ÊµÏÖÎŞweb.xmlÆô¶¯, °Ñsrc/main/webappÄ¿Â¼ÍêÈ«½»¸øÇ°¶ËÍÅ¶Ó.
@@ -130,7 +248,7 @@ obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔì
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-jedis</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependen
 ```
 
@@ -141,7 +259,7 @@ obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔì
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-test</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependen
 ```
 ## obase-testÊÇÊ²Ã´?
@@ -154,7 +272,7 @@ obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔì
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-config</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependen
 ```
 ## obase-configÊÇÊ²Ã´?
@@ -167,7 +285,7 @@ obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔì
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-loader</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependen
 ```
 ## obase-loaderÊÇÊ²Ã´?
@@ -180,7 +298,7 @@ obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔì
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-mysql</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 </dependency>
 ```
 
@@ -773,4 +891,3 @@ public class GenericService {
 ¿ª·¢Õß | ÁªÏµ·½Ê½
 ---|---
 jasonhe | jasonhe.hzw@foxmail.com, QQ:1255422783
-dongbing | dongbing@yy.com
