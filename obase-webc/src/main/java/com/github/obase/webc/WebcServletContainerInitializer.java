@@ -16,7 +16,25 @@ import com.github.obase.webc.config.WebcConfig;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.config.WebcConfigParser;
 
-public final class WebcServletContainerInitializer implements ServletContainerInitializer {
+public class WebcServletContainerInitializer implements ServletContainerInitializer {
+
+	/**
+	 * It is a convenient method to support spring-boot. e.g
+	 * 
+	 * <pre>
+	 * &#64;SpringBootApplication
+	 * public class AppMain extends WebcServletContainerInitializer implements ServletContextInitializer {
+	 * 
+	 * 	public static void main(String[] args) {
+	 * 		SpringApplication.run(AppMain.class, args);
+	 * 	}
+	 * 
+	 * }
+	 * </pre>
+	 */
+	public void onStartup(ServletContext servletContext) throws ServletException {
+		onStartup(null, servletContext);
+	}
 
 	@Override
 	public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) throws ServletException {
