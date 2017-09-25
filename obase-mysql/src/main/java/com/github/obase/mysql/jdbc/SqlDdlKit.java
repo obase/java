@@ -170,18 +170,18 @@ public class SqlDdlKit extends SqlKit {
 		return type;
 	}
 
-	private static final Integer getColumnLength(ColumnAnnotation columnAnnotation, JavaType javaType) {
+	private static final Integer getColumnLength(ColumnAnnotation columnAnnotation, SqlType sqlType) {
 		Integer length = columnAnnotation.length;
 		if (length == null) {
-			length = javaType.defaultLength;
+			length = sqlType.defaultLength;
 		}
 		return length;
 	}
 
-	private static final Integer getColumnDecimal(ColumnAnnotation columnAnnotation, JavaType javaType) {
+	private static final Integer getColumnDecimal(ColumnAnnotation columnAnnotation, SqlType sqlType) {
 		Integer decimals = columnAnnotation.decimals;
 		if (decimals == null) {
-			decimals = javaType.defaultDecimals;
+			decimals = sqlType.defaultDecimals;
 		}
 		return decimals;
 	}
@@ -439,15 +439,20 @@ public class SqlDdlKit extends SqlKit {
 		}
 		cols.append(identifier(name)).append(" ").append(sqlType.sqlValue);
 
-		Integer length = getColumnLength(columnAnnotation, javaType);
+		Integer length = getColumnLength(columnAnnotation, sqlType);
 		if (length != null) {
 			cols.append("(").append(length);
-			Integer decimals = getColumnDecimal(columnAnnotation, javaType);
+			Integer decimals = getColumnDecimal(columnAnnotation, sqlType);
 			if (decimals != null) {
 				cols.append(",").append(decimals);
 			}
 			cols.append(")");
 		}
+
+		if (sqlType.binary) {
+			cols.append(" ").append(SqlType.BINARY_SUFFIX);
+		}
+
 		if (Boolean.TRUE.equals(columnAnnotation.notNull)) {
 			cols.append(" NOT NULL");
 		}
