@@ -104,6 +104,7 @@ public class UserPrincipal implements Principal {
 		sb.append(nvlv(phone)).append('\001');
 		sb.append(nvlv(jobCode)).append('\001');
 		sb.append(Integer.toString(level));
+		sb.append(nvlv(yyuid)).append('\001');
 		return sb.toString();
 	}
 
@@ -117,6 +118,7 @@ public class UserPrincipal implements Principal {
 		phone = s.next();
 		jobCode = s.next();
 		level = Integer.parseInt(s.next());
+		yyuid = s.next();
 		return this;
 	}
 
