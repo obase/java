@@ -62,6 +62,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 
 		} else if (Props.wsidDomain.equals(localName)) {
 
+		} else if (Props.wsidName.equals(localName)) {
+
 		} else if (Props.defaultAuthType.equals(localName)) {
 
 		} else if (Props.refererDomain.equals(localName)) {
@@ -114,6 +116,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 			param.wsidTokenBase = cleanContentAsInt(Webc.DEFAULT_WSID_TOKEN_BASE);
 		} else if (Props.wsidDomain.equals(localName)) {
 			param.wsidDomain = cleanContentAsString(null);
+		} else if (Props.wsidName.equals(localName)) {
+			param.wsidName = cleanContentAsString(null);
 		} else if (Props.defaultAuthType.equals(localName)) {
 			String str = cleanContentAsString(null);
 			if (str != null) {

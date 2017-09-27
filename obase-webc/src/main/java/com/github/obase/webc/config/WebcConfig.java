@@ -30,6 +30,7 @@ public class WebcConfig {
 		String controlSuffix = "controlSuffix";
 		String wsidTokenBase = "wsidTokenBase";
 		String wsidDomain = "wsidDomain"; // For shared by multiple domain
+		String wsidName = "wsidName"; // For avoid cookie confict
 		String defaultAuthType = "defaultAuthType";
 		String refererDomain = "refererDomain";
 	}
@@ -52,6 +53,7 @@ public class WebcConfig {
 		public String controlSuffix;// multi values by comma
 		public int wsidTokenBase; // BKDRHash的base,默认为0
 		public String wsidDomain;
+		public String wsidName;
 		public AuthType defaultAuthType;
 		public String refererDomain; // multi values by comma
 	}
@@ -78,6 +80,7 @@ public class WebcConfig {
 		ret.controlSuffix = getStringParam(filterConfig, Props.controlSuffix, null);
 		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
 		ret.wsidDomain = getStringParam(filterConfig, Props.wsidDomain, null);
+		ret.wsidName = getStringParam(filterConfig, Props.wsidName, null);
 		String authTypeStr = getStringParam(filterConfig, Props.defaultAuthType, null);
 		if (authTypeStr != null) {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
@@ -126,6 +129,9 @@ public class WebcConfig {
 		}
 		if (param.wsidDomain != null) {
 			dynamic.setInitParameter(Props.wsidDomain, param.wsidDomain);
+		}
+		if (param.wsidName != null) {
+			dynamic.setInitParameter(Props.wsidName, param.wsidName);
 		}
 
 		if (param.defaultAuthType != null) {
