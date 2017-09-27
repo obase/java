@@ -81,14 +81,16 @@ public final class HiidoKit {
 
 	public static UserPrincipal getStaffInfoByToken(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey, String token) {
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getStaffInfoByToken", Arrays.<Object> asList(token));
-		if (RpcKit.code(result) != 1) {
-			return null;
+		int code = RpcKit.code(result);
+		if (code != 1) {
+			throw new MessageException(code, (String) result.get("msg"));
 		}
 		Map<String, Object> data = RpcKit.dataObject(result);
 		String passport = RpcKit._String(data, "passport", null);
 		if (StringKit.isNotEmpty(passport)) {
 			UserPrincipal principal = new UserPrincipal();
 			principal.setPassport(passport);
+			principal.setYyuid(RpcKit._String(data, "yyuid", null));
 			principal.setJobCode(RpcKit._String(data, "job_code", null));
 			principal.setEmail(RpcKit._String(data, "email", null));
 			principal.setRealname(RpcKit._String(data, "realname", null));
@@ -103,8 +105,9 @@ public final class HiidoKit {
 	public static List<Principal> getMyAgentStaffInfo(String udbApi, String agentId, byte[] agentPwdBytes, String publicKey) {
 		// 执行同步, 将usrmgr中maintain中的user同步到hiido
 		JSONObject result = jsonrpc(udbApi, agentId, agentPwdBytes, publicKey, "getMyAgentStaffInfo", Arrays.<Object> asList(Collections.emptyList()));
-		if (RpcKit.code(result) != 1) {
-			throw new MessageException(YyudbErrno.SOURCE, YyudbErrno.HIIDO_VALID_FAILED, result.toJSONString());
+		int code = RpcKit.code(result);
+		if (code != 1) {
+			throw new MessageException(code, (String) result.get("msg"));
 		}
 
 		// 已注册用户
@@ -117,6 +120,7 @@ public final class HiidoKit {
 				if (StringKit.isNotEmpty(passport)) {
 					UserPrincipal principal = new UserPrincipal();
 					principal.setPassport(passport);
+					principal.setYyuid(RpcKit._String(data, "yyuid", null));
 					principal.setJobCode(RpcKit._String(data, "job_code", null));
 					principal.setEmail(RpcKit._String(data, "email", null));
 					principal.setRealname(RpcKit._String(data, "realname", null));
