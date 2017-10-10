@@ -33,6 +33,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 
 	protected int wsidTokenBase;
 	protected String wsidDomain;
+	protected String wsidName;
 	protected long timeoutMillis;
 	protected AuthType defaultAuthType;
 	protected final Set<String> refererDomainSet = new HashSet<String>();
@@ -58,6 +59,11 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 		if (params.wsidDomain != null) {
 			wsidDomain = params.wsidDomain;
+		}
+		if (params.wsidName != null) {
+			wsidName = params.wsidName;
+		} else {
+			wsidName = Wsid.COOKIE_NAME;
 		}
 
 		// set object authType
@@ -85,7 +91,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		Principal principal = (Principal) request.getAttribute(Webc.ATTR_PRINCIPAL);
 		if (principal == null) {
 			// step1.1: parse wsid from request cookie
-			String tk = Kits.readCookie(request, Wsid.COOKIE_NAME);
+			String tk = Kits.readCookie(request, wsidName);
 			Wsid wsid;
 			if (tk == null || (wsid = Wsid.decode(tk)) == null) {
 				wsid = tryOssLogin(request, response);
@@ -101,7 +107,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 					if (logger.isDebugEnabled()) {
 						logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
 					}
-					Kits.writeCookie(response, Wsid.COOKIE_NAME, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
+					Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 					redirectLoginPage(request, response);
 					return null;
 				}
@@ -119,14 +125,14 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			// step1.3: validate and extend principal timeout
 			principal = validateAndExtendPrincipal(wsid);
 			if (principal == null) {
-				Kits.writeCookie(response, Wsid.COOKIE_NAME, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
+				Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 				redirectLoginPage(request, response);
 				return null;
 			}
 
 			request.setAttribute(ATTR_WSID, wsid);
 			request.setAttribute(ATTR_PRINCIPAL, principal);
-			Kits.writeCookie(response, Wsid.COOKIE_NAME, Wsid.encode(wsid.resetToken(wsidTokenBase)), wsidDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
+			Kits.writeCookie(response, wsidName, Wsid.encode(wsid.resetToken(wsidTokenBase)), wsidDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
 		}
 		// step2: check permission
 		if (object.authType == AuthType.PERMISSION) {
