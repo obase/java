@@ -107,7 +107,6 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 					if (logger.isDebugEnabled()) {
 						logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
 					}
-					Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 					redirectLoginPage(request, response);
 					return null;
 				}
@@ -125,7 +124,6 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			// step1.3: validate and extend principal timeout
 			principal = validateAndExtendPrincipal(wsid);
 			if (principal == null) {
-				Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);// 转发前销毁cookie
 				redirectLoginPage(request, response);
 				return null;
 			}
