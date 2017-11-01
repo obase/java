@@ -4765,4 +4765,55 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
+	@Override
+	public boolean tryLock(String key, String val, int expireSeconds) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			if (jedis.setnx(key, val) > 0) {
+				jedis.expire(key, expireSeconds);
+				return true;
+			}
+			return false;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public boolean tryLock(String key, String val, int expireSeconds, long waitMillis, int tryTimes) {
+		try {
+			if (tryLock(key, val, expireSeconds)) {
+				return true;
+			} else {
+				for (int i = 0; i < tryTimes; i++) {
+					TimeUnit.MILLISECONDS.sleep(waitMillis);
+					if (tryLock(key, val, expireSeconds)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		} catch (InterruptedException e) {
+			// if occur exception, treated as false
+			return false;
+		}
+	}
+
+	@Override
+	public int unlock(String key, String val) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			Number ret = (Number) jedis.eval("if redis.call('get',KEYS[1])==KEYS[2] then return redis.call('del',KEYS[1]) else return 0 end", 2, key, val);
+			return ret == null ? 0 : ret.intValue();
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 }
