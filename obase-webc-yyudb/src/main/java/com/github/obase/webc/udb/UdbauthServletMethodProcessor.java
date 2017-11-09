@@ -1,54 +1,13 @@
 package com.github.obase.webc.udb;
 
-import com.github.obase.security.Principal;
 import com.github.obase.webc.WsidSession;
-import com.github.obase.webc.yy.UserPrincipal;
+import com.github.obase.webc.yy.JedisSession;
 
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Response;
-import redis.clients.jedis.Transaction;
 
 public abstract class UdbauthServletMethodProcessor extends UdbauthServletMethodProcessor2 {
 
-	protected final WsidSession wsidSession = new WsidSession() {
-
-		final JedisPool jedisPool = getJedisPool();
-
-		@Override
-		public void passivate(String key, Principal val, long expireMillis) {
-			String data = ((UserPrincipal) val).encode();
-			Jedis jedis = null;
-			try {
-				jedis = jedisPool.getResource();
-				jedis.psetex(key, expireMillis, data);
-			} finally {
-				if (jedis != null) {
-					jedis.close();
-				}
-			}
-		}
-
-		@Override
-		public Principal activate(String key, long expireMillis) {
-			Jedis jedis = null;
-			Response<String> resp = null;
-			try {
-				jedis = jedisPool.getResource();
-				Transaction tx = jedis.multi();
-				resp = tx.get(key);
-				tx.pexpire(key, expireMillis);
-				tx.exec();
-
-			} finally {
-				if (jedis != null) {
-					jedis.close();
-				}
-			}
-			String data = resp.get();
-			return data == null ? null : new UserPrincipal().decode(data);
-		}
-	};
+	protected final WsidSession wsidSession = new JedisSession(getJedisPool());
 
 	@Override
 	protected final WsidSession getWsidSession() {
