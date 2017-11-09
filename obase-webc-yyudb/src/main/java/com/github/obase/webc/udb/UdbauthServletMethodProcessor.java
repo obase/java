@@ -1,26 +1,7 @@
 package com.github.obase.webc.udb;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.HttpMethod;
-
-import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
-import com.github.obase.webc.Kits;
-import com.github.obase.webc.ServletMethodHandler;
-import com.github.obase.webc.ServletMethodObject;
-import com.github.obase.webc.Webc;
-import com.github.obase.webc.Wsid;
-import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.webc.support.security.WsidServletMethodProcessor;
-import com.github.obase.webc.udb.UdbKit.Callback;
+import com.github.obase.webc.WsidSession;
 import com.github.obase.webc.yy.UserPrincipal;
 
 import redis.clients.jedis.Jedis;
@@ -28,135 +9,19 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
-public abstract class UdbauthServletMethodProcessor extends WsidServletMethodProcessor implements Callback {
+public abstract class UdbauthServletMethodProcessor extends UdbauthServletMethodProcessor2 {
 
-	protected abstract String getAppid();
+	protected final WsidSession wsidSession = new WsidSession() {
 
-	protected abstract String getAppkey();
+		final JedisPool jedisPool = getJedisPool();
 
-	protected abstract String getHomepage();
-
-	protected abstract String getLogoutpage();
-
-	protected abstract JedisPool getJedisPool();
-
-	@Override
-	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
-
-		ServletMethodHandler loginObject = new ServletMethodHandler() {
-			@Override
-			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				UdbKit.login(request, response, Kits.getNamespace(request));
-			}
-		};
-
-		ServletMethodHandler genUrlTokenObject = new ServletMethodHandler() {
-			@Override
-			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				UdbKit.genUrlToken(request, response, Kits.getNamespace(request), getAppid(), getAppkey());
-			}
-		};
-
-		ServletMethodHandler callbackObject = new ServletMethodHandler() {
-			@Override
-			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				UdbKit.callback(request, response, Kits.getNamespace(request), getAppid(), getAppkey(), getHomepage(), UdbauthServletMethodProcessor.this);
-			}
-		};
-
-		ServletMethodHandler denyCallbackObject = new ServletMethodHandler() {
-			@Override
-			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				UdbKit.denyCallback(request, response);
-			}
-		};
-
-		ServletMethodHandler logoutObject = new ServletMethodHandler() {
-			@Override
-			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
-				UdbKit.logout(request, response, Kits.getNamespace(request), getAppid(), getAppkey(), getLogoutpage(), UdbauthServletMethodProcessor.this);
-			}
-		};
-
-		rules.put(UdbKit.LOOKUP_PATH_LOGIN, newServletMethodObject(UdbKit.LOOKUP_PATH_LOGIN, loginObject));
-		rules.put(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, newServletMethodObject(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, genUrlTokenObject));
-		rules.put(UdbKit.LOOKUP_PATH_CALLBACK, newServletMethodObject(UdbKit.LOOKUP_PATH_CALLBACK, callbackObject));
-		rules.put(UdbKit.LOOKUP_PATH_DENY_CALLBACK, newServletMethodObject(UdbKit.LOOKUP_PATH_DENY_CALLBACK, denyCallbackObject));
-		rules.put(UdbKit.LOOKUP_PATH_LOGOUT, newServletMethodObject(UdbKit.LOOKUP_PATH_LOGOUT, logoutObject));
-
-		super.setup(params, rules);
-	}
-
-	private ServletMethodObject newServletMethodObject(String lookupPath, ServletMethodHandler handler) {
-		ServletMethodObject object = new ServletMethodObject(null, lookupPath);
-		Arrays.fill(object.handlers, handler);
-		return object;
-	}
-
-	@Override
-	public Principal validateAndExtendPrincipal(Wsid wsid) {
-
-		String data = null;
-		Jedis jedis = null;
-		try {
-			jedis = getJedisPool().getResource();
-			Transaction tx = jedis.multi();
-			Response<String> resp = tx.get(wsid.id);
-			tx.pexpire(wsid.id, timeoutMillis);
-			tx.exec();
-
-			data = resp.get();
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
-
-		if (data != null) {
-			return activatePrincipal(data);
-		}
-		return null;
-	}
-
-	@Override
-	public boolean postUdbLogin(HttpServletRequest request, HttpServletResponse response, String yyuid, String[] uProfile) throws IOException {
-
-		Principal principal = validatePrincipal(yyuid, uProfile);
-		if (principal == null) {
-			return false;
-		}
-
-		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
-
-		String data = persistPrincipal(principal);
-		Jedis jedis = null;
-		try {
-			jedis = getJedisPool().getResource();
-			jedis.psetex(wsid.id, timeoutMillis, data);
-		} finally {
-			if (jedis != null) {
-				jedis.close();
-			}
-		}
-		request.setAttribute(Webc.ATTR_WSID, wsid);
-		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
-		Kits.writeCookie(response, wsidName, Wsid.encode(wsid), wsidDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
-
-		return true;
-	}
-
-	@Override
-	public void preUdbLogout(HttpServletRequest request, HttpServletResponse response) {
-
-		Wsid wsid = Kits.getWsid(request);
-		if (wsid == null) {
-			wsid = Wsid.decode(Kits.readCookie(request, wsidName));
-		}
-		if (wsid != null) {
+		@Override
+		public void passivate(String key, Principal val, long expireMillis) {
+			String data = ((UserPrincipal) val).encode();
 			Jedis jedis = null;
 			try {
-				jedis = getJedisPool().getResource();
-				jedis.del(wsid.id.getBytes());
+				jedis = jedisPool.getResource();
+				jedis.psetex(key, expireMillis, data);
 			} finally {
 				if (jedis != null) {
 					jedis.close();
@@ -164,49 +29,32 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 			}
 		}
 
-		Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);
-	}
+		@Override
+		public Principal activate(String key, long expireMillis) {
+			Jedis jedis = null;
+			Response<String> resp = null;
+			try {
+				jedis = jedisPool.getResource();
+				Transaction tx = jedis.multi();
+				resp = tx.get(key);
+				tx.pexpire(key, expireMillis);
+				tx.exec();
 
-	@Override
-	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		StringBuilder psb = new StringBuilder(256);
-		psb.append(request.getContextPath()).append(request.getServletPath());
-		String queryString = request.getQueryString();
-		if (StringKit.isNotEmpty(queryString)) {
-			psb.append('?').append(queryString);
+			} finally {
+				if (jedis != null) {
+					jedis.close();
+				}
+			}
+			String data = resp.get();
+			return data == null ? null : new UserPrincipal().decode(data);
 		}
+	};
 
-		StringBuilder sb = new StringBuilder(256);
-		sb.append(Kits.getServletPath(request, UdbKit.LOOKUP_PATH_LOGIN));
-		sb.append("?").append(UdbKit.PARAM_URL).append("=").append(URLEncoder.encode(psb.toString(), Webc.CHARSET_NAME));
-
-		Kits.sendRedirect(response, sb.toString());
-	}
-
-	// for subclass override
-	protected String persistPrincipal(Principal principal) {
-		return ((UserPrincipal) principal).encode();
-	}
-
-	// for subclass override
-	public Principal activatePrincipal(String data) {
-		return new UserPrincipal().decode(data);
-	}
-
-	// for subclass override
-	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
-		UserPrincipal principal = new UserPrincipal();
-		principal.setYyuid(yyuid);
-		principal.setPassport(uProfile[0]);
-		principal.setRealname(uProfile[0]);
-		return principal;
-	}
-
-	// for subclass override
 	@Override
-	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
-		return principal;
+	protected final WsidSession getWsidSession() {
+		return wsidSession;
 	}
+
+	protected abstract JedisPool getJedisPool();
 
 }

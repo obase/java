@@ -22,6 +22,7 @@ import com.github.obase.webc.Webc;
 import static com.github.obase.webc.Webc.*;
 
 import com.github.obase.webc.Wsid;
+import com.github.obase.webc.WsidSession;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
@@ -122,7 +123,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			}
 
 			// step1.3: validate and extend principal timeout
-			principal = validateAndExtendPrincipal(wsid);
+			principal = getWsidSession().activate(wsid.id, timeoutMillis);
 			if (principal == null) {
 				redirectLoginPage(request, response);
 				return null;
@@ -155,7 +156,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	/**
 	 * 验证并延长会话时间
 	 */
-	protected abstract Principal validateAndExtendPrincipal(Wsid wsid) throws IOException;
+	protected abstract WsidSession getWsidSession();
 
 	protected abstract Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException;
 
