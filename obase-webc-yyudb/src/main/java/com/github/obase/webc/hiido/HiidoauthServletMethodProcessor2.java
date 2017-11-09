@@ -11,8 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpMethod;
-
 import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
@@ -89,19 +87,9 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 		Kits.sendRedirect(response, ObjectKit.<String> ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
 	}
 
-	@Override
-	protected Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		return null;
-	}
-
 	// for subclass override
 	protected Principal validatePrincipal(UserPrincipal staffInfoByToken) {
 		return staffInfoByToken;
-	}
-
-	// for subclass override
-	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
-		return principal;
 	}
 
 	public final List<Principal> getMyAgentStaffInfo() {

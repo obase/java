@@ -9,8 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpMethod;
-
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
 import com.github.obase.webc.Kits;
@@ -118,6 +116,15 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 		Kits.writeCookie(response, wsidName, "", wsidDomain, Wsid.COOKIE_PATH, 0);
 	}
 
+	// for subclass override
+	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
+		UserPrincipal principal = new UserPrincipal();
+		principal.setYyuid(yyuid);
+		principal.setPassport(uProfile[0]);
+		principal.setRealname(uProfile[0]);
+		return principal;
+	}
+
 	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -133,31 +140,6 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 		sb.append("?").append(UdbKit.PARAM_URL).append("=").append(URLEncoder.encode(psb.toString(), Webc.CHARSET_NAME));
 
 		Kits.sendRedirect(response, sb.toString());
-	}
-
-	// for subclass override
-	protected String persistPrincipal(Principal principal) {
-		return ((UserPrincipal) principal).encode();
-	}
-
-	// for subclass override
-	public Principal activatePrincipal(String data) {
-		return new UserPrincipal().decode(data);
-	}
-
-	// for subclass override
-	protected Principal validatePrincipal(String yyuid, String[] uProfile) {
-		UserPrincipal principal = new UserPrincipal();
-		principal.setYyuid(yyuid);
-		principal.setPassport(uProfile[0]);
-		principal.setRealname(uProfile[0]);
-		return principal;
-	}
-
-	// for subclass override
-	@Override
-	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) {
-		return principal;
 	}
 
 }

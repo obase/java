@@ -147,6 +147,8 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	}
 
 	/**
+	 * try login via oss
+	 * 
 	 * Override for subclass
 	 */
 	protected Wsid tryOssLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -154,11 +156,18 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	}
 
 	/**
+	 * validate perssion for auth=PERMISSION
+	 * 
+	 * Override for subclass
+	 */
+	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException {
+		return principal;
+	}
+
+	/**
 	 * 验证并延长会话时间
 	 */
 	protected abstract WsidSession getWsidSession();
-
-	protected abstract Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException;
 
 	protected abstract void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
