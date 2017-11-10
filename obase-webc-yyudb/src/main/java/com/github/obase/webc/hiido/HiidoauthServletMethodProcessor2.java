@@ -21,6 +21,7 @@ import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
+import com.github.obase.webc.yy.UserPrincipal;
 
 /**
  * Used to instead of HiidoauthServletMethodProcessor
@@ -101,5 +102,15 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 
 	public void updateMyStaffAgentInfo(Map<String, Boolean> users) {
 		HiidoKit.updateMyStaffAgentInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), users);
+	}
+
+	@Override
+	protected String encodePrincipal(Principal p) {
+		return ((UserPrincipal) p).encode();
+	}
+
+	@Override
+	protected Principal decodePrincipal(String v) {
+		return new UserPrincipal().decode(v);
 	}
 }

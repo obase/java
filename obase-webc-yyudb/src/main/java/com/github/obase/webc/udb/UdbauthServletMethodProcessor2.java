@@ -142,4 +142,14 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 		Kits.sendRedirect(response, sb.toString());
 	}
 
+	@Override
+	protected String encodePrincipal(Principal p) {
+		return ((UserPrincipal) p).encode();
+	}
+
+	@Override
+	protected Principal decodePrincipal(String v) {
+		return new UserPrincipal().decode(v);
+	}
+
 }
