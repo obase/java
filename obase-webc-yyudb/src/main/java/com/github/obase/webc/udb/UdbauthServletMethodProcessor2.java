@@ -149,7 +149,7 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 
 	@Override
 	protected Principal decodePrincipal(String v) {
-		return new UserPrincipal().decode(v);
+		return v == null ? null : new UserPrincipal().decode(v);
 	}
 
 }

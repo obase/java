@@ -58,7 +58,13 @@ public final class JedisSession implements WsidSession {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			jedis.psetex(key, expireMillis, data);
+			if (expireMillis > 0) {
+				jedis.psetex(key, expireMillis, data);
+			} else if (expireMillis == 0) {
+				jedis.del(key);
+			} else {
+				jedis.set(key, data);
+			}
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -74,7 +80,11 @@ public final class JedisSession implements WsidSession {
 			jedis = jedisPool.getResource();
 			Transaction tx = jedis.multi();
 			resp = tx.get(key);
-			tx.pexpire(key, expireMillis);
+			if (expireMillis > 0) {
+				tx.pexpire(key, expireMillis);
+			} else if (expireMillis == 0) {
+				tx.del(key);
+			}
 			tx.exec();
 
 		} finally {
