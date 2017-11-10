@@ -19,7 +19,7 @@ public class ClstrJedisSession implements WsidSession {
 				md = i;
 			}
 		}
-		master = md > 0 ? nodes[md] : null;
+		master = md == -1 ? null : nodes[md];
 	}
 
 	@Override
