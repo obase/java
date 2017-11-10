@@ -93,7 +93,7 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 		}
 
 		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
-		getWsidSession().passivate(wsid.id, principal, timeoutMillis);
+		getWsidSession().passivate(wsid.id, encodePrincipal(principal), timeoutMillis);
 
 		request.setAttribute(Webc.ATTR_WSID, wsid);
 		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);

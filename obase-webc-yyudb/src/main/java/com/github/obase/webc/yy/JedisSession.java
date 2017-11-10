@@ -2,7 +2,6 @@ package com.github.obase.webc.yy;
 
 import java.util.Scanner;
 
-import com.github.obase.security.Principal;
 import com.github.obase.webc.WsidSession;
 
 import redis.clients.jedis.Jedis;
@@ -55,8 +54,7 @@ public final class JedisSession implements WsidSession {
 	}
 
 	@Override
-	public void passivate(String key, Principal val, long expireMillis) {
-		String data = ((UserPrincipal) val).encode();
+	public void passivate(String key, String data, long expireMillis) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
@@ -69,7 +67,7 @@ public final class JedisSession implements WsidSession {
 	}
 
 	@Override
-	public Principal activate(String key, long expireMillis) {
+	public String activate(String key, long expireMillis) {
 		Jedis jedis = null;
 		Response<String> resp = null;
 		try {
@@ -84,8 +82,7 @@ public final class JedisSession implements WsidSession {
 				jedis.close();
 			}
 		}
-		String data = resp.get();
-		return data == null ? null : new UserPrincipal().decode(data);
+		return resp.get();
 	}
 
 }

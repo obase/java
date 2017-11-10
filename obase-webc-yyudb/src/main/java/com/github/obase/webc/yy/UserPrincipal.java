@@ -108,7 +108,7 @@ public class UserPrincipal implements Principal {
 		return sb.toString();
 	}
 
-	public Principal decode(String text) {
+	public void decode(String text) {
 		Spliter s = new Spliter('\001', text);
 		passport = s.next();
 		realname = s.next();
@@ -119,7 +119,7 @@ public class UserPrincipal implements Principal {
 		jobCode = s.next();
 		level = Integer.parseInt(s.next());
 		yyuid = s.next();
-		return this;
+
 	}
 
 	private String nvlv(String val) {

@@ -1,6 +1,5 @@
 package com.github.obase.webc.yy;
 
-import com.github.obase.security.Principal;
 import com.github.obase.webc.WsidSession;
 
 import redis.clients.jedis.JedisPool;
@@ -23,17 +22,17 @@ public class ClstrJedisSession implements WsidSession {
 	}
 
 	@Override
-	public void passivate(String key, Principal val, long expireMillis) {
-		master.passivate(key, val, expireMillis);
+	public void passivate(String key, String data, long expireMillis) {
+		master.passivate(key, data, expireMillis);
 	}
 
 	@Override
-	public Principal activate(String key, long expireMillis) {
-		Principal princ = null;
-		for (int i = 0; princ == null && i < nodes.length; i++) {
-			princ = nodes[i].activate(key, expireMillis);
+	public String activate(String key, long expireMillis) {
+		String data = null;
+		for (int i = 0; data == null && i < nodes.length; i++) {
+			data = nodes[i].activate(key, expireMillis);
 		}
-		return princ;
+		return data;
 	}
 
 }

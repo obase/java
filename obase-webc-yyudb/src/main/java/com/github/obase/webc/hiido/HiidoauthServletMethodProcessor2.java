@@ -21,7 +21,6 @@ import com.github.obase.webc.Webc;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 import com.github.obase.webc.support.security.WsidServletMethodProcessor;
-import com.github.obase.webc.yy.UserPrincipal;
 
 /**
  * Used to instead of HiidoauthServletMethodProcessor
@@ -51,7 +50,7 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 					sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
 					return;
 				}
-				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String> ifnull(getHomepage(), "/")));
+				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String>ifnull(getHomepage(), "/")));
 			}
 		};
 
@@ -73,7 +72,7 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 		}
 
 		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
-		getWsidSession().passivate(wsid.id, principal, timeoutMillis);
+		getWsidSession().passivate(wsid.id, encodePrincipal(principal), timeoutMillis);
 
 		request.setAttribute(Webc.ATTR_WSID, wsid);
 		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
@@ -84,11 +83,11 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 
 	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Kits.sendRedirect(response, ObjectKit.<String> ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
+		Kits.sendRedirect(response, ObjectKit.<String>ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(UserPrincipal staffInfoByToken) {
+	protected Principal validatePrincipal(Principal staffInfoByToken) {
 		return staffInfoByToken;
 	}
 

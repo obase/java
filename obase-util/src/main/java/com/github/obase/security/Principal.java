@@ -12,13 +12,4 @@ public interface Principal extends Serializable {
 	 */
 	String getKey();
 
-	/**
-	 * 编码
-	 */
-	String encode();
-
-	/**
-	 * 反编码
-	 */
-	void decode(String val);
 }

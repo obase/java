@@ -123,7 +123,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			}
 
 			// step1.3: validate and extend principal timeout
-			principal = getWsidSession().activate(wsid.id, timeoutMillis);
+			principal = decodePrincipal(getWsidSession().activate(wsid.id, timeoutMillis));
 			if (principal == null) {
 				redirectLoginPage(request, response);
 				return null;
@@ -165,9 +165,13 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	}
 
 	/**
-	 * 验证并延长会话时间
+	 * get wsid session to store and load principal
 	 */
 	protected abstract WsidSession getWsidSession();
+
+	protected abstract String encodePrincipal(Principal p);
+
+	protected abstract Principal decodePrincipal(String v);
 
 	protected abstract void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 
