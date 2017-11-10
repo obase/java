@@ -23,11 +23,11 @@ public class Hmac {
 		return Hex.encode(mac.doFinal());
 	}
 
-	static final String HmacSHA128 = "HmacSHA128";
+	static final String HmacSHA1 = "HmacSHA1";
 
-	public static String hmacSHA128Hex(String secret, String... args) throws GeneralSecurityException {
-		SecretKeySpec sks = new SecretKeySpec(secret.getBytes(UTF8), HmacSHA128);
-		Mac mac = Mac.getInstance(HmacSHA128);
+	public static String hmacSHA1Hex(String secret, String... args) throws GeneralSecurityException {
+		SecretKeySpec sks = new SecretKeySpec(secret.getBytes(UTF8), HmacSHA1);
+		Mac mac = Mac.getInstance(HmacSHA1);
 		mac.init(sks);
 		for (String arg : args) {
 			mac.update(arg.getBytes(UTF8));
