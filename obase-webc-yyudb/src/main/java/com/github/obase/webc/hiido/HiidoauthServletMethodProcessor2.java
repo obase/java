@@ -111,6 +111,6 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 
 	@Override
 	protected Principal decodePrincipal(String v) {
-		return new UserPrincipal().decode(v);
+		return v == null ? null : new UserPrincipal().decode(v);
 	}
 }
