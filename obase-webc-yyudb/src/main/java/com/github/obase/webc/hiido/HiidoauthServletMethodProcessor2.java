@@ -88,7 +88,7 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 	}
 
 	// for subclass override
-	protected Principal validatePrincipal(Principal staffInfoByToken) {
+	protected Principal validatePrincipal(UserPrincipal staffInfoByToken) {
 		return staffInfoByToken;
 	}
 
