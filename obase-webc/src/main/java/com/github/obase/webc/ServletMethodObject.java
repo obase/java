@@ -19,11 +19,19 @@ public class ServletMethodObject {
 	public ServletMethodObject(String lookupPath, ServletMethodHandler handler, ServletMethod annotation, AuthType defaultAuthType) {
 		this.lookupPath = lookupPath;
 		this.handler = handler;
-		this.auth = replaceDefault(annotation.auth(), defaultAuthType);
-		this.csrf = annotation.csrf();
-		this.api = annotation.api();
-		this.category = annotation.category();
-		this.remark = annotation.remark();
+		if (annotation != null) {
+			this.auth = replaceDefault(annotation.auth(), defaultAuthType);
+			this.csrf = annotation.csrf();
+			this.api = annotation.api();
+			this.category = annotation.category();
+			this.remark = annotation.remark();
+		} else {
+			this.auth = null;
+			this.csrf = false;
+			this.api = null;
+			this.category = null;
+			this.remark = null;
+		}
 	}
 
 	private AuthType replaceDefault(AuthType authType, AuthType defaultAuthType) {

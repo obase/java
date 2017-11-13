@@ -5,6 +5,7 @@ import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
 import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -222,6 +223,14 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				Kits.writeErrorMessage(response, errno, errmsg);
 			}
 		}
+	}
+
+	public static Map<HttpMethod, ServletMethodObject> fillObject(ServletMethodObject object) {
+		Map<HttpMethod, ServletMethodObject> map = new HashMap<HttpMethod, ServletMethodObject>(HttpMethod.values().length);
+		for (HttpMethod m : HttpMethod.values()) {
+			map.put(m, object);
+		}
+		return map;
 	}
 
 }

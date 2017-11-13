@@ -3,7 +3,6 @@ package com.github.obase.webc.hiido;
 import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,9 +10,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpMethod;
+
 import com.github.obase.kit.ObjectKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
+import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
@@ -41,7 +43,7 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 	protected abstract String getHiidoLoginUrl();
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
 
 		ServletMethodHandler postHiidoLoginObject = new ServletMethodHandler() {
 			@Override
@@ -55,9 +57,8 @@ public abstract class HiidoauthServletMethodProcessor2 extends WsidServletMethod
 			}
 		};
 
-		ServletMethodObject object = new ServletMethodObject(null, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN);
-		Arrays.fill(object.handlers, postHiidoLoginObject);
-		rules.put(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, object);
+		ServletMethodObject object = new ServletMethodObject(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, postHiidoLoginObject, null, AuthType.NONE);
+		rules.put(HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, fillObject(object));
 
 		super.setup(params, rules);
 	}

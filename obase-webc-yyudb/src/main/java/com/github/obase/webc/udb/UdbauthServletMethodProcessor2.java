@@ -2,15 +2,17 @@ package com.github.obase.webc.udb;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpMethod;
+
 import com.github.obase.kit.StringKit;
 import com.github.obase.security.Principal;
+import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodHandler;
 import com.github.obase.webc.ServletMethodObject;
@@ -32,7 +34,7 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 	protected abstract String getLogoutpage();
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
 
 		ServletMethodHandler loginObject = new ServletMethodHandler() {
 			@Override
@@ -69,19 +71,13 @@ public abstract class UdbauthServletMethodProcessor2 extends WsidServletMethodPr
 			}
 		};
 
-		rules.put(UdbKit.LOOKUP_PATH_LOGIN, newServletMethodObject(UdbKit.LOOKUP_PATH_LOGIN, loginObject));
-		rules.put(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, newServletMethodObject(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, genUrlTokenObject));
-		rules.put(UdbKit.LOOKUP_PATH_CALLBACK, newServletMethodObject(UdbKit.LOOKUP_PATH_CALLBACK, callbackObject));
-		rules.put(UdbKit.LOOKUP_PATH_DENY_CALLBACK, newServletMethodObject(UdbKit.LOOKUP_PATH_DENY_CALLBACK, denyCallbackObject));
-		rules.put(UdbKit.LOOKUP_PATH_LOGOUT, newServletMethodObject(UdbKit.LOOKUP_PATH_LOGOUT, logoutObject));
+		rules.put(UdbKit.LOOKUP_PATH_LOGIN, fillObject(new ServletMethodObject(UdbKit.LOOKUP_PATH_LOGIN, loginObject, null, AuthType.NONE)));
+		rules.put(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, fillObject(new ServletMethodObject(UdbKit.LOOKUP_PATH_GEN_URL_TOKEN, genUrlTokenObject, null, AuthType.NONE)));
+		rules.put(UdbKit.LOOKUP_PATH_CALLBACK, fillObject(new ServletMethodObject(UdbKit.LOOKUP_PATH_CALLBACK, callbackObject, null, AuthType.NONE)));
+		rules.put(UdbKit.LOOKUP_PATH_DENY_CALLBACK, fillObject(new ServletMethodObject(UdbKit.LOOKUP_PATH_DENY_CALLBACK, denyCallbackObject, null, AuthType.NONE)));
+		rules.put(UdbKit.LOOKUP_PATH_LOGOUT, fillObject(new ServletMethodObject(UdbKit.LOOKUP_PATH_LOGOUT, logoutObject, null, AuthType.NONE)));
 
 		super.setup(params, rules);
-	}
-
-	private ServletMethodObject newServletMethodObject(String lookupPath, ServletMethodHandler handler) {
-		ServletMethodObject object = new ServletMethodObject(null, lookupPath);
-		Arrays.fill(object.handlers, handler);
-		return object;
 	}
 
 	@Override
