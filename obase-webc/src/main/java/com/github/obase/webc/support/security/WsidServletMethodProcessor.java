@@ -40,7 +40,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	protected final Set<String> refererDomainSet = new HashSet<String>();
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
 		super.setup(params, rules);
 
 		wsidTokenBase = params.wsidTokenBase;
@@ -66,25 +66,13 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		} else {
 			wsidName = Wsid.COOKIE_NAME;
 		}
-
-		// set object authType
-		for (ServletMethodObject object : rules.values()) {
-			if (object.annotation != null) {
-				object.authType = object.annotation.auth();
-				if (object.authType == AuthType.DEFAULT) {
-					object.authType = defaultAuthType;
-				}
-			} else {
-				object.authType = AuthType.NONE;
-			}
-		}
 	}
 
 	@Override
 	public final HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, ServletMethodObject object) throws Throwable {
 
 		// step0: exclude
-		if (object.authType == AuthType.NONE) {
+		if (object.auth == AuthType.NONE) {
 			return request;
 		}
 
@@ -103,7 +91,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			}
 
 			// step1.2: check csrf
-			if (object.annotation.csrf()) {
+			if (object.csrf) {
 				if (!wsid.validate(wsidTokenBase, timeoutMillis)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
@@ -134,7 +122,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			Kits.writeCookie(response, wsidName, Wsid.encode(wsid.resetToken(wsidTokenBase)), wsidDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
 		}
 		// step2: check permission
-		if (object.authType == AuthType.PERMISSION) {
+		if (object.auth == AuthType.PERMISSION) {
 			principal = validatePermission(principal, Kits.getHttpMethod(request), object);
 			if (principal == null) {
 				sendError(response, SC_PERMISSION_DENIED, SC_PERMISSION_DENIED, "Permission denied!");

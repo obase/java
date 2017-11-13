@@ -7,8 +7,10 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncListener;
@@ -27,6 +29,7 @@ import com.github.obase.WrappedException;
 import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
+import com.github.obase.webc.annotation.ServletController;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
@@ -36,7 +39,8 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	ServletMethodProcessor processor;
 	AsyncListener listener;
 	long timeout;
-	Map<String, ServletMethodObject> rulesMap; // key is servletPath
+	// key: method + lookupPath, val: ServletMethodHandler[method]
+	Map<String, ServletMethodObject> rules;
 
 	@Override
 	protected final void initFrameworkFilter() throws ServletException {
@@ -48,78 +52,78 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.timeoutSecond * 1000;
 
-		// key is lookupPath
-		Map<String, ServletMethodObject> map = new HashMap<String, ServletMethodObject>();
-		Map<String, Object> beans = applicationContext.getBeansWithAnnotation(Controller.class);
-		if (beans.size() > 0) {
+		// @Controller + @ServletController
+		Set<String> beanNameSet = new HashSet<String>();
+		Collections.addAll(beanNameSet, applicationContext.getBeanNamesForAnnotation(Controller.class));
+		Collections.addAll(beanNameSet, applicationContext.getBeanNamesForAnnotation(ServletController.class));
+
+		Map<String, Map<HttpMethod, ServletMethodObject>> objects = new HashMap<String, Map<HttpMethod, ServletMethodObject>>();
+		if (beanNameSet.size() > 0) {
+
+			// get all filters
 			Collection<ServletMethodFilter> servletFilters = applicationContext.getBeansOfType(ServletMethodFilter.class).values();
-			for (Map.Entry<String, Object> beanEntry : beans.entrySet()) {
+			AuthType defaultAuthType = params.defaultAuthType == null ? AuthType.PERMISSION : params.defaultAuthType;
 
-				Object bean = beanEntry.getValue();
+			for (String beanName : beanNameSet) {
+				Controller controller = applicationContext.findAnnotationOnBean(beanName, Controller.class);
+				ServletController servletController = applicationContext.findAnnotationOnBean(beanName, ServletController.class);
 
+				Object bean = applicationContext.getBean(beanName);
 				Class userClass = ClassUtils.getUserClass(bean);
-				Controller controller = applicationContext.findAnnotationOnBean(beanEntry.getKey(), Controller.class);
-
-				Map<Method, ServletMethod> annotations = new HashMap<Method, ServletMethod>();
 				for (Method method : userClass.getMethods()) {
-					ServletMethod annot = method.getAnnotation(ServletMethod.class);
-					if (annot == null) {
+					// Signature: @ServletMethod public void xxx(HttpServletRequest, HttpServletResponse)...
+					ServletMethod servletMethod = method.getAnnotation(ServletMethod.class);
+					if (servletMethod == null) {
 						continue;
 					}
-					int mod = method.getModifiers();
-					if (Modifier.isAbstract(mod)) {
+					int modifiers = method.getModifiers();
+					if (!Modifier.isPublic(modifiers) || Modifier.isAbstract(modifiers)) {
 						continue;
 					}
 					Class[] ptypes = method.getParameterTypes();
-					// must match the signature
 					if (ptypes.length != 2 || ptypes[0] != HttpServletRequest.class || ptypes[1] != HttpServletResponse.class) {
 						continue;
 					}
-					annotations.put(method, annot);
-				}
 
-				if (annotations.size() > 0) {
+					String methodName = method.getName();
+					String lookupPath = processor.lookup(servletController, controller, servletMethod, userClass, methodName);
+					ServletMethodHandler handler = newServletMethodHandler(methodName, bean, findServletFilter(servletFilters, lookupPath, userClass, method.getName(), servletMethod));
+					ServletMethodObject object = new ServletMethodObject(lookupPath, handler, servletMethod, defaultAuthType);
 
-					for (Map.Entry<Method, ServletMethod> entry : annotations.entrySet()) {
+					Map<HttpMethod, ServletMethodObject> objectMap = objects.get(lookupPath);
+					if (objectMap == null) {
+						objectMap = new HashMap<HttpMethod, ServletMethodObject>(8);
+						objects.put(lookupPath, objectMap);
+					}
 
-						Method method = entry.getKey();
-						ServletMethod annotation = entry.getValue();
-
-						String methodName = method.getName();
-
-						String lookupPath = processor.lookup(controller, userClass, annotation, methodName);
-
-						ServletMethodHandler obj = newServletMethodHandler(method, bean, findServletFilter(servletFilters, lookupPath, userClass, methodName, annotation));
-
-						ServletMethodObject rules = map.get(lookupPath);
-						if (rules == null) {
-							rules = new ServletMethodObject(annotation, lookupPath);
-							map.put(lookupPath, rules);
-						}
-
-						HttpMethod[] methods = annotation.method();
-						if (annotation.method().length == 0) {
-							methods = HttpMethod.values(); // default all
-						}
-						for (HttpMethod m : methods) {
-							if (rules.handlers[m.ordinal()] == null) {
-								rules.handlers[m.ordinal()] = obj;
-							} else {
-								throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath);
-							}
+					HttpMethod[] methods = servletMethod.method();
+					if (methods.length == 0) {
+						methods = HttpMethod.values(); // default all
+					}
+					for (HttpMethod m : methods) {
+						if (objectMap.put(m, object) != null) {
+							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath);
 						}
 					}
 				}
 			}
 		}
-		processor.setup(params, map);
-		rulesMap = new HashMap<String, ServletMethodObject>(map.size());
-		// For performance: change lookupPath to servletPath and set to servletMethodHandlerMap
-		for (Map.Entry<String, ServletMethodObject> entry : map.entrySet()) {
-			rulesMap.put(Kits.getServletPath(params.namespace, entry.getKey(), null), entry.getValue());
-			if (StringKit.isEmpty(entry.getKey())) {
-				rulesMap.put(Kits.getServletPath(params.namespace, "/", null), entry.getValue()); // FIXBUG: special for home page
+
+		// setup by processor
+		processor.setup(params, objects);
+
+		rules = new HashMap<String, ServletMethodObject>();
+		for (Map.Entry<String, Map<HttpMethod, ServletMethodObject>> entry : objects.entrySet()) {
+			String lookupPath = entry.getKey();
+			for (Map.Entry<HttpMethod, ServletMethodObject> entry2 : entry.getValue().entrySet()) {
+				HttpMethod method = entry2.getKey();
+				ServletMethodObject object = entry2.getValue();
+				rules.put(method.name() + Kits.getServletPath(params.namespace, lookupPath, null), object);
+				if (StringKit.isEmpty(lookupPath)) {
+					rules.put(method.name() + Kits.getServletPath(params.namespace, "/", null), object); // FIXBUG: special for home page
+				}
 			}
+
 		}
 	}
 
@@ -130,66 +134,61 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		resp.setCharacterEncoding(Webc.CHARSET_NAME);
 
 		final HttpServletRequest request = (HttpServletRequest) req;
+		String rkey = request.getMethod() + request.getServletPath();
+		ServletMethodObject object = rules.get(rkey);
 
-		final ServletMethodObject object = rulesMap.get(request.getServletPath());
-		if (object != null) {
-			final HttpMethod method = HttpMethod.valueOf(request.getMethod());
-			final ServletMethodHandler handler = object.handlers[method.ordinal()];
-			if (handler != null) {
-				String lookupPath = object.lookupPath;
+		// FIXBUG: if aysnc not support
+		if (req.isAsyncSupported()) {
+			final AsyncContext asyncContext = req.isAsyncStarted() ? req.getAsyncContext() : req.startAsync();
+			if (listener != null) {
+				asyncContext.addListener(listener);
+			}
+			if (timeout != 0) {
+				asyncContext.setTimeout(timeout);
+			}
+			asyncContext.start(new Runnable() {
+				@Override
+				public void run() {
 
-				req.setAttribute(Webc.ATTR_HTTP_METHOD, method);
-				req.setAttribute(Webc.ATTR_LOOKUP_PATH, lookupPath);
-				req.setAttribute(Webc.ATTR_NAMESPACE, params.namespace);
+					final HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
+					final HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
 
-				// FIXBUG: if aysnc not support
-				if (req.isAsyncSupported()) {
-					final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
-					if (listener != null) {
-						asyncContext.addListener(listener);
-					}
-					asyncContext.setTimeout(timeout);
-					asyncContext.start(new Runnable() {
-						@Override
-						public void run() {
-
-							final HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
-							final HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
-
-							HttpServletRequest prerequest = null;
-							try {
-								prerequest = processor.process(request, response, object);
-								if (prerequest != null) {
-									handler.service(prerequest, response);
-								}
-							} catch (Throwable t) {
-								processor.error(request, response, t);
-							} finally {
-								if (request.isAsyncStarted()) {
-									asyncContext.complete();
-								}
-							}
-						}
-					});
-				} else {
-
-					final HttpServletResponse response = (HttpServletResponse) resp;
 					HttpServletRequest prerequest = null;
 					try {
 						prerequest = processor.process(request, response, object);
 						if (prerequest != null) {
-							handler.service(prerequest, response);
+							if (object != null) {
+								object.handler.service(prerequest, response);
+							} else {
+								chain.doFilter(prerequest, response);
+							}
 						}
 					} catch (Throwable t) {
 						processor.error(request, response, t);
+					} finally {
+						if (request.isAsyncStarted()) {
+							asyncContext.complete();
+						}
 					}
 				}
-				return;
+			});
+		} else {
+
+			final HttpServletResponse response = (HttpServletResponse) resp;
+			HttpServletRequest prerequest = null;
+			try {
+				prerequest = processor.process(request, response, object);
+				if (prerequest != null) {
+					if (object != null) {
+						object.handler.service(prerequest, response);
+					} else {
+						chain.doFilter(prerequest, response);
+					}
+				}
+			} catch (Throwable t) {
+				processor.error(request, response, t);
 			}
 		}
-
-		chain.doFilter(req, resp);
-
 	}
 
 	private ServletMethodFilter[] findServletFilter(Collection<ServletMethodFilter> servletFilters, String lookupPath, Class userClass, String methodName, ServletMethod annotation) {
@@ -209,13 +208,13 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		return ret.toArray(new ServletMethodFilter[ret.size()]);
 	}
 
-	public ServletMethodHandler newServletMethodHandler(Method method, Object bean, ServletMethodFilter... filters) {
-		String className = bean.getClass().getCanonicalName() + "__" + method.getName();
+	public ServletMethodHandler newServletMethodHandler(String methodName, Object bean, ServletMethodFilter... filters) {
+		String className = bean.getClass().getCanonicalName() + "__" + methodName;
 		Class<?> c;
 		try {
 			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
-			byte[] data = Webc.Util.dumpServletMethodObject(className, ClassUtils.getUserClass(bean), method);
+			byte[] data = Webc.Util.dumpServletMethodObject(className, ClassUtils.getUserClass(bean), methodName);
 			c = ClassKit.defineClass(className, data);
 		}
 

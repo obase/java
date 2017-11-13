@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
@@ -26,6 +27,7 @@ import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.ServletMethodProcessor;
 import com.github.obase.webc.Webc;
+import com.github.obase.webc.annotation.ServletController;
 import com.github.obase.webc.annotation.ServletMethod;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 
@@ -40,7 +42,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	protected String[] controlSuffixArray;
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, ServletMethodObject> rules) throws ServletException {
+	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
 		this.params = params;
 		this.sendError = params.sendError;
 		if (params.controlPrefix != null) {
@@ -110,14 +112,26 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	/**
-	 * uniform lookup path rule
+	 * default uniform lookup path rule:
+	 * 
+	 * 1. if path is "" then use value
+	 * 
+	 * 2. if value is "" the use class name
 	 */
 	@Override
-	public String lookup(Controller classAnnotation, Class<?> targetClass, ServletMethod methodAnnotation, String methodName) {
+	public String lookup(ServletController servletController, Controller controller, ServletMethod methodAnnotation, Class<?> targetClass, String methodName) {
 
 		StringBuilder sb = new StringBuilder(512);
-		if (!Webc.$.equals(classAnnotation.value())) {
-			if (StringKit.isEmpty(classAnnotation.value())) {
+
+		String cpath = null;
+		if (servletController != null) {
+			cpath = servletController.path();
+		} else {
+			cpath = controller.value();
+		}
+
+		if (!Webc.$.equals(cpath)) {
+			if (StringKit.isEmpty(cpath)) {
 
 				String className = targetClass.getCanonicalName();
 				sb.append(className);
@@ -164,7 +178,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				}
 
 			} else {
-				sb.append(classAnnotation.value());
+				sb.append(cpath);
 			}
 
 			if (sb.charAt(0) != '/') {
@@ -176,11 +190,15 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			}
 		}
 
-		if (!Webc.$.equals(methodAnnotation.value())) {
-			if (StringKit.isEmpty(methodAnnotation.value())) {
+		String mpath = methodAnnotation.path();
+		if (StringKit.isEmpty(mpath)) {
+			mpath = methodAnnotation.value();
+		}
+		if (!Webc.$.equals(mpath)) {
+			if (StringKit.isEmpty(mpath)) {
 				sb.append('/').append(methodName);
 			} else {
-				sb.append('/').append(methodAnnotation.value());
+				sb.append('/').append(mpath);
 			}
 		}
 

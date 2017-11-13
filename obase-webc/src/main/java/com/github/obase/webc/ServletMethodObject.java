@@ -1,7 +1,5 @@
 package com.github.obase.webc;
 
-import org.springframework.http.HttpMethod;
-
 import com.github.obase.webc.annotation.ServletMethod;
 
 /**
@@ -9,16 +7,27 @@ import com.github.obase.webc.annotation.ServletMethod;
  */
 public class ServletMethodObject {
 
-	public static final int HANDLES_LENGTH = HttpMethod.values().length;
-
-	public AuthType authType; // process default parsing
-	public final ServletMethod annotation;
 	public final String lookupPath;
-	public final ServletMethodHandler[] handlers = new ServletMethodHandler[HANDLES_LENGTH];
+	public final ServletMethodHandler handler;
 
-	public ServletMethodObject(ServletMethod annotation, String lookupPath) {
-		this.annotation = annotation;
+	public final AuthType auth;
+	public final boolean csrf; // check csrf
+	public final String api; // name of the api, if not empty, it will export as api
+	public final String category; // category of the api
+	public final String remark; // summary to the api
+
+	public ServletMethodObject(String lookupPath, ServletMethodHandler handler, ServletMethod annotation, AuthType defaultAuthType) {
 		this.lookupPath = lookupPath;
+		this.handler = handler;
+		this.auth = replaceDefault(annotation.auth(), defaultAuthType);
+		this.csrf = annotation.csrf();
+		this.api = annotation.api();
+		this.category = annotation.category();
+		this.remark = annotation.remark();
+	}
+
+	private AuthType replaceDefault(AuthType authType, AuthType defaultAuthType) {
+		return authType != AuthType.DEFAULT ? authType : defaultAuthType;
 	}
 
 }
