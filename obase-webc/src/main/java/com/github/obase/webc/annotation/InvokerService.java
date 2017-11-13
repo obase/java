@@ -17,7 +17,7 @@ public @interface InvokerService {
 
 	Class<?> value();
 
-	String summary() default ""; // summary to the service
+	String remark() default ""; // summary to the service
 
 	String category() default ""; // category of the service
 }
