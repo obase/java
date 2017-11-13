@@ -135,7 +135,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				for (String beanName : beanNames) {
 					InvokerService invokerServiceAnnotation = beanFactory.findAnnotationOnBean(beanName, InvokerService.class);
 					if (invokerServiceAnnotation != null) {
-						Class<?> serviceInterface = invokerServiceAnnotation.value();
+						Class<?> serviceInterface = invokerServiceAnnotation.target();
 						GenericBeanDefinition bf = new GenericBeanDefinition();
 						bf.setBeanClass(InvokerServiceObject.class);
 						MutablePropertyValues props = bf.getPropertyValues();

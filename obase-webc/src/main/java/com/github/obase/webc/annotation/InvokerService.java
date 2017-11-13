@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.stereotype.Service;
+
 /**
  * Auto create HttpInvokerServiceExporter instance
  */
@@ -13,9 +15,12 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Service
 public @interface InvokerService {
 
-	Class<?> value();
+	String value() default "";
+
+	Class<?> target(); // target interface to invoke
 
 	String remark() default ""; // summary to the service
 

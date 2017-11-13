@@ -6,20 +6,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.stereotype.Controller;
+
 import com.github.obase.webc.AuthType;
 
-/**
- * Auto create httpservlet instance
- */
-
-@Target({ ElementType.METHOD })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ServletMethod {
+@Controller
+public @interface ServletController {
 
-	String value() default ""; // "$": ignore the methodName
+	String value() default "";
 
-	String path() default ""; // composition of lookup path
+	String path() default "";
 
 	org.springframework.http.HttpMethod[] method() default {}; // if empty support all methods
 
@@ -27,10 +26,7 @@ public @interface ServletMethod {
 
 	boolean csrf() default true; // check csrf
 
-	String api() default ""; // name of the api, if not empty, it will export as api
-
 	String category() default ""; // category of the api
 
 	String remark() default ""; // summary to the api
-
 }
