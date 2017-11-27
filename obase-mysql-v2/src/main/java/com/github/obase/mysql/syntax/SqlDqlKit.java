@@ -54,44 +54,49 @@ public class SqlDqlKit extends SqlKit {
 	}
 
 	public static void parsePstmtLabel(ResultSet rs, final PstmtMeta meta) throws SQLException {
-		if (meta.label == null) {
-			Map<String, Integer> labels = new HashMap<String, Integer>();
-			ResultSetMetaData rsmd = rs.getMetaData();
-			for (int i = 1, n = rsmd.getColumnCount(); i <= n; i++) {
-				labels.put(rsmd.getColumnLabel(i), i);
+		synchronized (meta.psql) {
+			if (meta.label == null) {
+				Map<String, Integer> labels = new HashMap<String, Integer>();
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for (int i = 1, n = rsmd.getColumnCount(); i <= n; i++) {
+					labels.put(rsmd.getColumnLabel(i), i);
+				}
+				meta.label = labels;
 			}
-			meta.label = labels;
+
 		}
 	}
 
 	public static void parsePstmtIndex(final PstmtMeta meta) {
-		String sql = meta.psql;
-		int start = 0;
-		int end = 0;
-		int len = sql.length();
-		while (end < len) {
-			start = indexOfIncludeParent(Matcher.JavaIdentifier, sql, end, len);
-			if (start == -1) {
-				break;
-			}
-			end = indexOfNot(Matcher.JavaIdentifier, sql, start, len);
-			if (end == -1) {
-				end = len;
-			}
-			if (sql.regionMatches(true, start, SELECT, 0, SELECT.length())) {
-				meta.select = start;
-			} else if (sql.regionMatches(true, start, FROM, 0, FROM.length())) {
-				meta.from = start;
-			} else if (sql.regionMatches(true, start, WHERE, 0, WHERE.length())) {
-				meta.where = start;
-			} else if (sql.regionMatches(true, start, GROUP, 0, GROUP.length())) {
-				meta.group = start;
-			} else if (sql.regionMatches(true, start, HAVING, 0, HAVING.length())) {
-				meta.having = start;
-			} else if (sql.regionMatches(true, start, ORDER, 0, ORDER.length())) {
-				meta.order = start;
-			} else if (sql.regionMatches(true, start, LIMIT, 0, LIMIT.length())) {
-				meta.limit = start;
+		synchronized (meta.psql) {
+			String sql = meta.psql;
+			int start = 0;
+			int end = 0;
+			int len = sql.length();
+			while (end < len) {
+				start = indexOfIncludeParent(Matcher.JavaIdentifier, sql, end, len);
+				if (start == -1) {
+					break;
+				}
+				end = indexOfNot(Matcher.JavaIdentifier, sql, start, len);
+				if (end == -1) {
+					end = len;
+				}
+				if (sql.regionMatches(true, start, SELECT, 0, SELECT.length())) {
+					meta.select = start;
+				} else if (sql.regionMatches(true, start, FROM, 0, FROM.length())) {
+					meta.from = start;
+				} else if (sql.regionMatches(true, start, WHERE, 0, WHERE.length())) {
+					meta.where = start;
+				} else if (sql.regionMatches(true, start, GROUP, 0, GROUP.length())) {
+					meta.group = start;
+				} else if (sql.regionMatches(true, start, HAVING, 0, HAVING.length())) {
+					meta.having = start;
+				} else if (sql.regionMatches(true, start, ORDER, 0, ORDER.length())) {
+					meta.order = start;
+				} else if (sql.regionMatches(true, start, LIMIT, 0, LIMIT.length())) {
+					meta.limit = start;
+				}
 			}
 		}
 	}
