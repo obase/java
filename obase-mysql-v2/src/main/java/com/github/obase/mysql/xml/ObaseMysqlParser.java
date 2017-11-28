@@ -74,9 +74,10 @@ public final class ObaseMysqlParser {
 
 	void parseStmt(ObaseMysqlObject obj, Element root) {
 		String id = root.getAttribute(ATTR_ID);
+		String nop = root.getAttribute(ATTR_NOP);
 		List<Fragment> fragments = parseContainerFragments(root);
 		if (!fragments.isEmpty()) {
-			obj.statementList.add(new Statement(id, fragments));
+			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), fragments));
 		}
 	}
 
@@ -192,4 +193,5 @@ public final class ObaseMysqlParser {
 	static final String ATTR_SEP = "sep";
 	static final String ATTR_NAMESPACE = "namesapce";
 	static final String ATTR_ID = "id";
+	static final String ATTR_NOP = "nop";
 }

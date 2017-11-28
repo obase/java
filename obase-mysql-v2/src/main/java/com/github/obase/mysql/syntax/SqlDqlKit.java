@@ -14,6 +14,14 @@ import com.github.obase.mysql.core.PstmtMeta;
 
 public class SqlDqlKit extends SqlKit {
 
+	public static final String SELECT = "SELECT";
+	public static final String FROM = "FROM";
+	public static final String WHERE = "WHERE";
+	public static final String GROUP = "GROUP";
+	public static final String HAVING = "HAVING";
+	public static final String ORDER = "ORDER";
+	public static final String LIMIT = "LIMIT";
+
 	// 解析sql中的:name占位符
 	public static List<Holder> parseHolder(String sql) {
 
@@ -101,12 +109,61 @@ public class SqlDqlKit extends SqlKit {
 		}
 	}
 
-	public static final String SELECT = "SELECT";
-	public static final String FROM = "FROM";
-	public static final String WHERE = "WHERE";
-	public static final String GROUP = "GROUP";
-	public static final String HAVING = "HAVING";
-	public static final String ORDER = "ORDER";
-	public static final String LIMIT = "LIMIT";
+	public static void parsePstmtLimit(PstmtMeta meta) {
+		if (meta.select == PstmtMeta.UNSET) {
+			parsePstmtIndex(meta);
+		}
+		synchronized (meta.psql) {
+			if (meta.limitPsql == null) {
+				StringBuilder sb = new StringBuilder(meta.psql.length() + 128);
+				if (meta.limit == PstmtMeta.UNSET) {
+					sb.append(meta.psql).append(" LIMIT ?,?");
+				} else {
+					sb.append("SELECT * FROM (").append(meta.psql).append(") _ LIMIT ?,?");
+				}
+				meta.limitPsql = sb.toString();
+			}
+		}
+	}
+
+	// TODO: 约定SELECT子句没有参数,否则简单优化出错!
+	public static void parsePstmtCount(PstmtMeta meta) {
+		if (meta.select == PstmtMeta.UNSET) {
+			parsePstmtIndex(meta);
+		}
+		synchronized (meta.psql) {
+			if (meta.countPsql == null) {
+				StringBuilder sb = new StringBuilder(meta.psql.length() + 256);
+				if (meta.nop || meta.group != PstmtMeta.UNSET || meta.limit != PstmtMeta.UNSET) {
+					sb.append("SELECT COUNT(*) FROM (");
+					// 去掉order by子句, 避免浪费性能
+					if (meta.order == PstmtMeta.UNSET) {
+						sb.append(meta.psql);
+					} else {
+						sb.append(meta.psql, 0, meta.order);
+						if (meta.limit != PstmtMeta.UNSET) {
+							sb.append(meta.psql, meta.limit, meta.psql.length());
+						}
+					}
+					sb.append(") _");
+				} else {
+					sb.append("SELECT COUNT(*) ");
+					sb.append(meta.psql, meta.from, meta.order == PstmtMeta.UNSET ? meta.psql.length() : meta.order);
+				}
+				meta.countPsql = sb.toString();
+			}
+		}
+	}
+
+	public static String parsePstmtOrderLimit(PstmtMeta meta, String field, String direction) {
+		if (meta.select == PstmtMeta.UNSET) {
+			parsePstmtIndex(meta);
+		}
+		StringBuilder sb = new StringBuilder(meta.psql.length() + 128);
+		sb.append(meta.psql, 0, meta.order == PstmtMeta.UNSET ? meta.psql.length() : meta.order);
+		sb.append(" ORDER BY ").append(identifier(field)).append(" ").append(direction);
+		sb.append(" LIMIT ?, ?");
+		return sb.toString();
+	}
 
 }

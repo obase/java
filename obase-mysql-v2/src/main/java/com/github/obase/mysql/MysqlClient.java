@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.github.obase.Page;
 import com.github.obase.mysql.core.PstmtMeta;
-import com.mysql.jdbc.Statement;
+import com.github.obase.mysql.stmt.Statement;
 
 /**
  * Spring-mysqlclient core interface, which provides CRUD its bulk form @Table class.
@@ -35,17 +35,15 @@ public interface MysqlClient {
 
 	<T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
 
-	<T> void queryPage(PstmtMeta cpstmt, PstmtMeta dpstmt, Page<T> page, Object param) throws SQLException;
-
-	<T> void queryPage(PstmtMeta pstmt, Page<T> page, Object param) throws SQLException;
+	<T> void queryPage(PstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
 
 	int executeUpdate(PstmtMeta pstmt, Object param) throws SQLException;
 
 	<R> R executeUpdate(PstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException;
 
-	int[] executeBatch(PstmtMeta pstmt, List<Object> params) throws SQLException;
+	<T> int[] executeBatch(PstmtMeta pstmt, List<T> params) throws SQLException;
 
-	<R> List<R> executeBatch(PstmtMeta pstmt, Class<R> generateKeyType, List<Object> params) throws SQLException;
+	<T, R> List<R> executeBatch(PstmtMeta pstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
 
 	// =====================================================
 	// 动态SQL处理方法
@@ -56,15 +54,13 @@ public interface MysqlClient {
 
 	<T> List<T> queryRange(Statement xstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
 
-	<T> void queryPage(Statement cstmt, Statement dstmt, Page<T> page, Object param) throws SQLException;
-
-	<T> void queryPage(Statement xstmt, Page<T> page, Object param) throws SQLException;
+	<T> void queryPage(Statement xstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
 
 	int executeUpdate(Statement xstmt, Object param) throws SQLException;
 
 	<R> R executeUpdate(Statement xstmt, Class<R> generateKeyType, Object param) throws SQLException;
 
-	int[] executeBatch(Statement xstmt, List<Object> params) throws SQLException;
+	<T> int[] executeBatch(Statement xstmt, List<T> params) throws SQLException;
 
-	<R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<Object> params) throws SQLException;
+	<T, R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
 }

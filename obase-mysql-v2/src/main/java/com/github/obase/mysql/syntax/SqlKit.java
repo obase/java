@@ -7,6 +7,11 @@ public class SqlKit {
 
 	public static final char SPACE = '\u0020';
 
+	// 先去除`,再添加`
+	public static String identifier(String val) {
+		return new StringBuilder(256).append('`').append(val.replace("`", "")).append('`').toString();
+	}
+
 	// 去除SQL中的无用空白字符,智能处理单引,双引,反引
 	public static String filterWhiteSpaces(String psql) {
 		StringBuilder sb = new StringBuilder(psql.length());

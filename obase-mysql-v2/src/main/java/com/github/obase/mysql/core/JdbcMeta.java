@@ -844,12 +844,12 @@ public abstract class JdbcMeta {
 			pstmt.setInt(pos, (Integer) param);
 		} else if (type == Long.class || type == long.class) {
 			pstmt.setLong(pos, (Long) param);
+		} else if (type == Double.class || type == double.class) {
+			pstmt.setDouble(pos, (Double) param);
 		} else if (type == Float.class || type == float.class) {
 			pstmt.setFloat(pos, (Float) param);
 		} else if (type == Short.class || type == short.class) {
 			pstmt.setShort(pos, (Short) param);
-		} else if (type == Double.class || type == double.class) {
-			pstmt.setDouble(pos, (Double) param);
 		} else if (type == java.util.Date.class) {
 			pstmt.setDate(pos, new Date(((java.util.Date) param).getTime()));
 		} else if (type == Date.class) {
@@ -890,6 +890,75 @@ public abstract class JdbcMeta {
 				meta.set(pstmt, pos, param);
 			} else {
 				pstmt.setObject(pos, param);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <R> R getResultByType(ResultSet rs, int pos, Class<R> type) throws SQLException {
+
+		if (type == String.class) {
+			return (R) rs.getString(pos);
+		} else if (type == Integer.class || type == int.class) {
+			int ret = rs.getInt(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == Long.class || type == long.class) {
+			long ret = rs.getLong(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == Double.class || type == double.class) {
+			double ret = rs.getDouble(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == Float.class || type == float.class) {
+			float ret = rs.getFloat(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == Short.class || type == short.class) {
+			short ret = rs.getShort(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == java.util.Date.class) {
+			Date ret = rs.getDate(pos);
+			return (R) (ret == null ? null : new java.util.Date(ret.getTime()));
+		} else if (type == Date.class) {
+			return (R) rs.getDate(pos);
+		} else if (type == Boolean.class || type == boolean.class) {
+			boolean ret = rs.getBoolean(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == Character.class || type == char.class) {
+			String ret = rs.getString(pos);
+			return (R) (ret == null ? null : ret.charAt(0));
+		} else if (type == Byte.class || type == byte.class) {
+			byte ret = rs.getByte(pos);
+			return (R) (rs.wasNull() ? null : ret);
+		} else if (type == BigDecimal.class) {
+			return (R) rs.getBigDecimal(pos);
+		} else if (type == BigInteger.class) {
+			BigDecimal ret = rs.getBigDecimal(pos);
+			return (R) (ret == null ? null : ret.toBigInteger());
+		} else if (type == Time.class) {
+			return (R) rs.getTime(pos);
+		} else if (type == Timestamp.class) {
+			return (R) rs.getTimestamp(pos);
+		} else if (type == byte[].class) {
+			return (R) rs.getBytes(pos);
+		} else if (type == Ref.class) {
+			return (R) rs.getRef(pos);
+		} else if (type == URL.class) {
+			return (R) rs.getURL(pos);
+		} else if (type == SQLXML.class) {
+			return (R) rs.getSQLXML(pos);
+		} else if (type == Blob.class) {
+			return (R) rs.getBlob(pos);
+		} else if (type == Clob.class) {
+			return (R) rs.getClob(pos);
+		} else if (type == InputStream.class) {
+			return (R) rs.getBinaryStream(pos);
+		} else if (type == Reader.class) {
+			return (R) rs.getCharacterStream(pos);
+		} else {
+			JavaTypeMeta meta = JavaTypeMeta.get(type);
+			if (meta != null) {
+				return meta.get(rs, pos, type);
+			} else {
+				return (R) rs.getObject(pos);
 			}
 		}
 	}

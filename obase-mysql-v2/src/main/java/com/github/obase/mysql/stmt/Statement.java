@@ -14,11 +14,13 @@ import com.github.obase.mysql.core.PstmtMeta;
 public class Statement extends Container {
 
 	public final String id;
+	public final boolean nop;
 	private PstmtMeta pstmtMeta; // 缓存属性
 
-	public Statement(String id, List<Fragment> fragments) {
+	public Statement(String id, boolean nop, List<Fragment> fragments) {
 		super(fragments);
 		this.id = id;
+		this.nop = nop;
 	}
 
 	@Override

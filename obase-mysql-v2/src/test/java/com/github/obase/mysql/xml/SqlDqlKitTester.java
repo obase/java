@@ -19,7 +19,12 @@ public class SqlDqlKitTester extends SqlKitTester {
 			params.add(new Param(p));
 		}
 		PstmtMeta meta = new PstmtMeta(pstmt.psql, params);
-		SqlDqlKit.parsePstmtIndex(meta);
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 10000 * 1000; i++) {
+			SqlDqlKit.parsePstmtIndex(meta);
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("used time:" + (end - start));
 
 		System.out.println(meta.psql);
 		if (meta.select >= 0)
