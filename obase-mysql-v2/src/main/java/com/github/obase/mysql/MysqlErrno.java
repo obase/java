@@ -15,4 +15,5 @@ public interface MysqlErrno {
 	int SQL_CONFIG_DUPLICATE = __ | 6; // 配置重复
 
 	int SQL_CONFIG_EXCEED_PARAMS = __ | 7; // 配置过多参数, 例如foreach, isnull, notnull只允许一个参数
+	int SQL_DYNAMIC_NOT_SUPPORT = __ | 8; // 配置过多参数, 例如foreach, isnull, notnull只允许一个参数
 }

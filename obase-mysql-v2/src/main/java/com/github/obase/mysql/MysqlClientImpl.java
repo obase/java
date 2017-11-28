@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.github.obase.MessageException;
 import com.github.obase.Page;
 import com.github.obase.kit.CollectKit;
 import com.github.obase.mysql.core.JdbcMeta;
@@ -93,7 +94,12 @@ public class MysqlClientImpl implements MysqlClient {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			rs = ps.executeQuery();
@@ -135,7 +141,12 @@ public class MysqlClientImpl implements MysqlClient {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			rs = ps.executeQuery();
@@ -190,7 +201,12 @@ public class MysqlClientImpl implements MysqlClient {
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			// 设置最好limit的参数
@@ -256,7 +272,12 @@ public class MysqlClientImpl implements MysqlClient {
 			if (param != null) {
 				setjm = JdbcMeta.get(param.getClass());
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			// 设置最好limit的参数
@@ -289,7 +310,12 @@ public class MysqlClientImpl implements MysqlClient {
 				if (param != null) {
 					pos = 0;
 					for (Param p : pstmt.param) {
-						setjm.setParam(ps, ++pos, param, p.name);
+						++pos;
+						if (p.setted) {
+							JdbcMeta.setParamByType(ps, pos, param);
+						} else {
+							setjm.setParam(ps, pos, param, p.name);
+						}
 					}
 				}
 				rs = ps.executeQuery();
@@ -321,7 +347,12 @@ public class MysqlClientImpl implements MysqlClient {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			return ps.executeUpdate();
@@ -349,7 +380,12 @@ public class MysqlClientImpl implements MysqlClient {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 			}
 			ps.executeUpdate();
@@ -387,7 +423,12 @@ public class MysqlClientImpl implements MysqlClient {
 			for (T param : params) {
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 				ps.addBatch();
 			}
@@ -421,7 +462,12 @@ public class MysqlClientImpl implements MysqlClient {
 			for (T param : params) {
 				int pos = 0;
 				for (Param p : pstmt.param) {
-					setjm.setParam(ps, ++pos, param, p.name);
+					++pos;
+					if (p.setted) {
+						JdbcMeta.setParamByType(ps, pos, param);
+					} else {
+						setjm.setParam(ps, pos, param, p.name);
+					}
 				}
 				ps.addBatch();
 			}
@@ -449,49 +495,84 @@ public class MysqlClientImpl implements MysqlClient {
 
 	@Override
 	public <T> T queryFirst(Statement xstmt, Class<T> type, Object param) throws SQLException {
-		return null;
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return queryFirst(pstmt, type, param);
 	}
 
 	@Override
 	public <T> List<T> queryList(Statement xstmt, Class<T> type, Object param) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return queryList(pstmt, type, param);
 	}
 
 	@Override
 	public <T> List<T> queryRange(Statement xstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return queryRange(pstmt, type, offset, count, param);
 	}
 
 	@Override
 	public <T> void queryPage(Statement xstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
-		// TODO Auto-generated method stub
-
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		queryPage(pstmt, type, page, param);
 	}
 
 	@Override
 	public int executeUpdate(Statement xstmt, Object param) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return executeUpdate(pstmt, param);
 	}
 
 	@Override
 	public <R> R executeUpdate(Statement xstmt, Class<R> generateKeyType, Object param) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return executeUpdate(pstmt, generateKeyType, param);
 	}
 
 	@Override
 	public <T> int[] executeBatch(Statement xstmt, List<T> params) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		if (xstmt.dynamic) {
+			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
+		}
+		return executeBatch(xstmt.staticPstmtMeta, params);
 	}
 
 	@Override
 	public <T, R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<T> params) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		if (xstmt.dynamic) {
+			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
+		}
+		return executeBatch(xstmt.staticPstmtMeta, generateKeyType, params);
 	}
 
 }

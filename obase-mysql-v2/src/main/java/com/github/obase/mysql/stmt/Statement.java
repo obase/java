@@ -14,13 +14,13 @@ public class Statement extends Container {
 
 	public final String id;
 	public final boolean nop;
-	public final PstmtMeta pstmtMeta; // 缓存属性
+	public final PstmtMeta staticPstmtMeta; // 缓存属性
 
 	public Statement(String id, boolean nop, List<Fragment> fragments) {
 		super(fragments);
 		this.id = id;
 		this.nop = nop;
-		this.pstmtMeta = dynamic ? null : PstmtMeta.getInstance(psql, param);
+		this.staticPstmtMeta = dynamic ? null : PstmtMeta.getInstance(psql, param);
 	}
 
 	@Override
