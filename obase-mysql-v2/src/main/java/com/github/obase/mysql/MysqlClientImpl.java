@@ -21,6 +21,7 @@ import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.stmt.Statement;
 import com.github.obase.mysql.syntax.SqlDdlKit;
+import com.github.obase.mysql.syntax.SqlMetaKit;
 import com.github.obase.mysql.xml.ObaseMysqlObject;
 import com.github.obase.mysql.xml.ObaseMysqlParser;
 
@@ -161,12 +162,18 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 			clazz = ClassKit.forName(entry.getKey());
 			classMetaInfo = entry.getValue();
+			// 初始化JdbcMeta
 			JdbcMeta.set(clazz, AsmKit.newJdbcMeta(classMetaInfo), false);
 
+			// 初始化ORM相关的SQL
 			if (classMetaInfo.tableAnnotation != null) {
-
+				selectAllCache.put(clazz, SqlMetaKit.genSelectAllPstmt(classMetaInfo));
+				selectCache.put(clazz, SqlMetaKit.genSelectPstmt(classMetaInfo));
+				insertCache.put(clazz, SqlMetaKit.genInsertPstmt(classMetaInfo));
+				mergeCache.put(clazz, SqlMetaKit.genMergePstmt(classMetaInfo));
+				updateCache.put(clazz, SqlMetaKit.genUpdatePstmt(classMetaInfo));
+				deleteCache.put(clazz, SqlMetaKit.genDeletePstmt(classMetaInfo));
 			}
-
 		}
 
 		if (updateTable) {
