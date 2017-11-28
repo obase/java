@@ -9,15 +9,8 @@ import com.github.obase.mysql.core.JdbcMeta;
 
 public class TestBean__JdbcMeta extends JdbcMeta {
 
-	public TestBean__JdbcMeta() {
-		names.add("name");
-		names.add("age");
-		names.add("score");
-		names.add("birth");
-	}
-
 	@Override
-	public Object getValue(String name, Object obj) {
+	public Object getValue(Object obj, String name) {
 		TestBean b = (TestBean) obj;
 		if ("name".equals(name)) {
 			return b.getName();
@@ -32,30 +25,54 @@ public class TestBean__JdbcMeta extends JdbcMeta {
 	}
 
 	@Override
-	public void setParam(PreparedStatement pstmt, Map<String, int[]> params, Object obj) throws SQLException {
+	public void setParam(PreparedStatement pstmt, int p, Object obj, String name) throws SQLException {
 		TestBean b = (TestBean) obj;
-		int[] p;
-		if ((p = params.get("name")) != null) {
-
-		} else if ((p = params.get("age")) != null) {
-
-		} else if ((p = params.get("score")) != null) {
-
-		} else if ((p = params.get("birth")) != null) {
-
+		if ("name".equals(name)) {
+			set_String(pstmt, p, b.getName());
+		} else if ("age".equals(name)) {
+			set_int(pstmt, p, b.getAge());
+		} else if ("score".equals(name)) {
+			set_double(pstmt, p, b.getScore());
+		} else if ("birth".equals(name)) {
+			set_JavaUtilDate(pstmt, p, b.getBirth());
 		}
 	}
 
 	@Override
 	public Object getResult(ResultSet rs, Map<String, Integer> types) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		TestBean t = new TestBean();
+		Integer p = null;
+		if ((p = types.get("name")) != null) {
+			t.setName(get_String(rs, p));
+		}
+		if ((p = types.get("age")) != null) {
+			t.setAge(get_int(rs, p));
+		}
+		if ((p = types.get("score")) != null) {
+			t.setScore(get_double(rs, p));
+		}
+		if ((p = types.get("birth")) != null) {
+			t.setBirth(get_JavaUtilDate(rs, p));
+		}
+		return t;
 	}
 
 	@Override
 	public void getResult2(ResultSet rs, Map<String, Integer> types, Object obj) throws SQLException {
-		// TODO Auto-generated method stub
-
+		TestBean t = (TestBean) obj;
+		Integer p = null;
+		if ((p = types.get("name")) != null) {
+			t.setName(get_String(rs, p));
+		}
+		if ((p = types.get("age")) != null) {
+			t.setAge(get_int(rs, p));
+		}
+		if ((p = types.get("score")) != null) {
+			t.setScore(get_double(rs, p));
+		}
+		if ((p = types.get("birth")) != null) {
+			t.setBirth(get_JavaUtilDate(rs, p));
+		}
 	}
 
 }

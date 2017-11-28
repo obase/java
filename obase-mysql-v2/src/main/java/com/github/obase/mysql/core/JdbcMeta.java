@@ -963,6 +963,387 @@ public abstract class JdbcMeta {
 		}
 	}
 
+	// ============================================
+	// 细粒度辅助方法,减少字节码
+	// ============================================
+	public static final void set_boolean(PreparedStatement pstmt, int p, boolean value) throws SQLException {
+		pstmt.setBoolean(p, value);
+	}
+
+	public static final void set_char(PreparedStatement pstmt, int p, char value) throws SQLException {
+		pstmt.setString(p, java.lang.String.valueOf(value));
+	}
+
+	public static final void set_byte(PreparedStatement pstmt, int p, byte value) throws SQLException {
+		pstmt.setByte(p, value);
+	}
+
+	public static final void set_short(PreparedStatement pstmt, int p, short value) throws SQLException {
+		pstmt.setShort(p, value);
+	}
+
+	public static final void set_int(PreparedStatement pstmt, int p, int value) throws SQLException {
+		pstmt.setInt(p, value);
+	}
+
+	public static final void set_long(PreparedStatement pstmt, int p, long value) throws SQLException {
+		pstmt.setLong(p, value);
+	}
+
+	public static final void set_float(PreparedStatement pstmt, int p, float value) throws SQLException {
+		pstmt.setFloat(p, value);
+	}
+
+	public static final void set_double(PreparedStatement pstmt, int p, double value) throws SQLException {
+		pstmt.setDouble(p, value);
+	}
+
+	public static final void set_Boolean(PreparedStatement pstmt, int p, Boolean value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBoolean(p, value);
+		}
+	}
+
+	public static final void set_Character(PreparedStatement pstmt, int p, Character value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setString(p, value.toString());
+		}
+	}
+
+	public static final void set_Byte(PreparedStatement pstmt, int p, Byte value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setByte(p, value);
+		}
+	}
+
+	public static final void set_Short(PreparedStatement pstmt, int p, Short value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setShort(p, value);
+		}
+	}
+
+	public static final void set_Integer(PreparedStatement pstmt, int p, Integer value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setInt(p, value);
+		}
+	}
+
+	public static final void set_Long(PreparedStatement pstmt, int p, Long value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setLong(p, value);
+		}
+	}
+
+	public static final void set_Float(PreparedStatement pstmt, int p, Float value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setFloat(p, value);
+		}
+	}
+
+	public static final void set_Double(PreparedStatement pstmt, int p, Double value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setDouble(p, value);
+		}
+	}
+
+	public static final void set_String(PreparedStatement pstmt, int p, String value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setString(p, value);
+		}
+	}
+
+	public static final void set_BigDecimal(PreparedStatement pstmt, int p, BigDecimal value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBigDecimal(p, value);
+		}
+	}
+
+	public static final void set_BigInteger(PreparedStatement pstmt, int p, BigInteger value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBigDecimal(p, new BigDecimal(value));
+		}
+	}
+
+	public static final void set_JavaUtilDate(PreparedStatement pstmt, int p, java.util.Date value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setTimestamp(p, new Timestamp(value.getTime()));
+		}
+	}
+
+	public static final void set_Date(PreparedStatement pstmt, int p, Date value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setDate(p, value);
+		}
+	}
+
+	public static final void set_Time(PreparedStatement pstmt, int p, Time value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setTime(p, value);
+		}
+	}
+
+	public static final void set_Timestamp(PreparedStatement pstmt, int p, Timestamp value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setTimestamp(p, value);
+		}
+	}
+
+	public static final void set_bytes(PreparedStatement pstmt, int p, byte[] value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBytes(p, value);
+		}
+	}
+
+	public static final void set_InputStream(PreparedStatement pstmt, int p, InputStream value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBinaryStream(p, value);
+		}
+	}
+
+	public static final void set_Reader(PreparedStatement pstmt, int p, Reader value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setCharacterStream(p, value);
+		}
+	}
+
+	public static final void set_Blob(PreparedStatement pstmt, int p, Blob value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setBlob(p, value);
+		}
+	}
+
+	public static final void set_Clob(PreparedStatement pstmt, int p, Clob value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setClob(p, value);
+		}
+	}
+
+	public static final void set_Ref(PreparedStatement pstmt, int p, Ref value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setRef(p, value);
+		}
+	}
+
+	public static final void set_URL(PreparedStatement pstmt, int p, URL value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setURL(p, value);
+		}
+	}
+
+	public static final void set_SQLXML(PreparedStatement pstmt, int p, SQLXML value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			pstmt.setSQLXML(p, value);
+		}
+	}
+
+	public static final void set_Object(PreparedStatement pstmt, int p, Object value) throws SQLException {
+		if (value == null) {
+			pstmt.setNull(p, Types.OTHER);
+		} else {
+			JavaTypeMeta meta = JavaTypeMeta.get(value.getClass());
+			if (meta != null) {
+				meta.set(pstmt, p, value);
+			} else {
+				pstmt.setObject(p, value);
+			}
+		}
+	}
+
+	public static final boolean get_boolean(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getBoolean(pos);
+	}
+
+	public static final char get_char(ResultSet rs, Integer pos) throws SQLException {
+		String val = rs.getString(pos);
+		if (val != null && val.length() > 0) {
+			return val.charAt(0);
+		}
+		return '\0';
+	}
+
+	public static final byte get_byte(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getByte(pos);
+	}
+
+	public static final short get_short(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getShort(pos);
+	}
+
+	public static final int get_int(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getInt(pos);
+	}
+
+	public static final long get_long(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getLong(pos);
+	}
+
+	public static final float get_float(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getFloat(pos);
+	}
+
+	public static final double get_double(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getDouble(pos);
+	}
+
+	public static final Boolean get_Boolean(ResultSet rs, Integer pos) throws SQLException {
+		boolean result = rs.getBoolean(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Character get_Character(ResultSet rs, Integer pos) throws SQLException {
+		String val = rs.getString(pos);
+		if (val != null && val.length() > 0) {
+			return val.charAt(0);
+		}
+		return null;
+	}
+
+	public static final Byte get_Byte(ResultSet rs, Integer pos) throws SQLException {
+		byte result = rs.getByte(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Short get_Short(ResultSet rs, Integer pos) throws SQLException {
+		short result = rs.getShort(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Integer get_Integer(ResultSet rs, Integer pos) throws SQLException {
+		int result = rs.getInt(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Long get_Long(ResultSet rs, Integer pos) throws SQLException {
+		long result = rs.getLong(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Float get_Float(ResultSet rs, Integer pos) throws SQLException {
+		float result = rs.getFloat(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final Double get_Double(ResultSet rs, Integer pos) throws SQLException {
+		double result = rs.getDouble(pos);
+		return rs.wasNull() ? null : result;
+	}
+
+	public static final String get_String(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getString(pos);
+	}
+
+	public static final BigDecimal get_BigDecimal(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getBigDecimal(pos);
+	}
+
+	public static final BigInteger get_BigInteger(ResultSet rs, Integer pos) throws SQLException {
+		BigDecimal val = rs.getBigDecimal(pos);
+		return val == null ? null : val.toBigInteger();
+	}
+
+	public static final Date get_Date(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getDate(pos);
+	}
+
+	public static final Time get_Time(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getTime(pos);
+	}
+
+	public static final Timestamp get_Timestamp(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getTimestamp(pos);
+	}
+
+	public static final java.util.Date get_JavaUtilDate(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getTimestamp(pos);
+	}
+
+	public static final byte[] get_bytes(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getBytes(pos);
+	}
+
+	public static final InputStream get_InputStream(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getBinaryStream(pos);
+	}
+
+	public static final Reader get_Reader(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getCharacterStream(pos);
+	}
+
+	public static final Blob get_Blob(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getBlob(pos);
+	}
+
+	public static final Clob get_Clob(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getClob(pos);
+	}
+
+	public static final Ref get_Ref(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getRef(pos);
+	}
+
+	public static final URL get_URL(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getURL(pos);
+	}
+
+	public static final SQLXML get_SQLXML(ResultSet rs, Integer pos) throws SQLException {
+		return rs.getSQLXML(pos);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> T get_Object(ResultSet rs, Integer pos, Class<T> type) throws SQLException {
+		JavaTypeMeta meta = JavaTypeMeta.get(type);
+		if (meta != null) {
+			return meta.get(rs, pos, type);
+		}
+		return (T) rs.getObject(pos);
+	}
+
 	// =============================================
 	// 缓存属性: JdbcMetaCache
 	// =============================================
