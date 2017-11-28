@@ -1,48 +1,40 @@
 package com.github.obase.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import static com.github.obase.kit.StringKit.isNotEmpty;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.github.obase.MessageException;
-import com.github.obase.Page;
-import com.github.obase.kit.CollectKit;
+import com.github.obase.kit.ClassKit;
+import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.core.JdbcMeta;
 import com.github.obase.mysql.core.PstmtMeta;
-import com.github.obase.mysql.stmt.Param;
+import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.stmt.Statement;
-import com.github.obase.mysql.syntax.SqlDqlKit;
-import com.github.obase.spring.transaction.DataSourceUtils;
+import com.github.obase.mysql.syntax.SqlDdlKit;
+import com.github.obase.mysql.xml.ObaseMysqlObject;
+import com.github.obase.mysql.xml.ObaseMysqlParser;
 
-/**
- * MysqlClient实现类, 处理缓存与初始化相关工作
- */
-@SuppressWarnings("unchecked")
-public class MysqlClientImpl implements MysqlClient {
+public class MysqlClientImpl extends MysqlClientBase {
 
-	static final Log logger = LogFactory.getLog(MysqlClientImpl.class);
+	static final Log logger = LogFactory.getLog(MysqlClientBase.class);
 
 	// =============================================
 	// 基础属性及设置
 	// =============================================
-	DataSource dataSource;
 	String packagesToScan; // multi-value separated by comma ","
 	String configLocations; // multi-value separated by comma ","
 	boolean showSql; // show sql or not
 	boolean updateTable; // update table or not
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	public void setPackagesToScan(String packagesToScan) {
 		this.packagesToScan = packagesToScan;
@@ -61,518 +53,131 @@ public class MysqlClientImpl implements MysqlClient {
 	}
 
 	// =============================================
-	// 辅助方法
+	// 全局缓存属性, 由metainfo快速生成的缓存.部分如limit,count,
+	// insertIgnore, replace等合并到对应的SQL中
 	// =============================================
-	private void releaseStatement(PreparedStatement ps) {
-		if (ps != null) {
-			try {
-				ps.close();
-			} catch (SQLException e) {
-				logger.error("Close preapred statement failed", e);
-			}
-		}
-	}
+	final Map<String, Statement> statementCache = new HashMap<String, Statement>(); // xml中statement缓存
+	// selectAllCache同时缓存limit,count
+	final Map<Class<?>, PstmtMeta> selectAllCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
+	final Map<Class<?>, PstmtMeta> selectCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
+	// insertCache同时缓存insertIgnore, replace
+	final Map<Class<?>, PstmtMeta> insertCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
+	// 采用insert or update语法
+	final Map<Class<?>, PstmtMeta> mergeCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
+	final Map<Class<?>, PstmtMeta> updateCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
+	final Map<Class<?>, PstmtMeta> deleteCache = new HashMap<Class<?>, PstmtMeta>(); // table全表搜索缓存
 
-	// =============================================
-	// 基础方法
-	// =============================================
+	protected void doInit(Connection conn) throws Exception {
+		final Pattern separator = Pattern.compile("\\s*,\\s*");
+		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-	@Override
-	public void init() throws SQLException {
-		// TODO Auto-generated method stub
+		Map<String, ClassMetaInfo> metaMetaInfoMap = new HashMap<String, ClassMetaInfo>(); // key is classname
+		Map<String, ClassMetaInfo> tableMetaInfoMap = new HashMap<String, ClassMetaInfo>(); // key is tablename
 
-	}
+		ClassMetaInfo classMetaInfo, tableMetaInfo;
+		StringBuilder sb = new StringBuilder(128);
+		String key;
 
-	@Override
-	public <T> T queryFirst(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			if (param != null) {
-				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-			}
-			rs = ps.executeQuery();
+		if (isNotEmpty(packagesToScan)) {
+			String[] pkgs = separator.split(packagesToScan);
+			for (String pkg : pkgs) {
+				if (isNotEmpty(pkg)) {
+					sb.setLength(0);
+					String packageSearchPath = sb.append(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX).append(ClassKit.getInternalNameFromClassName(pkg)).append("/**/*.class").toString();
+					Resource[] rss = resolver.getResources(packageSearchPath);
+					for (Resource rs : rss) {
+						classMetaInfo = AsmKit.getAnnotationClassMetaInfo(rs);
 
-			// 设置查询结果标签
-			if (pstmt.label == null) {
-				SqlDqlKit.parsePstmtLabel(rs, pstmt);
-			}
-
-			JdbcMeta getjm = JdbcMeta.get(type);
-			if (rs.next()) {
-				return (T) getjm.getResult(rs, pstmt.label);
-			}
-
-			return null;
-		} catch (
-
-		SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		}
-	}
-
-	@Override
-	public <T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			if (param != null) {
-				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-			}
-			rs = ps.executeQuery();
-
-			// 设置查询结果标签
-			if (pstmt.label == null) {
-				SqlDqlKit.parsePstmtLabel(rs, pstmt);
-			}
-
-			JdbcMeta getjm = JdbcMeta.get(type);
-			List<T> list = new LinkedList<T>();
-			while (rs.next()) {
-				list.add((T) getjm.getResult(rs, pstmt.label));
-			}
-			return list;
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		}
-	}
-
-	@Override
-	public <T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
-
-		if (offset < 0) {
-			offset = 0;
-		}
-
-		if (count <= 0) {
-			count = Integer.MAX_VALUE;
-		}
-
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-
-			// 解析关键词下标位置用于编辑SQL
-			if (pstmt.limitPsql == null) {
-				SqlDqlKit.parsePstmtLimit(pstmt);
-			}
-
-			ps = conn.prepareStatement(pstmt.limitPsql);
-			int pos = 0;
-			if (param != null) {
-				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-			}
-			// 设置最好limit的参数
-			ps.setInt(++pos, offset);
-			ps.setInt(++pos, count);
-
-			rs = ps.executeQuery();
-
-			// 设置查询结果标签
-			if (pstmt.label == null) {
-				SqlDqlKit.parsePstmtLabel(rs, pstmt);
-			}
-
-			JdbcMeta getjm = JdbcMeta.get(type);
-			List<T> list = new LinkedList<T>();
-			while (rs.next()) {
-				list.add((T) getjm.getResult(rs, pstmt.label));
-			}
-			return list;
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		}
-	}
-
-	public <T> void queryPage(PstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
-
-		int offset = page.start;
-		if (offset < 0) {
-			offset = 0;
-		}
-		int count = page.limit;
-		if (count <= 0) {
-			count = Integer.MAX_VALUE;
-		}
-
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-
-			// 解析关键词下标位置用于编辑SQL
-			String pagePsql = null;
-			if (page.field == null) {
-				if (pstmt.limitPsql == null) {
-					SqlDqlKit.parsePstmtLimit(pstmt);
-				}
-				pagePsql = pstmt.limitPsql;
-			} else {
-				pagePsql = SqlDqlKit.parsePstmtOrderLimit(pstmt, page.field, page.direction);
-			}
-
-			ps = conn.prepareStatement(pagePsql);
-			JdbcMeta setjm = null;
-			int pos = 0;
-			if (param != null) {
-				setjm = JdbcMeta.get(param.getClass());
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-			}
-			// 设置最好limit的参数
-			ps.setInt(++pos, offset);
-			ps.setInt(++pos, count);
-
-			rs = ps.executeQuery();
-
-			// 设置查询结果标签
-			if (pstmt.label == null) {
-				SqlDqlKit.parsePstmtLabel(rs, pstmt);
-			}
-
-			JdbcMeta getjm = JdbcMeta.get(type);
-			List<T> list = new LinkedList<T>();
-			while (rs.next()) {
-				list.add((T) getjm.getResult(rs, pstmt.label));
-			}
-			releaseStatement(ps); // 释放data的查询
-
-			page.setRows(list);
-			int size = list.size();
-			if ((offset == 0 && count == Integer.MAX_VALUE) || (size > 0 && size < count)) {
-				page.setResults(size + offset);
-			} else {
-				if (pstmt.countPsql == null) {
-					SqlDqlKit.parsePstmtCount(pstmt);
-				}
-				ps = conn.prepareStatement(pstmt.countPsql);
-				if (param != null) {
-					pos = 0;
-					for (Param p : pstmt.param) {
-						++pos;
-						if (p.setted) {
-							JdbcMeta.setParamByType(ps, pos, param);
-						} else {
-							setjm.setParam(ps, pos, param, p.name);
+						if (classMetaInfo.tableAnnotation != null || classMetaInfo.metaAnnotation != null) {
+							metaMetaInfoMap.put(ClassKit.getClassNameFromInternalName(classMetaInfo.internalName), classMetaInfo);
+							if (classMetaInfo.tableAnnotation != null) {
+								if (logger.isInfoEnabled()) {
+									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
+								}
+								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
+									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
+											"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+								}
+							}
 						}
 					}
 				}
-				rs = ps.executeQuery();
-				if (rs.next()) {
-					page.setResults(rs.getInt(1));
-				}
 			}
-
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
 		}
-	}
+		if (isNotEmpty(configLocations)) {
+			ObaseMysqlParser parser = new ObaseMysqlParser();
+			String[] locations = separator.split(configLocations);
+			for (String location : locations) {
+				if (isNotEmpty(location)) {
+					Resource[] rss = resolver.getResources(location);
+					for (Resource rs : rss) {
+						ObaseMysqlObject configMetaInfo = parser.parse(rs);
+						for (Class<?> clazz : configMetaInfo.tableClassList) {
+							String className = clazz.getCanonicalName();
+							if (!metaMetaInfoMap.containsKey(className)) {
+								classMetaInfo = AsmKit.getAnnotationClassMetaInfo(className);
 
-	@Override
-	public int executeUpdate(PstmtMeta pstmt, Object param) throws SQLException {
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			if (param != null) {
-				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
+								if (classMetaInfo.tableAnnotation != null || classMetaInfo.metaAnnotation != null) {
+									metaMetaInfoMap.put(className, classMetaInfo);
+									if (classMetaInfo.tableAnnotation != null) {
+										if (logger.isInfoEnabled()) {
+											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
+										}
+										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
+											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
+													"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+										}
+									}
+								}
+							}
+						}
+						for (Class<?> clazz : configMetaInfo.metaClassList) {
+							String className = clazz.getCanonicalName();
+							if (!metaMetaInfoMap.containsKey(className)) {
+								classMetaInfo = AsmKit.getClassMetaInfo(className);
+								classMetaInfo.tableAnnotation = null; // FIXBUG:<meta>的类不是<table>
+								metaMetaInfoMap.put(className, classMetaInfo);
+							}
+						}
+						for (Statement stmt : configMetaInfo.statementList) {
+							// key = namespace + . + id
+							sb.setLength(0);
+							if (isNotEmpty(configMetaInfo.namespace)) {
+								// ignore if not setting namespace
+								sb.append(configMetaInfo.namespace).append('.');
+							}
+							key = sb.append(stmt.id).toString();
+							if (statementCache.put(key, stmt) != null) {
+								throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_DUPLICATE, "Duplicate statement id: " + key);
+							}
+						}
 					}
 				}
 			}
-			return ps.executeUpdate();
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
 		}
-	}
 
-	@Override
-	public <R> R executeUpdate(PstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			if (param != null) {
-				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
+		Class<?> clazz;
+		for (Map.Entry<String, ClassMetaInfo> entry : metaMetaInfoMap.entrySet()) {
+
+			clazz = ClassKit.forName(entry.getKey());
+			classMetaInfo = entry.getValue();
+			JdbcMeta.set(clazz, AsmKit.newJdbcMeta(classMetaInfo), false);
+
+			if (classMetaInfo.tableAnnotation != null) {
+
 			}
-			ps.executeUpdate();
-			rs = ps.getGeneratedKeys();
-			if (rs.next()) {
-				return JdbcMeta.getResultByType(rs, 1, generateKeyType);
+
+		}
+
+		if (updateTable) {
+			if (tableMetaInfoMap.size() > 0) {
+				SqlDdlKit.processUpdateTable(conn, tableMetaInfoMap);
 			}
-			return null;
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		}
-	}
-
-	@Override
-	public <T> int[] executeBatch(PstmtMeta pstmt, List<T> params) throws SQLException {
-
-		// 如果参数为空直接返回null表示未执行
-		if (CollectKit.isEmpty(params)) {
-			return null;
 		}
 
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
-			for (T param : params) {
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-				ps.addBatch();
-			}
-			return ps.executeBatch();
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("Mysqlclient initialization successful, loading %d Tables, %d Metas, and %d SQLs", tableMetaInfoMap.size(), metaMetaInfoMap.size(), statementCache.size()));
 		}
-	}
-
-	@Override
-	public <T, R> List<R> executeBatch(PstmtMeta pstmt, Class<R> generateKeyType, List<T> params) throws SQLException {
-		// 如果参数为空直接返回null表示未执行
-		if (CollectKit.isEmpty(params)) {
-			return null;
-		}
-
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		Connection conn = DataSourceUtils.getConnection(dataSource);
-		try {
-			ps = conn.prepareStatement(pstmt.psql);
-			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
-			for (T param : params) {
-				int pos = 0;
-				for (Param p : pstmt.param) {
-					++pos;
-					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
-					} else {
-						setjm.setParam(ps, pos, param, p.name);
-					}
-				}
-				ps.addBatch();
-			}
-			ps.executeBatch();
-
-			List<R> list = new ArrayList<R>(params.size());
-			rs = ps.getGeneratedKeys();
-			while (rs.next()) {
-				list.add(JdbcMeta.getResultByType(rs, 1, generateKeyType));
-			}
-			return list;
-
-		} catch (SQLException ex) {
-			// Release Connection early, to avoid potential connection pool deadlock
-			// in the case when the exception translator hasn't been initialized yet.
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-			conn = null;
-			throw ex;
-		} finally {
-			releaseStatement(ps);
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		}
-	}
-
-	@Override
-	public <T> T queryFirst(Statement xstmt, Class<T> type, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		return queryFirst(pstmt, type, param);
-	}
-
-	@Override
-	public <T> List<T> queryList(Statement xstmt, Class<T> type, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		return queryList(pstmt, type, param);
-	}
-
-	@Override
-	public <T> List<T> queryRange(Statement xstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		return queryRange(pstmt, type, offset, count, param);
-	}
-
-	@Override
-	public <T> void queryPage(Statement xstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		queryPage(pstmt, type, page, param);
-	}
-
-	@Override
-	public int executeUpdate(Statement xstmt, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		return executeUpdate(pstmt, param);
-	}
-
-	@Override
-	public <R> R executeUpdate(Statement xstmt, Class<R> generateKeyType, Object param) throws SQLException {
-		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
-			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
-		} else {
-			pstmt = xstmt.staticPstmtMeta;
-		}
-		return executeUpdate(pstmt, generateKeyType, param);
-	}
-
-	@Override
-	public <T> int[] executeBatch(Statement xstmt, List<T> params) throws SQLException {
-		if (xstmt.dynamic) {
-			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
-		}
-		return executeBatch(xstmt.staticPstmtMeta, params);
-	}
-
-	@Override
-	public <T, R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<T> params) throws SQLException {
-		if (xstmt.dynamic) {
-			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
-		}
-		return executeBatch(xstmt.staticPstmtMeta, generateKeyType, params);
 	}
 
 }

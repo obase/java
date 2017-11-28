@@ -24,7 +24,7 @@ public interface MysqlClient {
 	String DIRECTION_DESC = "DESC";
 	String DIRECTION_ASC = "ASC";
 
-	void init() throws SQLException;
+	void init() throws Exception;
 
 	// =====================================================
 	// 静态SQL处理方法

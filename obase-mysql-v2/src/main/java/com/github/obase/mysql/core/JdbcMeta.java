@@ -1412,4 +1412,14 @@ public abstract class JdbcMeta {
 		return meta;
 
 	}
+
+	public static void set(Class<?> type, JdbcMeta meta, boolean force) {
+		synchronized (CACHE) {
+			if (CACHE.put(type, meta) != null) {
+				if (!force) {
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_DUPLICATE, "Duplicate jdbc meta for class: " + type);
+				}
+			}
+		}
+	}
 }

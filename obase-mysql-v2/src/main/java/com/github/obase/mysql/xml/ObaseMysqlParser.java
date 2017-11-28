@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -38,28 +39,40 @@ public final class ObaseMysqlParser {
 		factory.setCoalescing(true); // 必需! 将CDATA转为TEXT.
 	}
 
-	public ObaseMysqlObject parse(InputStream is) throws Exception {
+	public ObaseMysqlObject parse(Resource rs) throws Exception {
 
-		ObaseMysqlObject obj = new ObaseMysqlObject();
-
-		Element root = factory.newDocumentBuilder().parse(new BufferedInputStream(is)).getDocumentElement();
-		obj.namespace = root.getAttribute(ATTR_NAMESPACE);
-
-		for (Node node = root.getFirstChild(); node != null; node = node.getNextSibling()) {
-			if (node.getNodeType() != Node.ELEMENT_NODE) {
-				continue;
+		InputStream is = null;
+		try {
+			is = rs.getInputStream();
+			if (is == null) {
+				return null;
 			}
-			String tag = node.getNodeName();
-			if (ELEM_TABLE.equals(tag)) {
-				parseTable(obj, (Element) node);
-			} else if (ELEM_META.equals(tag)) {
-				parseTable(obj, (Element) node);
-			} else if (ELEM_STMT.equals(tag)) {
-				parseStmt(obj, (Element) node);
+			ObaseMysqlObject obj = new ObaseMysqlObject();
+
+			Element root = factory.newDocumentBuilder().parse(new BufferedInputStream(is)).getDocumentElement();
+			obj.namespace = root.getAttribute(ATTR_NAMESPACE);
+
+			for (Node node = root.getFirstChild(); node != null; node = node.getNextSibling()) {
+				if (node.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
+				String tag = node.getNodeName();
+				if (ELEM_TABLE.equals(tag)) {
+					parseTable(obj, (Element) node);
+				} else if (ELEM_META.equals(tag)) {
+					parseTable(obj, (Element) node);
+				} else if (ELEM_STMT.equals(tag)) {
+					parseStmt(obj, (Element) node);
+				}
+			}
+
+			return obj;
+		} finally {
+			if (is != null) {
+				is.close();
 			}
 		}
 
-		return obj;
 	}
 
 	void parseTable(ObaseMysqlObject obj, Element node) throws ClassNotFoundException {
