@@ -1,6 +1,5 @@
 package com.github.obase.mysql.stmt;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,35 +14,25 @@ public class Statement extends Container {
 
 	public final String id;
 	public final boolean nop;
-	private PstmtMeta pstmtMeta; // 缓存属性
+	public final PstmtMeta pstmtMeta; // 缓存属性
 
 	public Statement(String id, boolean nop, List<Fragment> fragments) {
 		super(fragments);
 		this.id = id;
 		this.nop = nop;
+		this.pstmtMeta = dynamic ? null : PstmtMeta.getInstance(psql, param);
 	}
 
 	@Override
 	protected int satisfy(int[] codes) {
-		return Pack.YES;
+		return Pack.CODE_YES;
 	}
 
-	public PstmtMeta getPstmtMeta(JdbcMeta meta, Object bean) {
-		if (dynamic) {
-			StringBuilder psqls = new StringBuilder(4096);
-			List<Param> params = new LinkedList<Param>();
-			processDynamic(psqls, params, satisfy(meta, bean).value);
-			return new PstmtMeta(psqls.toString(), params);
-		} else {
-			if (pstmtMeta == null) {
-				List<Param> ps = new ArrayList<Param>(param == null ? 0 : param.size());
-				for (String p : param) {
-					ps.add(new Param(p));
-				}
-				pstmtMeta = new PstmtMeta(psql, ps);
-			}
-			return pstmtMeta;
-		}
+	public PstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
+		StringBuilder psqls = new StringBuilder(4096);
+		List<Param> params = new LinkedList<Param>();
+		processDynamic(psqls, params, satisfy(meta, bean).value);
+		return new PstmtMeta(psqls.toString(), params);
 	}
 
 }

@@ -18,16 +18,16 @@ public class Whenany extends Container {
 		// 只有全部为
 		boolean markno = false;
 		for (int code : codes) {
-			if (code == Pack.UKW) {
+			if (code == Pack.CODE_UKW) {
 				continue;
-			} else if (code == Pack.YES) {
-				return Pack.YES;
+			} else if (code == Pack.CODE_YES) {
+				return Pack.CODE_YES;
 			} else {
 				markno = true;
 			}
 		}
 		// 没有no也当作yes
-		return markno ? Pack.NO : Pack.YES;
+		return markno ? Pack.CODE_NO : Pack.CODE_YES;
 	}
 
 }

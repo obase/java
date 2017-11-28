@@ -25,8 +25,11 @@ public class Notnull implements Fragment {
 
 	@Override
 	public Pack satisfy(JdbcMeta meta, Object bean) {
+		if (bean == null) {
+			return Pack.NO;
+		}
 		Object val = meta.getValue(bean, param);
-		return new Pack(val != null ? Pack.YES : Pack.NO, val);
+		return new Pack(val != null ? Pack.CODE_YES : Pack.CODE_NO, val);
 	}
 
 	@Override

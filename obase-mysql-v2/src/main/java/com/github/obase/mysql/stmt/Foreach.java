@@ -46,8 +46,11 @@ public class Foreach implements Fragment {
 
 	@Override
 	public Pack satisfy(JdbcMeta meta, Object bean) {
+		if (bean == null) {
+			return Pack.NO;
+		}
 		Object value = meta.getValue(bean, param);
-		return new Pack(isEmptyCollect(value) ? Pack.NO : Pack.YES, value);
+		return new Pack(isEmptyCollect(value) ? Pack.CODE_NO : Pack.CODE_YES, value);
 	}
 
 	@Override

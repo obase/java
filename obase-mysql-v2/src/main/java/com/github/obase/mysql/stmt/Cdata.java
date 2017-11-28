@@ -25,7 +25,7 @@ public final class Cdata implements Fragment {
 
 	@Override
 	public Pack satisfy(JdbcMeta meta, Object bean) {
-		return Pack.NIL;
+		return Pack.UKW;
 	}
 
 	@Override

@@ -16,13 +16,13 @@ public class Whenall extends Container {
 	@Override
 	protected int satisfy(int[] codes) {
 		for (int code : codes) {
-			if (code == Pack.UKW) {
+			if (code == Pack.CODE_UKW) {
 				continue;
-			} else if (code == Pack.NO) {
-				return Pack.NO;
+			} else if (code == Pack.CODE_NO) {
+				return Pack.CODE_NO;
 			}
 		}
-		return Pack.YES;
+		return Pack.CODE_YES;
 	}
 
 }
