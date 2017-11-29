@@ -46,6 +46,7 @@ class JdbcMetaClassWriter implements Opcodes {
 		cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null, SuperClassDesc, null);
 
 		String name;
+		int ord;
 		MethodMetaInfo methodMetaInfo;
 		Label lb;
 		boolean frameSame;
@@ -65,55 +66,53 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitMaxs(1, 1);
 			mv.visitEnd();
 		}
+
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "setParam", "(Ljava/sql/PreparedStatement;Ljava/util/Map;Ljava/lang/Object;)V", "(Ljava/sql/PreparedStatement;Ljava/util/Map<Ljava/lang/String;[I>;Ljava/lang/Object;)V", new String[] { "java/sql/SQLException" });
+			mv = cw.visitMethod(ACC_PUBLIC, "getValue", "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;", null, null);
 			mv.visitCode();
 			Label l0 = new Label();
 			mv.visitLabel(l0);
-			mv.visitVarInsn(ALOAD, 3);
+			mv.visitVarInsn(ALOAD, 1);
 			mv.visitTypeInsn(CHECKCAST, classMetaInfo.internalName);
-			mv.visitVarInsn(ASTORE, 4);
-			Label l1 = new Label();
-			mv.visitLabel(l1);
-			/************************ begin ************************/
-			frameSame = false;
+			mv.visitVarInsn(ASTORE, 3);
+
+			ord = 0;
+			lb = new Label();
 			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.getters.entrySet()) {
 				name = entry.getKey();
 				methodMetaInfo = entry.getValue();
 
-				mv.visitVarInsn(ALOAD, 2);
-				mv.visitLdcInsn(name);
-				mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-				mv.visitTypeInsn(CHECKCAST, "[I");
-				mv.visitInsn(DUP);
-				mv.visitVarInsn(ASTORE, 5);
-				lb = new Label();
-				mv.visitJumpInsn(IFNULL, lb);
-				mv.visitVarInsn(ALOAD, 1);
-				mv.visitVarInsn(ALOAD, 5);
-				mv.visitVarInsn(ALOAD, 4);
-				mv.visitMethodInsn(INVOKEVIRTUAL, classMetaInfo.internalName, methodMetaInfo.name, methodMetaInfo.descriptor, false);
-				setParamByType(mv, Type.getReturnType(methodMetaInfo.descriptor), internalName);// 根据类型选择
 				mv.visitLabel(lb);
-				if (frameSame) {
+				if (ord == 1) {
+					mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
+				} else if (ord > 2) {
 					mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-				} else {
-					frameSame = true;
-					mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "[I" }, 0, null);
 				}
+				mv.visitLdcInsn(name);
+				mv.visitVarInsn(ALOAD, 2);
+				mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
+
+				lb = new Label();
+				ord++;
+				mv.visitJumpInsn(IFEQ, lb);
+				mv.visitVarInsn(ALOAD, 3);
+				mv.visitMethodInsn(INVOKEVIRTUAL, classMetaInfo.internalName, methodMetaInfo.name, methodMetaInfo.descriptor, false);
+				valueOfPrimitiveType(mv, Type.getReturnType(methodMetaInfo.descriptor));
+				mv.visitInsn(ARETURN);
 			}
-			/************************ end ************************/
-			mv.visitInsn(RETURN);
-			Label l2 = new Label();
-			mv.visitLabel(l2);
-			mv.visitLocalVariable("this", descriptor, null, l0, l2, 0);
-			mv.visitLocalVariable("pstmt", "Ljava/sql/PreparedStatement;", null, l0, l2, 1);
-			mv.visitLocalVariable("params", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;[I>;", l0, l2, 2);
-			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l2, 3);
-			mv.visitLocalVariable("that", targetDescriptor, null, l1, l2, 4);
-			mv.visitLocalVariable("pos", "[I", null, l1, l2, 5);
-			mv.visitMaxs(4, 6);
+
+			Label l1 = new Label();
+			mv.visitLabel(l1);
+			mv.visitLocalVariable("this", descriptor, null, l0, l1, 0);
+			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l1, 1);
+			mv.visitLocalVariable("name", "Ljava/lang/String;", null, l0, l1, 2);
+			mv.visitLocalVariable("that", targetDescriptor, null, l0, l1, 3);
+			mv.visitMaxs(2, 4);
 			mv.visitEnd();
+		}
+
+		{
+
 		}
 
 		{
@@ -223,104 +222,135 @@ class JdbcMetaClassWriter implements Opcodes {
 		return cw.toByteArray();
 	}
 
+	static final void valueOfPrimitiveType(MethodVisitor mv, Type type) {
+		switch (JavaType.match(type.getDescriptor())) {
+		case _boolean:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
+			break;
+		case _char:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false);
+			break;
+		case _byte:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false);
+			break;
+		case _short:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false);
+			break;
+		case _int:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+			break;
+		case _long:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
+			break;
+		case _float:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
+			break;
+		case _double:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
+			break;
+		default:
+			break;
+		}
+	}
+
 	static final void setParamByType(MethodVisitor mv, Type type, String internalName) {
 
 		switch (JavaType.match(type.getDescriptor())) {
 		case _boolean:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_boolean", "(Ljava/sql/PreparedStatement;[IZ)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_boolean", "(Ljava/sql/PreparedStatement;IZ)V", false);
 			break;
 		case _Boolean:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Boolean", "(Ljava/sql/PreparedStatement;[ILjava/lang/Boolean;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Boolean", "(Ljava/sql/PreparedStatement;ILjava/lang/Boolean;)V", false);
 			break;
 		case _char:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_char", "(Ljava/sql/PreparedStatement;[IC)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_char", "(Ljava/sql/PreparedStatement;IC)V", false);
 			break;
 		case _Character:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Character", "(Ljava/sql/PreparedStatement;[ILjava/lang/Character;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Character", "(Ljava/sql/PreparedStatement;ILjava/lang/Character;)V", false);
 			break;
 		case _byte:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_byte", "(Ljava/sql/PreparedStatement;[IB)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_byte", "(Ljava/sql/PreparedStatement;IB)V", false);
 			break;
 		case _Byte:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Byte", "(Ljava/sql/PreparedStatement;[ILjava/lang/Byte;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Byte", "(Ljava/sql/PreparedStatement;ILjava/lang/Byte;)V", false);
 			break;
 		case _short:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_short", "(Ljava/sql/PreparedStatement;[IS)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_short", "(Ljava/sql/PreparedStatement;IS)V", false);
 			break;
 		case _Short:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Short", "(Ljava/sql/PreparedStatement;[ILjava/lang/Short;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Short", "(Ljava/sql/PreparedStatement;ILjava/lang/Short;)V", false);
 			break;
 		case _int:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_int", "(Ljava/sql/PreparedStatement;[II)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_int", "(Ljava/sql/PreparedStatement;II)V", false);
 			break;
 		case _Integer:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Integer", "(Ljava/sql/PreparedStatement;[ILjava/lang/Integer;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Integer", "(Ljava/sql/PreparedStatement;ILjava/lang/Integer;)V", false);
 			break;
 		case _long:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_long", "(Ljava/sql/PreparedStatement;[IJ)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_long", "(Ljava/sql/PreparedStatement;IJ)V", false);
 			break;
 		case _Long:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Long", "(Ljava/sql/PreparedStatement;[ILjava/lang/Long;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Long", "(Ljava/sql/PreparedStatement;ILjava/lang/Long;)V", false);
 			break;
 		case _float:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_float", "(Ljava/sql/PreparedStatement;[IF)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_float", "(Ljava/sql/PreparedStatement;IF)V", false);
 			break;
 		case _Float:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Float", "(Ljava/sql/PreparedStatement;[ILjava/lang/Float;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Float", "(Ljava/sql/PreparedStatement;ILjava/lang/Float;)V", false);
 			break;
 		case _double:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_double", "(Ljava/sql/PreparedStatement;[ID)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_double", "(Ljava/sql/PreparedStatement;ID)V", false);
 			break;
 		case _Double:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Double", "(Ljava/sql/PreparedStatement;[ILjava/lang/Double;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Double", "(Ljava/sql/PreparedStatement;ILjava/lang/Double;)V", false);
 			break;
 		case _String:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_String", "(Ljava/sql/PreparedStatement;[ILjava/lang/String;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_String", "(Ljava/sql/PreparedStatement;ILjava/lang/String;)V", false);
 			break;
 		case _BigDecimal:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_BigDecimal", "(Ljava/sql/PreparedStatement;[ILjava/math/BigDecimal;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_BigDecimal", "(Ljava/sql/PreparedStatement;ILjava/math/BigDecimal;)V", false);
 			break;
 		case _BigInteger:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_BigInteger", "(Ljava/sql/PreparedStatement;[ILjava/math/BigInteger;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_BigInteger", "(Ljava/sql/PreparedStatement;ILjava/math/BigInteger;)V", false);
 			break;
 		case _JavaUtilDate:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_JavaUtilDate", "(Ljava/sql/PreparedStatement;[ILjava/util/Date;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_JavaUtilDate", "(Ljava/sql/PreparedStatement;ILjava/util/Date;)V", false);
 			break;
 		case _Date:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Date", "(Ljava/sql/PreparedStatement;[ILjava/sql/Date;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Date", "(Ljava/sql/PreparedStatement;ILjava/sql/Date;)V", false);
 			break;
 		case _Time:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Time", "(Ljava/sql/PreparedStatement;[ILjava/sql/Time;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Time", "(Ljava/sql/PreparedStatement;ILjava/sql/Time;)V", false);
 			break;
 		case _Timestamp:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Timestamp", "(Ljava/sql/PreparedStatement;[ILjava/sql/Timestamp;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Timestamp", "(Ljava/sql/PreparedStatement;ILjava/sql/Timestamp;)V", false);
 			break;
 		case _bytes:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_bytes", "(Ljava/sql/PreparedStatement;[I[B)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_bytes", "(Ljava/sql/PreparedStatement;I[B)V", false);
 			break;
 		case _Ref:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Ref", "(Ljava/sql/PreparedStatement;[ILjava/sql/Ref;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Ref", "(Ljava/sql/PreparedStatement;ILjava/sql/Ref;)V", false);
 			break;
 		case _URL:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_URL", "(Ljava/sql/PreparedStatement;[ILjava/net/URL;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_URL", "(Ljava/sql/PreparedStatement;ILjava/net/URL;)V", false);
 			break;
 		case _SQLXML:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_SQLXML", "(Ljava/sql/PreparedStatement;[ILjava/sql/SQLXML;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_SQLXML", "(Ljava/sql/PreparedStatement;ILjava/sql/SQLXML;)V", false);
 			break;
 		case _Blob:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Blob", "(Ljava/sql/PreparedStatement;[ILjava/sql/Blob;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Blob", "(Ljava/sql/PreparedStatement;ILjava/sql/Blob;)V", false);
 			break;
 		case _Clob:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Clob", "(Ljava/sql/PreparedStatement;[ILjava/sql/Clob;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Clob", "(Ljava/sql/PreparedStatement;ILjava/sql/Clob;)V", false);
 			break;
 		case _InputStream:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_InputStream", "(Ljava/sql/PreparedStatement;[ILjava/io/InputStream;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_InputStream", "(Ljava/sql/PreparedStatement;ILjava/io/InputStream;)V", false);
 			break;
 		case _Reader:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Reader", "(Ljava/sql/PreparedStatement;[ILjava/io/Reader;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Reader", "(Ljava/sql/PreparedStatement;ILjava/io/Reader;)V", false);
 			break;
 		case _Object:
-			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Object", "(Ljava/sql/PreparedStatement;[ILjava/lang/Object;)V", false);
+			mv.visitMethodInsn(INVOKESTATIC, internalName, "set_Object", "(Ljava/sql/PreparedStatement;ILjava/lang/Object;)V", false);
 			break;
 		}
 

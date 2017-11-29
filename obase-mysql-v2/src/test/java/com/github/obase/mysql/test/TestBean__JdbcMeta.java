@@ -29,12 +29,16 @@ public class TestBean__JdbcMeta extends JdbcMeta {
 		TestBean b = (TestBean) obj;
 		if ("name".equals(name)) {
 			set_String(pstmt, p, b.getName());
+			return;
 		} else if ("age".equals(name)) {
 			set_int(pstmt, p, b.getAge());
+			return;
 		} else if ("score".equals(name)) {
 			set_double(pstmt, p, b.getScore());
+			return;
 		} else if ("birth".equals(name)) {
 			set_JavaUtilDate(pstmt, p, b.getBirth());
+			return;
 		}
 	}
 
