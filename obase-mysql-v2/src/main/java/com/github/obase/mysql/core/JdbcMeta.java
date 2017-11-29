@@ -2,6 +2,7 @@ package com.github.obase.mysql.core;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
@@ -1347,40 +1349,41 @@ public abstract class JdbcMeta {
 	// =============================================
 	// 缓存属性: JdbcMetaCache
 	// =============================================
-	static final Map<Class<?>, JdbcMeta> CACHE = new HashMap<Class<?>, JdbcMeta>(JavaType.values().length + 8);
+	static final Map<Class<?>, SoftReference<JdbcMeta>> TEMP_CACHE = new ConcurrentHashMap<Class<?>, SoftReference<JdbcMeta>>();
+	static final Map<Class<?>, JdbcMeta> PERM_CACHE = new HashMap<Class<?>, JdbcMeta>(JavaType.values().length + 8);
 	static {
 		// scalar jdbcAction
-		CACHE.put(boolean.class, Boolean);
-		CACHE.put(Boolean.class, Boolean);
-		CACHE.put(char.class, Character);
-		CACHE.put(Character.class, Character);
-		CACHE.put(byte.class, Byte);
-		CACHE.put(Byte.class, Byte);
-		CACHE.put(short.class, Short);
-		CACHE.put(Short.class, Short);
-		CACHE.put(int.class, Integer);
-		CACHE.put(Integer.class, Integer);
-		CACHE.put(long.class, Long);
-		CACHE.put(Long.class, Long);
-		CACHE.put(float.class, Float);
-		CACHE.put(Float.class, Float);
-		CACHE.put(double.class, Double);
-		CACHE.put(String.class, String);
-		CACHE.put(Double.class, Double);
-		CACHE.put(BigDecimal.class, BigDecimal);
-		CACHE.put(BigInteger.class, BigInteger);
-		CACHE.put(java.util.Date.class, JavaUtilDate);
-		CACHE.put(Date.class, Date);
-		CACHE.put(Time.class, Time);
-		CACHE.put(Timestamp.class, Timestamp);
-		CACHE.put(Ref.class, Ref);
-		CACHE.put(URL.class, URL);
-		CACHE.put(SQLXML.class, SQLXML);
-		CACHE.put(Blob.class, Blob);
-		CACHE.put(Clob.class, Clob);
-		CACHE.put(InputStream.class, InputStream);
-		CACHE.put(Reader.class, Reader);
-		CACHE.put(byte[].class, Bytes);
+		PERM_CACHE.put(boolean.class, Boolean);
+		PERM_CACHE.put(Boolean.class, Boolean);
+		PERM_CACHE.put(char.class, Character);
+		PERM_CACHE.put(Character.class, Character);
+		PERM_CACHE.put(byte.class, Byte);
+		PERM_CACHE.put(Byte.class, Byte);
+		PERM_CACHE.put(short.class, Short);
+		PERM_CACHE.put(Short.class, Short);
+		PERM_CACHE.put(int.class, Integer);
+		PERM_CACHE.put(Integer.class, Integer);
+		PERM_CACHE.put(long.class, Long);
+		PERM_CACHE.put(Long.class, Long);
+		PERM_CACHE.put(float.class, Float);
+		PERM_CACHE.put(Float.class, Float);
+		PERM_CACHE.put(double.class, Double);
+		PERM_CACHE.put(String.class, String);
+		PERM_CACHE.put(Double.class, Double);
+		PERM_CACHE.put(BigDecimal.class, BigDecimal);
+		PERM_CACHE.put(BigInteger.class, BigInteger);
+		PERM_CACHE.put(java.util.Date.class, JavaUtilDate);
+		PERM_CACHE.put(Date.class, Date);
+		PERM_CACHE.put(Time.class, Time);
+		PERM_CACHE.put(Timestamp.class, Timestamp);
+		PERM_CACHE.put(Ref.class, Ref);
+		PERM_CACHE.put(URL.class, URL);
+		PERM_CACHE.put(SQLXML.class, SQLXML);
+		PERM_CACHE.put(Blob.class, Blob);
+		PERM_CACHE.put(Clob.class, Clob);
+		PERM_CACHE.put(InputStream.class, InputStream);
+		PERM_CACHE.put(Reader.class, Reader);
+		PERM_CACHE.put(byte[].class, Bytes);
 	}
 
 	public static JdbcMeta get(Class<?> type) {
@@ -1392,34 +1395,32 @@ public abstract class JdbcMeta {
 		} else if (List.class.isAssignableFrom(type)) {
 			return LIST;
 		}
-		JdbcMeta meta = CACHE.get(type);
+		JdbcMeta meta = PERM_CACHE.get(type);
 		if (meta == null) {
-			if (type.isArray() || type.isEnum() || type.isInterface() || type.isAnnotation()) {
-				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
-			}
-			synchronized (CACHE) {
-				meta = CACHE.get(type);
-				if (meta == null) {
-					try {
-						meta = AsmKit.newJdbcMeta(type.getCanonicalName());
-					} catch (Exception e) {
-						throw new WrappedException(e);
-					}
+			SoftReference<JdbcMeta> ref = TEMP_CACHE.get(type);
+			if (ref == null || (meta = ref.get()) == null) {
+				if (type.isArray() || type.isEnum() || type.isInterface() || type.isAnnotation()) {
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
+				}
+				try {
+					meta = AsmKit.newJdbcMeta(type.getCanonicalName());
+					ref = new SoftReference<JdbcMeta>(meta);
+					TEMP_CACHE.put(type, ref);
+				} catch (Exception e) {
+					throw new WrappedException(e);
 				}
 			}
-
 		}
 		return meta;
 
 	}
 
-	public static void set(Class<?> type, JdbcMeta meta, boolean force) {
-		synchronized (CACHE) {
-			if (CACHE.put(type, meta) != null) {
-				if (!force) {
-					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_DUPLICATE, "Duplicate jdbc meta for class: " + type);
-				}
+	public static void set(Class<?> type, JdbcMeta meta, boolean override) {
+		synchronized (PERM_CACHE) {
+			if (!override && PERM_CACHE.containsKey(type)) {
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_DUPLICATE, "Duplicate jdbc meta for class: " + type);
 			}
+			PERM_CACHE.put(type, meta);
 		}
 	}
 }

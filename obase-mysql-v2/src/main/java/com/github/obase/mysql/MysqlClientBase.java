@@ -34,10 +34,15 @@ public abstract class MysqlClientBase implements MysqlClient {
 	// =============================================
 	// 核心属性
 	// =============================================
-	DataSource dataSource;
+	protected DataSource dataSource;
+	protected boolean showSql; // show sql or not
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+
+	public void setShowSql(boolean showSql) {
+		this.showSql = showSql;
 	}
 
 	// =============================================
@@ -78,6 +83,11 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <T> T queryFirst(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("queryFirst: " + pstmt);
+		}
+
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
@@ -124,7 +134,61 @@ public abstract class MysqlClientBase implements MysqlClient {
 	}
 
 	@Override
+	public boolean queryFirst2(PstmtMeta pstmt, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("queryFirst: " + pstmt);
+		}
+
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		Connection conn = DataSourceUtils.getConnection(dataSource);
+		try {
+			ps = conn.prepareStatement(pstmt.psql);
+			JdbcMeta jm = JdbcMeta.get(param.getClass());
+			int pos = 0;
+			for (Param p : pstmt.param) {
+				++pos;
+				if (p.setted) {
+					JdbcMeta.setParamByType(ps, pos, param);
+				} else {
+					jm.setParam(ps, pos, param, p.name);
+				}
+			}
+			rs = ps.executeQuery();
+
+			// 设置查询结果标签
+			if (pstmt.label == null) {
+				SqlDqlKit.parsePstmtLabel(rs, pstmt);
+			}
+
+			if (rs.next()) {
+				jm.getResult2(rs, pstmt.label, param);
+				return true;
+			}
+			return false;
+		} catch (
+
+		SQLException ex) {
+			// Release Connection early, to avoid potential connection pool deadlock
+			// in the case when the exception translator hasn't been initialized yet.
+			releaseStatement(ps);
+			DataSourceUtils.releaseConnection(conn, dataSource);
+			conn = null;
+			throw ex;
+		} finally {
+			releaseStatement(ps);
+			DataSourceUtils.releaseConnection(conn, dataSource);
+		}
+	}
+
+	@Override
 	public <T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("queryList: " + pstmt);
+		}
+
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
@@ -170,6 +234,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("queryRange: " + pstmt);
+		}
 
 		if (offset < 0) {
 			offset = 0;
@@ -233,6 +301,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 	}
 
 	public <T> void queryPage(PstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("queryPage: " + pstmt);
+		}
 
 		int offset = page.start;
 		if (offset < 0) {
@@ -332,6 +404,11 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public int executeUpdate(PstmtMeta pstmt, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("executeUpdate: " + pstmt);
+		}
+
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
@@ -364,6 +441,11 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <R> R executeUpdate(PstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException {
+
+		if (showSql) {
+			logger.info("executeUpdate: " + pstmt);
+		}
+
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
@@ -402,6 +484,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <T> int[] executeBatch(PstmtMeta pstmt, List<T> params) throws SQLException {
+
+		if (showSql) {
+			logger.info("executeBatch: " + pstmt);
+		}
 
 		// 如果参数为空直接返回null表示未执行
 		if (CollectKit.isEmpty(params)) {
@@ -444,6 +530,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 		// 如果参数为空直接返回null表示未执行
 		if (CollectKit.isEmpty(params)) {
 			return null;
+		}
+
+		if (showSql) {
+			logger.info("executeBatch: " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -495,6 +585,17 @@ public abstract class MysqlClientBase implements MysqlClient {
 			pstmt = xstmt.staticPstmtMeta;
 		}
 		return queryFirst(pstmt, type, param);
+	}
+
+	@Override
+	public boolean queryFirst2(Statement xstmt, Object param) throws SQLException {
+		PstmtMeta pstmt = null;
+		if (xstmt.dynamic) {
+			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
+		} else {
+			pstmt = xstmt.staticPstmtMeta;
+		}
+		return queryFirst2(pstmt, param);
 	}
 
 	@Override

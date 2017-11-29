@@ -31,6 +31,8 @@ public interface MysqlClient {
 	// =====================================================
 	<T> T queryFirst(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
+	boolean queryFirst2(PstmtMeta pstmt, Object param) throws SQLException;
+
 	<T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
 	<T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
@@ -49,6 +51,8 @@ public interface MysqlClient {
 	// 动态SQL处理方法
 	// =====================================================
 	<T> T queryFirst(Statement xstmt, Class<T> type, Object param) throws SQLException;
+
+	boolean queryFirst2(Statement xstmt, Object param) throws SQLException;
 
 	<T> List<T> queryList(Statement xstmt, Class<T> type, Object param) throws SQLException;
 
@@ -69,49 +73,61 @@ public interface MysqlClient {
 	// =====================================================
 	<T> List<T> selectList(Class<T> table) throws SQLException;
 
-	<T> T selectFirst(Class<T> tableType) throws SQLException;
+	<T> T selectFirst(Class<T> table) throws SQLException;
 
-	<T> List<T> selectRange(Class<T> tableType, int offset, int count) throws SQLException;
+	<T> List<T> selectRange(Class<T> table, int offset, int count) throws SQLException;
 
-	<T> void selectPage(Class<T> tableType, Page<T> page) throws SQLException;
+	<T> void selectPage(Class<T> table, Page<T> page) throws SQLException;
 
 	<T> T select(Class<T> table, Object object) throws SQLException;
 
-	<T> void select2(Class<T> table, Object object) throws SQLException;
+	<T> boolean select2(Class<T> table, Object object) throws SQLException;
 
 	<T> T selectByKey(Class<T> table, Object... keys) throws SQLException;
 
-	<T> int insert(Class<T> table, Object object) throws SQLException;
+	int insert(Class<?> table, Object object) throws SQLException;
 
-	<T, R> R insert(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+	<R> R insert(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException;
 
-	<T> int insertIgnore(Class<?> tableType, T tableObject) throws SQLException;
+	int insertIgnore(Class<?> table, Object object) throws SQLException;
 
-	<T, R> R insertIgnore(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+	<R> R insertIgnore(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException;
 
-	<T> int replace(Class<?> tableType, T tableObject) throws SQLException;
+	int replace(Class<?> table, Object object) throws SQLException;
 
-	<T, R> R replace(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+	<R> R replace(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException;
 
-	<T> int merge(Class<?> tableType, T tableObject) throws SQLException;
+	int merge(Class<?> table, Object object) throws SQLException;
 
-	<T, R> R merge(Class<?> tableType, T tableObject, Class<R> generatedKeyType) throws SQLException;
+	<R> R merge(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException;
 
-	<T> int update(Class<?> tableType, T tableObject) throws SQLException;
+	int update(Class<?> table, Object object) throws SQLException;
 
-	<T> int delete(Class<?> tableType, T tableObject) throws SQLException;
+	int delete(Class<?> table, Object object) throws SQLException;
 
-	<T> int deleteByKey(Class<T> tableType, Object... keys) throws SQLException;
+	int deleteByKey(Class<?> table, Object... keys) throws SQLException;
 
-	<T> int[] batchInsert(Class<?> tableType, List<T> tableObject) throws SQLException;
+	<T> int[] batchInsert(Class<?> table, List<T> objects) throws SQLException;
 
-	<T, R> List<R> batchInsert(Class<?> tableType, List<T> tableObject, Class<R> generatedKeyType) throws SQLException;
+	<T, R> List<R> batchInsert(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException;
 
-	<T> int[] batchUpdate(Class<?> tableType, List<T> tableObject) throws SQLException;
+	<T> int[] batchInsertIgnore(Class<?> table, List<T> objects) throws SQLException;
 
-	<T> int[] batchDelete(Class<?> tableType, List<T> tableObjects) throws SQLException;
+	<T, R> List<R> batchInsertIgnore(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException;
 
-	<T> int[] batchDeleteByKey(Class<T> tableType, List<Object[]> keys) throws SQLException;
+	<T> int[] batchReplace(Class<?> table, List<T> objects) throws SQLException;
+
+	<T, R> List<R> batchReplace(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException;
+
+	<T> int[] batchMerge(Class<?> table, List<T> objects) throws SQLException;
+
+	<T, R> List<R> batchMerge(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException;
+
+	<T> int[] batchUpdate(Class<?> table, List<T> objects) throws SQLException;
+
+	<T> int[] batchDelete(Class<?> table, List<T> objects) throws SQLException;
+
+	<T> int[] batchDeleteByKey(Class<T> table, List<Object[]> keys) throws SQLException;
 
 	// =====================================================
 	// Query相关方法
@@ -123,6 +139,8 @@ public interface MysqlClient {
 
 	<T> T queryFirst(String queryId, Class<T> elemType, Object params) throws SQLException;
 
+	boolean queryFirst2(String queryId, Object params) throws SQLException;
+
 	<T> void queryPage(String queryId, Class<T> elemType, Page<T> page, Object params) throws SQLException;
 
 	int executeUpdate(String updateId, Object params) throws SQLException;
@@ -132,4 +150,5 @@ public interface MysqlClient {
 	<T> int[] executeBatch(String updateId, List<T> params) throws SQLException;
 
 	<T, R> List<R> executeBatch(String updateId, Class<R> generateKeyType, List<T> params) throws SQLException;
+
 }

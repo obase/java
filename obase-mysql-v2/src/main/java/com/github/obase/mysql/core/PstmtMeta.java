@@ -28,10 +28,6 @@ public class PstmtMeta {
 	public String limitPsql;
 	public String countPsql;
 
-	// 由insert构建
-	public String insertIgnorePsql; // 由insertPsql做简单修改缓存
-	public String replacePsql;
-
 	// 构造时必须复制外来参数param
 	public PstmtMeta(String psql, List<Param> params) {
 		this(false, psql, params);

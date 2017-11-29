@@ -10,7 +10,7 @@ import com.github.obase.mysql.data.ClassMetaInfo;
 public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genSelectAllPstmt(ClassMetaInfo classMetaInfo) {
-		StringBuilder psql = new StringBuilder(512);
+		StringBuilder select = new StringBuilder(512);
 
 		StringBuilder colsStr = new StringBuilder(128);
 		for (String field : classMetaInfo.columns) {
@@ -19,13 +19,13 @@ public class SqlMetaKit extends SqlKit {
 			}
 			colsStr.append(identifier(field));
 		}
-		psql.append("SELECT ").append(colsStr).append(" FROM ").append(identifier(classMetaInfo.tableName));
+		select.append("SELECT ").append(colsStr).append(" FROM ").append(identifier(classMetaInfo.tableName));
 
-		return new PstmtMeta(psql.toString(), null);
+		return new PstmtMeta(select.toString(), null);
 	}
 
 	public static PstmtMeta genSelectPstmt(ClassMetaInfo classMetaInfo) {
-		StringBuilder psql = new StringBuilder(512);
+		StringBuilder select = new StringBuilder(512);
 		List<String> params = new LinkedList<String>();
 
 		StringBuilder colsStr = new StringBuilder(128);
@@ -35,7 +35,7 @@ public class SqlMetaKit extends SqlKit {
 			}
 			colsStr.append(identifier(field));
 		}
-		psql.append("SELECT ").append(colsStr).append(" FROM ").append(identifier(classMetaInfo.tableName));
+		select.append("SELECT ").append(colsStr).append(" FROM ").append(identifier(classMetaInfo.tableName));
 
 		StringBuilder whereStr = new StringBuilder(128);
 		for (String field : classMetaInfo.keys) {
@@ -45,13 +45,13 @@ public class SqlMetaKit extends SqlKit {
 			whereStr.append(identifier(field)).append("=?");
 			params.add(field);
 		}
-		psql.append(" WHERE ").append(whereStr);
+		select.append(" WHERE ").append(whereStr);
 
-		return PstmtMeta.getInstance(psql.toString(), params);
+		return PstmtMeta.getInstance(select.toString(), params);
 	}
 
 	public static PstmtMeta genInsertPstmt(ClassMetaInfo classMetaInfo) {
-		StringBuilder psql = new StringBuilder(512);
+		StringBuilder insert = new StringBuilder(512);
 		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
@@ -72,9 +72,9 @@ public class SqlMetaKit extends SqlKit {
 			}
 			params.add(field);
 		}
-		psql.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
+		insert.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
-		return PstmtMeta.getInstance(psql.toString(), params);
+		return PstmtMeta.getInstance(insert.toString(), params);
 	}
 
 	public static PstmtMeta genMergePstmt(ClassMetaInfo classMetaInfo) {
@@ -194,6 +194,60 @@ public class SqlMetaKit extends SqlKit {
 		}
 		delete.append("DELETE FROM ").append(classMetaInfo.tableName).append(" WHERE ").append(whereStr);
 		return PstmtMeta.getInstance(delete.toString(), params);
+	}
+
+	public static PstmtMeta genInsertIgnorePstmt(ClassMetaInfo classMetaInfo) {
+		StringBuilder insert = new StringBuilder(512);
+		List<String> params = new LinkedList<String>();
+
+		// Optimistic Lock
+		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
+
+		StringBuilder colsStr = new StringBuilder(128);
+		StringBuilder valsStr = new StringBuilder(128);
+		for (String field : classMetaInfo.columns) {
+			if (colsStr.length() > 0) {
+				colsStr.append(',');
+				valsStr.append(',');
+			}
+			colsStr.append(identifier(field));
+			if (!field.equals(optLckCol)) {
+				valsStr.append('?');
+			} else {
+				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
+			}
+			params.add(field);
+		}
+		insert.append("INSERT IGNORE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
+
+		return PstmtMeta.getInstance(insert.toString(), params);
+	}
+
+	public static PstmtMeta genReplacePstmt(ClassMetaInfo classMetaInfo) {
+		StringBuilder insert = new StringBuilder(512);
+		List<String> params = new LinkedList<String>();
+
+		// Optimistic Lock
+		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
+
+		StringBuilder colsStr = new StringBuilder(128);
+		StringBuilder valsStr = new StringBuilder(128);
+		for (String field : classMetaInfo.columns) {
+			if (colsStr.length() > 0) {
+				colsStr.append(',');
+				valsStr.append(',');
+			}
+			colsStr.append(identifier(field));
+			if (!field.equals(optLckCol)) {
+				valsStr.append('?');
+			} else {
+				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
+			}
+			params.add(field);
+		}
+		insert.append("REPLACE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
+
+		return PstmtMeta.getInstance(insert.toString(), params);
 	}
 
 }
