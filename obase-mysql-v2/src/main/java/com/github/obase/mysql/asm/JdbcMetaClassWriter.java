@@ -46,9 +46,7 @@ class JdbcMetaClassWriter implements Opcodes {
 		cw.visit(MajorJavaVersion, ACC_PUBLIC + ACC_SUPER, internalName, null, SuperInternalName, null);
 
 		String name;
-		int ord;
 		MethodMetaInfo methodMetaInfo;
-		Label lb;
 		MethodVisitor mv;
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
@@ -65,7 +63,6 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitMaxs(1, 1);
 			mv.visitEnd();
 		}
-
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "getValue", "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;", null, null);
 			mv.visitCode();
@@ -75,18 +72,23 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitTypeInsn(CHECKCAST, classMetaInfo.internalName);
 			mv.visitVarInsn(ASTORE, 3);
 
-			ord = 0;
-			lb = new Label();
+			int ord = 0;
+			Label lb = new Label();
 			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.getters.entrySet()) {
 				name = entry.getKey();
 				methodMetaInfo = entry.getValue();
 
+				if (name == "name") {
+					continue;
+				}
+
 				mv.visitLabel(lb);
 				if (ord == 1) {
 					mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
-				} else if (ord > 2) {
+				} else if (ord > 1) {
 					mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 				}
+
 				mv.visitLdcInsn(name);
 				mv.visitVarInsn(ALOAD, 2);
 				mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false);
@@ -99,6 +101,14 @@ class JdbcMetaClassWriter implements Opcodes {
 				valueOfPrimitiveType(mv, Type.getReturnType(methodMetaInfo.descriptor));
 				mv.visitInsn(ARETURN);
 			}
+			mv.visitLabel(lb);
+			if (ord == 1) {
+				mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
+			} else if (ord > 1) {
+				mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+			}
+			mv.visitInsn(ACONST_NULL);
+			mv.visitInsn(ARETURN);
 
 			Label l1 = new Label();
 			mv.visitLabel(l1);
@@ -109,7 +119,6 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitMaxs(2, 4);
 			mv.visitEnd();
 		}
-
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "setParam", "(Ljava/sql/PreparedStatement;ILjava/lang/Object;Ljava/lang/String;)V", null, new String[] { "java/sql/SQLException" });
 			mv.visitCode();
@@ -120,17 +129,17 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitTypeInsn(CHECKCAST, classMetaInfo.internalName);
 			mv.visitVarInsn(ASTORE, 5);
 
-			ord = 0;
-			lb = new Label();
+			int ord = 0;
+			Label lb = new Label();
 			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.getters.entrySet()) {
 				name = entry.getKey();
 				methodMetaInfo = entry.getValue();
 
 				mv.visitLabel(lb);
-				if (ord == 1) {
-					mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
-				} else if (ord > 1) {
+				if (ord > 1) {
 					mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+				} else if (ord == 1) {
+					mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
 				}
 
 				mv.visitLdcInsn(name);
@@ -145,13 +154,21 @@ class JdbcMetaClassWriter implements Opcodes {
 				mv.visitVarInsn(ALOAD, 5);
 				mv.visitMethodInsn(INVOKEVIRTUAL, classMetaInfo.internalName, methodMetaInfo.name, methodMetaInfo.descriptor, false);
 				setParamByType(mv, Type.getReturnType(methodMetaInfo.descriptor));
-
 				mv.visitInsn(RETURN);
 			}
+
+			mv.visitLabel(lb);
+			if (ord > 1) {
+				mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+			} else if (ord == 1) {
+				mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { classMetaInfo.internalName }, 0, null);
+			}
+
+			mv.visitInsn(RETURN);
 			Label l2 = new Label();
 			mv.visitLabel(l2);
 			mv.visitLocalVariable("this", descriptor, null, l0, l2, 0);
-			mv.visitLocalVariable("pstmt", "Ljava/sql/PreparedStatement;", null, l0, l2, 1);
+			mv.visitLocalVariable("ps", "Ljava/sql/PreparedStatement;", null, l0, l2, 1);
 			mv.visitLocalVariable("pos", "I", null, l0, l2, 2);
 			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l2, 3);
 			mv.visitLocalVariable("name", "Ljava/lang/String;", null, l0, l2, 4);
@@ -159,67 +176,61 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitMaxs(4, 6);
 			mv.visitEnd();
 		}
-
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "getResult", "(Ljava/sql/ResultSet;Ljava/util/Map;)Ljava/lang/Object;", "(Ljava/sql/ResultSet;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;)Ljava/lang/Object;", new String[] { "java/sql/SQLException" });
 			mv.visitCode();
 			Label l0 = new Label();
 			mv.visitLabel(l0);
-			mv.visitLineNumber(47, l0);
 			mv.visitTypeInsn(NEW, classMetaInfo.internalName);
 			mv.visitInsn(DUP);
 			mv.visitMethodInsn(INVOKESPECIAL, classMetaInfo.internalName, "<init>", "()V", false);
 			mv.visitVarInsn(ASTORE, 3);
 
-			ord = 0;
-			lb = new Label();
-			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.getters.entrySet()) {
+			int ord = 0;
+			Label lb = new Label();
+			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.setters.entrySet()) {
 				name = entry.getKey();
 				methodMetaInfo = entry.getValue();
 
 				mv.visitLabel(lb);
-				if (ord == 1) {
-					mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
-				} else if (ord > 1) {
+				if (ord > 1) {
 					mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+				} else if (ord == 1) {
+					mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
 				}
-
 				mv.visitVarInsn(ALOAD, 2);
 				mv.visitLdcInsn(name);
 				mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
 				mv.visitTypeInsn(CHECKCAST, "java/lang/Integer");
 				mv.visitInsn(DUP);
 				mv.visitVarInsn(ASTORE, 4);
-
 				lb = new Label();
 				ord++;
 				mv.visitJumpInsn(IFNULL, lb);
 				mv.visitVarInsn(ALOAD, 3);
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 4);
-				getResultByType(mv, Type.getMethodType(methodMetaInfo.descriptor));
+				getResultByType(mv, Type.getArgumentTypes(methodMetaInfo.descriptor)[0]);
 				mv.visitMethodInsn(INVOKEVIRTUAL, classMetaInfo.internalName, methodMetaInfo.name, methodMetaInfo.descriptor, false);
 			}
 			mv.visitLabel(lb);
-			if (ord == 1) {
-				mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
-			} else if (ord > 1) {
+			if (ord > 1) {
 				mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+			} else if (ord == 1) {
+				mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
 			}
 			mv.visitVarInsn(ALOAD, 3);
 			mv.visitInsn(ARETURN);
-
-			Label l1 = new Label();
-			mv.visitLabel(l1);
-			mv.visitLocalVariable("this", descriptor, null, l0, l1, 0);
-			mv.visitLocalVariable("rs", "Ljava/sql/ResultSet;", null, l0, l1, 1);
-			mv.visitLocalVariable("types", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;", l0, l1, 2);
-			mv.visitLocalVariable("that", targetDescriptor, null, l1, l1, 3);
-			mv.visitLocalVariable("pos", "Ljava/lang/Integer;", null, l0, l1, 4);
+			Label l2 = new Label();
+			mv.visitLabel(l2);
+			mv.visitLocalVariable("this", descriptor, null, l0, l2, 0);
+			mv.visitLocalVariable("rs", "Ljava/sql/ResultSet;", null, l0, l2, 1);
+			mv.visitLocalVariable("types", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;", l0, l2, 2);
+			mv.visitLocalVariable("that", targetDescriptor, null, l0, l2, 3);
+			mv.visitLocalVariable("pos", "Ljava/lang/Integer;", null, l0, l2, 4);
 			mv.visitMaxs(4, 6);
 			mv.visitEnd();
 		}
-
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "getResult2", "(Ljava/sql/ResultSet;Ljava/util/Map;Ljava/lang/Object;)V", "(Ljava/sql/ResultSet;Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;Ljava/lang/Object;)V", new String[] { "java/sql/SQLException" });
 			mv.visitCode();
@@ -229,20 +240,21 @@ class JdbcMetaClassWriter implements Opcodes {
 			mv.visitTypeInsn(CHECKCAST, classMetaInfo.internalName);
 			mv.visitVarInsn(ASTORE, 4);
 
-			ord = 0;
-			lb = new Label();
-			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.getters.entrySet()) {
+			int ord = 0;
+			Label lb = new Label();
+
+			for (Map.Entry<String, MethodMetaInfo> entry : classMetaInfo.setters.entrySet()) {
 				name = entry.getKey();
 				methodMetaInfo = entry.getValue();
 
 				mv.visitLabel(lb);
-				if (ord == 1) {
-					mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
-				} else if (ord > 1) {
+				if (ord > 1) {
 					mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+				} else if (ord == 1) {
+					mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
 				}
 				mv.visitVarInsn(ALOAD, 2);
-				mv.visitLdcInsn(name);
+				mv.visitLdcInsn("id");
 				mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
 				mv.visitTypeInsn(CHECKCAST, "java/lang/Integer");
 				mv.visitInsn(DUP);
@@ -253,25 +265,24 @@ class JdbcMetaClassWriter implements Opcodes {
 				mv.visitVarInsn(ALOAD, 4);
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 5);
-				getResultByType(mv, Type.getReturnType(methodMetaInfo.descriptor));
+				getResultByType(mv, Type.getArgumentTypes(methodMetaInfo.descriptor)[0]);
 				mv.visitMethodInsn(INVOKEVIRTUAL, classMetaInfo.internalName, methodMetaInfo.name, methodMetaInfo.descriptor, false);
-
 			}
 			mv.visitLabel(lb);
-			if (ord == 1) {
-				mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { "com/github/obase/mysql/test/TestBean", "java/lang/Integer" }, 0, null);
-			} else if (ord > 1) {
+			if (ord > 1) {
 				mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+			} else if (ord == 1) {
+				mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { classMetaInfo.internalName, "java/lang/Integer" }, 0, null);
 			}
 			mv.visitInsn(RETURN);
-			Label l1 = new Label();
-			mv.visitLabel(l1);
-			mv.visitLocalVariable("this", descriptor, null, l0, l1, 0);
-			mv.visitLocalVariable("rs", "Ljava/sql/ResultSet;", null, l0, l1, 1);
-			mv.visitLocalVariable("types", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;", l0, l1, 2);
-			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l1, 3);
-			mv.visitLocalVariable("that",targetDescriptor, null, l1, l1, 4);
-			mv.visitLocalVariable("pos", "Ljava/lang/Integer;", null, l0, l1, 5);
+			Label l2 = new Label();
+			mv.visitLabel(l2);
+			mv.visitLocalVariable("this", descriptor, null, l0, l2, 0);
+			mv.visitLocalVariable("rs", "Ljava/sql/ResultSet;", null, l0, l2, 1);
+			mv.visitLocalVariable("types", "Ljava/util/Map;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Integer;>;", l0, l2, 2);
+			mv.visitLocalVariable("obj", "Ljava/lang/Object;", null, l0, l2, 3);
+			mv.visitLocalVariable("that", targetDescriptor, null, l0, l2, 4);
+			mv.visitLocalVariable("pos", "Ljava/lang/Integer;", null, l0, l2, 5);
 			mv.visitMaxs(4, 6);
 			mv.visitEnd();
 		}
