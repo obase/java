@@ -1,5 +1,9 @@
 package com.github.obase.mysql.syntax;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 /**
  * 针对标准SQL语法处理相关逻辑.另外拓展Mysql的双引号与反引号.
  */
@@ -12,27 +16,21 @@ public class SqlKit {
 		return new StringBuilder(256).append('`').append(val.replace("`", "")).append('`').toString();
 	}
 
-	// 去除SQL中的无用空白字符,智能处理单引,双引,反引
-	public static String filterWhiteSpaces(String psql) {
+	// 去除SQL每行首尾的空白符
+	public static String trimEveryLine(String psql) {
 		StringBuilder sb = new StringBuilder(psql.length());
-		int start = 0;
-		int end = 0;
-		int len = psql.length();
-		while (end < len) {
+		BufferedReader reader = new BufferedReader(new StringReader(psql));
+		try {
+			for (String line; (line = reader.readLine()) != null;) {
+				sb.append(line.trim()).append('\n');
+			}
 			if (sb.length() > 0) {
-				sb.append(SPACE);
+				sb.setLength(sb.length() - 1);// 清掉最后的换行符
 			}
-			start = indexOfNot(Matcher.Whitespace, psql, end, len);
-			if (start == -1) {
-				break;
-			}
-			end = indexOf(Matcher.Whitespace, psql, start, end);
-			if (end == -1) {
-				end = len;
-			}
-			sb.append(psql, start, end); // 不要反复创建substring
+			return sb.toString();
+		} catch (IOException e) {
+			return psql;
 		}
-		return sb.toString();
 	}
 
 	// 从start开始查找下一个非空白字符
@@ -96,6 +94,37 @@ public class SqlKit {
 					}
 				}
 				break;
+			case '/':
+				ch = psql.charAt(start + 1);
+				// 从/*到*/
+				if (ch == '*') {
+					start = psql.indexOf("*/", start += 2); // 后移2个字符
+					if (start == -1) { // 如果未找到则位移至最后
+						start = len;
+					}
+				}
+				break;
+			case '#':
+				// 一直到行尾
+				while (++start < len) {
+					ch = psql.charAt(start);
+					if (ch == '\r' || ch == '\n') {
+						break;
+					}
+				}
+				break;
+			case '-':
+				ch = psql.charAt(start + 1);
+				if (ch == '-') {
+					// 一直到行尾
+					while (++start < len) {
+						ch = psql.charAt(start);
+						if (ch == '\r' || ch == '\n') {
+							break;
+						}
+					}
+				}
+				break;
 			}
 			start++;
 		}
@@ -150,6 +179,37 @@ public class SqlKit {
 						}
 					} else if (ch == '\\') {
 						start++;
+					}
+				}
+				break;
+			case '/':
+				ch = psql.charAt(start + 1);
+				// 从/*到*/
+				if (ch == '*') {
+					start = psql.indexOf("*/", start += 2); // 后移2个字符
+					if (start == -1) { // 如果未找到则位移至最后
+						start = len;
+					}
+				}
+				break;
+			case '#':
+				// 一直到行尾
+				while (++start < len) {
+					ch = psql.charAt(start);
+					if (ch == '\r' || ch == '\n') {
+						break;
+					}
+				}
+				break;
+			case '-':
+				ch = psql.charAt(start + 1);
+				if (ch == '-') {
+					// 一直到行尾
+					while (++start < len) {
+						ch = psql.charAt(start);
+						if (ch == '\r' || ch == '\n') {
+							break;
+						}
 					}
 				}
 				break;
