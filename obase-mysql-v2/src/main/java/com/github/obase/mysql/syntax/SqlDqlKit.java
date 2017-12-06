@@ -3,13 +3,9 @@ package com.github.obase.mysql.syntax;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import com.github.obase.mysql.core.Pstmt;
 import com.github.obase.mysql.core.PstmtMeta;
 
 public class SqlDqlKit extends SqlKit {
@@ -21,45 +17,6 @@ public class SqlDqlKit extends SqlKit {
 	public static final String HAVING = "HAVING";
 	public static final String ORDER = "ORDER";
 	public static final String LIMIT = "LIMIT";
-
-	// 解析sql中的:name占位符
-	public static List<Holder> parseHolder(String sql) {
-
-		LinkedList<Holder> holders = new LinkedList<Holder>();
-		int start = 0;
-		int end = 0;
-		int len = sql.length();
-		while (end < len) {
-			start = indexOf(Matcher.JavaIdentifier, sql, end, len);
-			if (start == -1) {
-				break;
-			}
-			end = indexOfNot(Matcher.JavaIdentifier, sql, start, len);
-			if (end == -1) {
-				end = len;
-			}
-			if (start > 0 && sql.charAt(start - 1) == ':') {
-				holders.add(new Holder(sql.substring(start, end), start - 1, end));
-			}
-		}
-		return holders;
-	}
-
-	// 解析sql为pstmt对象
-	public static Pstmt parsePstmt(String sql) {
-
-		List<Holder> holders = parseHolder(sql);
-		Collections.reverse(holders);
-
-		LinkedList<String> param = new LinkedList<String>();
-		StringBuilder psql = new StringBuilder(sql);
-		for (Holder h : holders) {
-			param.addFirst(h.name);
-			psql.replace(h.start, h.end, "?");
-		}
-
-		return new Pstmt(psql.toString(), param);
-	}
 
 	public static void parsePstmtLabel(ResultSet rs, final PstmtMeta meta) throws SQLException {
 		synchronized (meta.psql) {

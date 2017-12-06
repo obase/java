@@ -3,6 +3,9 @@ package com.github.obase.mysql.syntax;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 针对标准SQL语法处理相关逻辑.另外拓展Mysql的双引号与反引号.
@@ -16,13 +19,55 @@ public class SqlKit {
 		return new StringBuilder(256).append('`').append(val.replace("`", "")).append('`').toString();
 	}
 
+	// 解析sql为pstmt对象
+	public static Sql parseSql(String sql) {
+
+		List<Holder> holders = parseHolder(sql);
+		Collections.reverse(holders);
+
+		LinkedList<String> params = new LinkedList<String>();
+		StringBuilder psql = new StringBuilder(sql);
+		for (Holder h : holders) {
+			params.addFirst(h.name);
+			psql.replace(h.start, h.end, "?");
+		}
+
+		return new Sql(psql.toString(), params);
+	}
+
+	// 解析sql中的:name占位符
+	public static List<Holder> parseHolder(String sql) {
+
+		LinkedList<Holder> holders = new LinkedList<Holder>();
+		int start = 0;
+		int end = 0;
+		int len = sql.length();
+		while (end < len) {
+			start = indexOf(Matcher.JavaIdentifier, sql, end, len);
+			if (start == -1) {
+				break;
+			}
+			end = indexOfNot(Matcher.JavaIdentifier, sql, start, len);
+			if (end == -1) {
+				end = len;
+			}
+			if (start > 0 && sql.charAt(start - 1) == ':') {
+				holders.add(new Holder(sql.substring(start, end), start - 1, end));
+			}
+		}
+		return holders;
+	}
+
 	// 去除SQL每行首尾的空白符
-	public static String trimEveryLine(String psql) {
+	public static String trimLine(String psql) {
 		StringBuilder sb = new StringBuilder(psql.length());
 		BufferedReader reader = new BufferedReader(new StringReader(psql));
 		try {
 			for (String line; (line = reader.readLine()) != null;) {
-				sb.append(line.trim()).append('\n');
+				line = line.trim();
+				if (line.length() > 0) {
+					sb.append(line).append('\n');
+				}
 			}
 			if (sb.length() > 0) {
 				sb.setLength(sb.length() - 1);// 清掉最后的换行符

@@ -10,29 +10,25 @@ import com.github.obase.mysql.core.PstmtMeta;
 /**
  * 语句Union结构,根据dynamic区分是动态还是静态
  */
-public class Statement extends Container {
+public class Statement extends Dynamic {
 
 	public final String id;
-	public final boolean nop;
-	public final PstmtMeta staticPstmtMeta; // 缓存属性
+	public final boolean nop;// 如果select或from子句包含参数,请设置nop为true.
+	public final PstmtMeta staticPstmtMeta; // 静态PstmtMeta
 
-	public Statement(String id, boolean nop, List<Fragment> fragments) {
-		super(fragments);
+	public Statement(String id, boolean nop, List<Fragment> children) {
+		super(null, children);
 		this.id = id;
 		this.nop = nop;
-		this.staticPstmtMeta = dynamic ? null : PstmtMeta.getInstance(psql, param);
-	}
-
-	@Override
-	protected int satisfy(int[] codes) {
-		return Pack.CODE_YES;
+		this.staticPstmtMeta = d ? null : new PstmtMeta(psql, params);
 	}
 
 	public PstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
-		StringBuilder psqls = new StringBuilder(4096);
+		StringBuilder psql = new StringBuilder(4096);
 		List<Param> params = new LinkedList<Param>();
-		processDynamic(psqls, params, satisfy(meta, bean).value);
-		return new PstmtMeta(psqls.toString(), params);
+		this.processDynamic(meta, bean, psql, params, 0);
+		int size = params.size();
+		return new PstmtMeta(psql.toString(), size > 0 ? params.toArray(new Param[size]) : Param.EMPTY_ARRAY);
 	}
 
 }

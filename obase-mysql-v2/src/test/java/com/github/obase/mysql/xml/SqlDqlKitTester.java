@@ -4,29 +4,29 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.obase.mysql.core.Pstmt;
 import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.stmt.Param;
+import com.github.obase.mysql.syntax.Sql;
 import com.github.obase.mysql.syntax.SqlDqlKit;
 
 public class SqlDqlKitTester extends SqlKitTester {
 
 	public static void main(String[] args) throws IOException {
 		String sql = readFile("/test.sql");
-		Pstmt pstmt = SqlDqlKit.parsePstmt(sql);
+		Sql pstmt = SqlDqlKit.parseSql(sql);
 		List<Param> params = new LinkedList<>();
-		for (String p : pstmt.param) {
+		for (String p : pstmt.params) {
 			params.add(new Param(p));
 		}
-		PstmtMeta meta = new PstmtMeta(pstmt.psql, params);
+		PstmtMeta meta = new PstmtMeta(pstmt.content, params.toArray(new Param[params.size()]));
 		long start = System.currentTimeMillis();
-		for (int i = 0; i < 10000 * 1000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			SqlDqlKit.parsePstmtIndex(meta);
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("used time:" + (end - start));
 
-		System.out.println(meta.psql);
+		System.out.println(meta);
 		if (meta.select >= 0)
 			System.out.println(meta.select + "==>" + meta.psql.substring(meta.select, meta.select + SqlDqlKit.SELECT.length()));
 		if (meta.from >= 0)

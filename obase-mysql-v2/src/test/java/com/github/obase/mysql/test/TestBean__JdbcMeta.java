@@ -45,7 +45,7 @@ public class TestBean__JdbcMeta extends JdbcMeta {
 	@Override
 	public Object getResult(ResultSet rs, Map<String, Integer> types) throws SQLException {
 		TestBean t = new TestBean();
-		Integer p = null;
+		Integer p;
 		if ((p = types.get("name")) != null) {
 			t.setName(get_String(rs, p));
 		}
@@ -64,7 +64,7 @@ public class TestBean__JdbcMeta extends JdbcMeta {
 	@Override
 	public void getResult2(ResultSet rs, Map<String, Integer> types, Object obj) throws SQLException {
 		TestBean t = (TestBean) obj;
-		Integer p = null;
+		Integer p;
 		if ((p = types.get("name")) != null) {
 			t.setName(get_String(rs, p));
 		}

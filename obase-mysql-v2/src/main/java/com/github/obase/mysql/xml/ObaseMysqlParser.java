@@ -11,18 +11,15 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
-import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.core.Fragment;
-import com.github.obase.mysql.core.Pstmt;
-import com.github.obase.mysql.stmt.Cdata;
-import com.github.obase.mysql.stmt.Foreach;
-import com.github.obase.mysql.stmt.Isnull;
-import com.github.obase.mysql.stmt.Notnull;
+import com.github.obase.mysql.stmt.AND;
+import com.github.obase.mysql.stmt.Dynamic;
+import com.github.obase.mysql.stmt.OR;
 import com.github.obase.mysql.stmt.Statement;
-import com.github.obase.mysql.stmt.Whenall;
-import com.github.obase.mysql.stmt.Whenany;
+import com.github.obase.mysql.stmt.Static;
+import com.github.obase.mysql.stmt.WHERE;
+import com.github.obase.mysql.syntax.Sql;
 import com.github.obase.mysql.syntax.SqlDqlKit;
 import com.github.obase.mysql.syntax.SqlKit;
 
@@ -62,7 +59,7 @@ public final class ObaseMysqlParser {
 				} else if (ELEM_META.equals(tag)) {
 					parseTable(obj, (Element) node);
 				} else if (ELEM_STMT.equals(tag)) {
-					parseStmt(obj, (Element) node);
+					parseStatement(obj, (Element) node);
 				}
 			}
 
@@ -85,35 +82,33 @@ public final class ObaseMysqlParser {
 		obj.metaClassList.add(Class.forName(className));
 	}
 
-	void parseStmt(ObaseMysqlObject obj, Element root) {
+	void parseStatement(ObaseMysqlObject obj, Element root) {
 		String id = root.getAttribute(ATTR_ID);
 		String nop = root.getAttribute(ATTR_NOP);
-		List<Fragment> fragments = parseContainerFragments(root);
+		List<Fragment> fragments = parseChildrenFragment(root);
 		if (!fragments.isEmpty()) {
 			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), fragments));
 		}
 	}
 
-	private List<Fragment> parseContainerFragments(Element root) {
+	private List<Fragment> parseChildrenFragment(Element root) {
 		List<Fragment> fragments = new LinkedList<Fragment>();
 
 		for (Node node = root.getFirstChild(); node != null; node = node.getNextSibling()) {
 			short nt = node.getNodeType();
 			Fragment f = null;
 			if (nt == Node.TEXT_NODE) {
-				f = parseCdata(node);
+				f = parseStatic(node);
 			} else if (nt == Node.ELEMENT_NODE) {
 				String tag = node.getNodeName();
-				if (ELEM_WHENALL.equals(tag)) {
-					f = parseWhenall((Element) node);
-				} else if (ELEM_WHENANY.equals(tag)) {
-					f = parseWhenany((Element) node);
-				} else if (ELEM_ISNULL.equals(tag)) {
-					f = parseIsnull((Element) node);
-				} else if (ELEM_NOTNULL.equals(tag)) {
-					f = parseNotnull((Element) node);
-				} else if (ELEM_FOREACH.equals(tag)) {
-					f = parseForeach((Element) node);
+				if (ELEM_WHERE.equals(tag)) {
+					f = parseWHERE((Element) node);
+				} else if (ELEM_AND.equals(tag)) {
+					f = parseAND((Element) node);
+				} else if (ELEM_OR.equals(tag)) {
+					f = parseOR((Element) node);
+				} else if (ELEM_X.equals(tag)) {
+					f = parseDynamic((Element) node);
 				}
 			}
 			if (f != null) {
@@ -123,72 +118,49 @@ public final class ObaseMysqlParser {
 		return fragments;
 	}
 
-	private Foreach parseForeach(Element node) {
+	private WHERE parseWHERE(Element root) {
+		String s = root.getAttribute(ATTR_SEP);
+		List<Fragment> fragments = parseChildrenFragment(root);
+		if (!fragments.isEmpty()) {
+			return new WHERE(s, fragments);
+		}
+		return null;
+	}
 
-		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
+	private AND parseAND(Element root) {
+		String s = root.getAttribute(ATTR_SEP);
+		List<Fragment> fragments = parseChildrenFragment(root);
+		if (!fragments.isEmpty()) {
+			return new AND(s, fragments);
+		}
+		return null;
+	}
+
+	private OR parseOR(Element root) {
+		String s = root.getAttribute(ATTR_SEP);
+		List<Fragment> fragments = parseChildrenFragment(root);
+		if (!fragments.isEmpty()) {
+			return new OR(s, fragments);
+		}
+		return null;
+	}
+
+	private Dynamic parseDynamic(Element root) {
+		String s = root.getAttribute(ATTR_SEP);
+		List<Fragment> fragments = parseChildrenFragment(root);
+		if (!fragments.isEmpty()) {
+			return new Dynamic(s, fragments);
+		}
+		return null;
+	}
+
+	private Static parseStatic(Node node) {
+		String sql = SqlKit.trimLine(node.getTextContent());
 		if (StringKit.isEmpty(sql)) {
 			return null;
 		}
-		Pstmt pstmt = SqlDqlKit.parsePstmt(sql);
-
-		// 目前只支持一个参数
-		int size = pstmt.param.size();
-		if (size > 1) {
-			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "foreach element nested more than 1 params: " + pstmt);
-		}
-		return new Foreach(pstmt.psql, size > 0 ? pstmt.param.get(0) : null, node.getAttribute(ATTR_SEP));
-	}
-
-	private Notnull parseNotnull(Element node) {
-
-		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
-		if (StringKit.isEmpty(sql)) {
-			return null;
-		}
-		Pstmt pstmt = SqlDqlKit.parsePstmt(sql);
-
-		// 目前只支持一个参数
-		int size = pstmt.param.size();
-		if (size > 1) {
-			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "notnull element nested more than 1 params: " + pstmt);
-		}
-		return new Notnull(pstmt.psql, size > 0 ? pstmt.param.get(0) : null);
-	}
-
-	private Isnull parseIsnull(Element node) {
-		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
-		if (StringKit.isEmpty(sql)) {
-			return null;
-		}
-		Pstmt pstmt = SqlDqlKit.parsePstmt(sql);
-
-		// 目前只支持一个参数
-		int size = pstmt.param.size();
-		if (size > 1) {
-			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "notnull element nested more than 1 params: " + pstmt);
-		}
-		return new Isnull(pstmt.psql, size > 0 ? pstmt.param.get(0) : null);
-	}
-
-	private Whenany parseWhenany(Element root) {
-		List<Fragment> fragments = parseContainerFragments(root);
-		// 如果没有子元素,没有必要构建
-		return fragments.isEmpty() ? null : new Whenany(fragments);
-	}
-
-	private Whenall parseWhenall(Element root) {
-		List<Fragment> fragments = parseContainerFragments(root);
-		// 如果没有子元素,没有必要构建
-		return fragments.isEmpty() ? null : new Whenall(fragments);
-	}
-
-	private Cdata parseCdata(Node node) {
-		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
-		if (StringKit.isEmpty(sql)) {
-			return null;
-		}
-		Pstmt pstmt = SqlDqlKit.parsePstmt(sql);
-		return new Cdata(pstmt.psql, pstmt.param);
+		Sql pstmt = SqlDqlKit.parseSql(sql);
+		return Static.getInstance(pstmt.content, pstmt.params);
 	}
 
 	/* Lv1 */
@@ -197,13 +169,12 @@ public final class ObaseMysqlParser {
 	static final String ELEM_META = "meta-class";
 	static final String ELEM_STMT = "statement";
 	/* Lv2 */
-	static final String ELEM_WHENALL = "whenall";
-	static final String ELEM_WHENANY = "whenany";
-	static final String ELEM_ISNULL = "isnull";
-	static final String ELEM_NOTNULL = "notnall";
-	static final String ELEM_FOREACH = "foreach";
+	static final String ELEM_WHERE = "where";
+	static final String ELEM_AND = "and";
+	static final String ELEM_OR = "or";
+	static final String ELEM_X = "x";
 
-	static final String ATTR_SEP = "sep";
+	static final String ATTR_SEP = "s";
 	static final String ATTR_NAMESPACE = "namesapce";
 	static final String ATTR_ID = "id";
 	static final String ATTR_NOP = "nop";

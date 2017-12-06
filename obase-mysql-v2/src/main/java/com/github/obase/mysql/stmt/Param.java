@@ -2,6 +2,8 @@ package com.github.obase.mysql.stmt;
 
 public final class Param {
 
+	public static Param[] EMPTY_ARRAY = new Param[0];
+
 	public final String name;
 	public final Object value;
 	public final boolean setted;

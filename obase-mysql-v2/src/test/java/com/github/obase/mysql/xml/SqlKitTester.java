@@ -28,7 +28,7 @@ public class SqlKitTester {
 	public static void main(String[] args) throws IOException {
 		String sql = readFile("/test.sql");
 		// System.out.println(sql);
-		sql = SqlKit.filterWhiteSpaces(sql);
+		sql = SqlKit.trimLine(sql);
 		System.out.println(sql);
 	}
 

@@ -1,7 +1,6 @@
 package com.github.obase.mysql.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ public class PstmtMeta {
 
 	public final boolean nop;
 	public final String psql;
-	public final List<Param> param;
+	public final Param[] params;
 
 	public Map<String, Integer> label;
 	public int select = UNSET;
@@ -29,27 +28,33 @@ public class PstmtMeta {
 	public String countPsql;
 
 	// 构造时必须复制外来参数param
-	public PstmtMeta(String psql, List<Param> params) {
+	public PstmtMeta(String psql, Param[] params) {
 		this(false, psql, params);
 	}
 
-	public PstmtMeta(boolean nop, String psql, List<Param> params) {
+	public PstmtMeta(boolean nop, String psql, Param[] params) {
 		this.nop = nop;
 		this.psql = psql;
-		this.param = params == null ? Collections.emptyList() : params;
+		this.params = params;
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuilder(4096).append(psql).append(", ").append(param).toString();
+		return new StringBuilder(4096).append(psql).append(", ").append(Arrays.toString(params)).toString();
 	}
 
-	public static PstmtMeta getInstance(String psql, List<String> param) {
-		List<Param> ps = new ArrayList<Param>(param == null ? 0 : param.size());
-		for (String p : param) {
-			ps.add(new Param(p));
+	public static PstmtMeta getInstance(String psql, List<String> params) {
+		Param[] ps;
+		if (params == null || params.isEmpty()) {
+			ps = Param.EMPTY_ARRAY;
+		} else {
+			ps = new Param[params.size()];
+			int idx = 0;
+			for (String p : params) {
+				ps[idx++] = new Param(p);
+			}
 		}
-		return new PstmtMeta(false, psql, ps);
+		return new PstmtMeta(psql, ps);
 	}
 
 }

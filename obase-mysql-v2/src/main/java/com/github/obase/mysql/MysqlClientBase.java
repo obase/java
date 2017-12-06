@@ -96,7 +96,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -147,7 +147,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			ps = conn.prepareStatement(pstmt.psql);
 			JdbcMeta jm = JdbcMeta.get(param.getClass());
 			int pos = 0;
-			for (Param p : pstmt.param) {
+			for (Param p : pstmt.params) {
 				++pos;
 				if (p.setted) {
 					JdbcMeta.setParamByType(ps, pos, param);
@@ -197,7 +197,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -261,7 +261,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			int pos = 0;
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -336,7 +336,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			int pos = 0;
 			if (param != null) {
 				setjm = JdbcMeta.get(param.getClass());
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -374,7 +374,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				ps = conn.prepareStatement(pstmt.countPsql);
 				if (param != null) {
 					pos = 0;
-					for (Param p : pstmt.param) {
+					for (Param p : pstmt.params) {
 						++pos;
 						if (p.setted) {
 							JdbcMeta.setParamByType(ps, pos, param);
@@ -416,7 +416,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -454,7 +454,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.get(param.getClass());
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -501,7 +501,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
 			for (T param : params) {
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -544,7 +544,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
 			for (T param : params) {
 				int pos = 0;
-				for (Param p : pstmt.param) {
+				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
 						JdbcMeta.setParamByType(ps, pos, param);
@@ -579,7 +579,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public <T> T queryFirst(Statement xstmt, Class<T> type, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -590,7 +590,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public boolean queryFirst2(Statement xstmt, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -601,7 +601,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public <T> List<T> queryList(Statement xstmt, Class<T> type, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -612,7 +612,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public <T> List<T> queryRange(Statement xstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -623,7 +623,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public <T> void queryPage(Statement xstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -634,7 +634,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public int executeUpdate(Statement xstmt, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -645,7 +645,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	@Override
 	public <R> R executeUpdate(Statement xstmt, Class<R> generateKeyType, Object param) throws SQLException {
 		PstmtMeta pstmt = null;
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			pstmt = xstmt.dynamicPstmtMeta(param == null ? null : JdbcMeta.get(param.getClass()), param);
 		} else {
 			pstmt = xstmt.staticPstmtMeta;
@@ -655,7 +655,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <T> int[] executeBatch(Statement xstmt, List<T> params) throws SQLException {
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
 		}
 		return executeBatch(xstmt.staticPstmtMeta, params);
@@ -663,7 +663,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 
 	@Override
 	public <T, R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<T> params) throws SQLException {
-		if (xstmt.dynamic) {
+		if (xstmt.isDynamic()) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
 		}
 		return executeBatch(xstmt.staticPstmtMeta, generateKeyType, params);
