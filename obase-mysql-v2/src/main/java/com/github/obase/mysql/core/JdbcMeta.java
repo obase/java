@@ -163,7 +163,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -193,7 +193,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -223,7 +223,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -253,7 +253,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -283,7 +283,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -313,7 +313,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -343,7 +343,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -373,7 +373,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -402,7 +402,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -431,7 +431,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -460,7 +460,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -490,7 +490,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -520,7 +520,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -549,7 +549,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -578,7 +578,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -606,7 +606,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -635,7 +635,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -664,7 +664,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -692,7 +692,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -720,7 +720,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -748,7 +748,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -776,7 +776,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override
@@ -804,7 +804,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, java.lang.String name) {
-			return null;
+			return obj;
 		}
 
 		@Override

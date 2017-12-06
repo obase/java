@@ -69,9 +69,6 @@ public class SqlKit {
 					sb.append(line).append('\n');
 				}
 			}
-			if (sb.length() > 0) {
-				sb.setLength(sb.length() - 1);// 清掉最后的换行符
-			}
 			return sb.toString();
 		} catch (IOException e) {
 			return psql;
