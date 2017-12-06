@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.github.obase.mysql.core.Fragment;
 
-public class AND extends Dynamic {
+public class AND extends Generic {
 
 	public AND(String s, List<Fragment> children) {
-		super(s, children);
+		super(true, s, children);
 	}
 
 	@Override

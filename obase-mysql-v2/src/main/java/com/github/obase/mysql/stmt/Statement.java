@@ -10,14 +10,14 @@ import com.github.obase.mysql.core.PstmtMeta;
 /**
  * 语句Union结构,根据dynamic区分是动态还是静态
  */
-public class Statement extends Dynamic {
+public class Statement extends Generic {
 
 	public final String id;
 	public final boolean nop;// 如果select或from子句包含参数,请设置nop为true.
 	public final PstmtMeta staticPstmtMeta; // 静态PstmtMeta
 
 	public Statement(String id, boolean nop, List<Fragment> children) {
-		super(null, children);
+		super(false, null, children);
 		this.id = id;
 		this.nop = nop;
 		this.staticPstmtMeta = d ? null : new PstmtMeta(psql, params);

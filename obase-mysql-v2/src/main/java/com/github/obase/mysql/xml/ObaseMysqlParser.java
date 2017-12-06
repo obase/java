@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
 import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.core.Fragment;
 import com.github.obase.mysql.stmt.AND;
-import com.github.obase.mysql.stmt.Dynamic;
+import com.github.obase.mysql.stmt.Generic;
 import com.github.obase.mysql.stmt.OR;
 import com.github.obase.mysql.stmt.Statement;
 import com.github.obase.mysql.stmt.Static;
@@ -108,7 +108,7 @@ public final class ObaseMysqlParser {
 				} else if (ELEM_OR.equals(tag)) {
 					f = parseOR((Element) node);
 				} else if (ELEM_X.equals(tag)) {
-					f = parseDynamic((Element) node);
+					f = parseGeneric((Element) node);
 				}
 			}
 			if (f != null) {
@@ -145,11 +145,11 @@ public final class ObaseMysqlParser {
 		return null;
 	}
 
-	private Dynamic parseDynamic(Element root) {
+	private Generic parseGeneric(Element root) {
 		String s = root.getAttribute(ATTR_SEP);
 		List<Fragment> fragments = parseChildrenFragment(root);
 		if (!fragments.isEmpty()) {
-			return new Dynamic(s, fragments);
+			return new Generic(true, s, fragments);
 		}
 		return null;
 	}
@@ -175,7 +175,7 @@ public final class ObaseMysqlParser {
 	static final String ELEM_X = "x";
 
 	static final String ATTR_SEP = "s";
-	static final String ATTR_NAMESPACE = "namesapce";
+	static final String ATTR_NAMESPACE = "namespace";
 	static final String ATTR_ID = "id";
 	static final String ATTR_NOP = "nop";
 }

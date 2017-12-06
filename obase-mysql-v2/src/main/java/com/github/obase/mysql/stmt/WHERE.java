@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.github.obase.mysql.core.Fragment;
 
-public class WHERE extends Dynamic {
+public class WHERE extends Generic {
 
 	public WHERE(String s, List<Fragment> children) {
-		super(s, children);
+		super(true, s, children);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import com.github.obase.mysql.core.JdbcMeta;
  * 每个标签只能包含一个参数用于判断.
  *
  */
-public class Dynamic implements Fragment {
+public class Generic implements Fragment {
 
 	protected final String psql;
 	protected final Param[] params;
@@ -31,7 +31,7 @@ public class Dynamic implements Fragment {
 	protected final String p; // 首个param的名称
 	protected final boolean d; // 动态标签也会退化为静态标签: 没有子元素也没有参数
 
-	public Dynamic(String s, List<Fragment> children) {
+	public Generic(boolean dynamic, String s, List<Fragment> children) {
 
 		List<Fragment> _children = new LinkedList<Fragment>();
 		StringBuilder _psql = new StringBuilder(2048);
@@ -64,9 +64,9 @@ public class Dynamic implements Fragment {
 		this.params = _params.isEmpty() ? Param.EMPTY_ARRAY : _params.toArray(new Param[_params.size()]);
 		this.children = _children.isEmpty() ? Fragment.EMPTY_ARRAY : _children.toArray(new Fragment[_children.size()]);
 		this.s = StringKit.isEmpty(s) ? DEF_SEP : s;
-		this.d = this.children.length > 0 || this.params.length > 0;
-		this.p = this.params.length > 0 ? this.params[0].name : null;
 
+		this.p = this.params.length > 0 ? this.params[0].name : null;
+		this.d = this.params.length > 0 || (dynamic && this.params.length > 0); // 标签本身为动态且有参数
 		// 限制动态标签只允许包含子标签或者至多一个参数
 		if (this.d && this.params.length > 1) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Dynamic fragment contains more than 1 params");
