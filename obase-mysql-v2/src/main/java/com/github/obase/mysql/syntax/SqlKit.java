@@ -1,8 +1,5 @@
 package com.github.obase.mysql.syntax;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,20 +56,26 @@ public class SqlKit {
 	}
 
 	// 去除SQL每行首尾的空白符
-	public static String trimLine(String psql) {
+	public static String filterWhiteSpaces(String psql) {
 		StringBuilder sb = new StringBuilder(psql.length());
-		BufferedReader reader = new BufferedReader(new StringReader(psql));
-		try {
-			for (String line; (line = reader.readLine()) != null;) {
-				line = line.trim();
-				if (line.length() > 0) {
-					sb.append(line).append('\n');
-				}
+		int start = 0;
+		int end = 0;
+		int len = psql.length();
+		while (end < len) {
+			if (sb.length() > 0) {
+				sb.append(SPACE);
 			}
-			return sb.toString();
-		} catch (IOException e) {
-			return psql;
+			start = indexOfNot(Matcher.Whitespace, psql, end, len);
+			if (start == -1) {
+				break;
+			}
+			end = indexOf(Matcher.Whitespace, psql, start, len);
+			if (end == -1) {
+				end = len;
+			}
+			sb.append(psql, start, end); // 不要反复创建substring
 		}
+		return sb.toString();
 	}
 
 	// 从start开始查找下一个非空白字符
@@ -150,7 +153,7 @@ public class SqlKit {
 				// 一直到行尾
 				while (++start < len) {
 					ch = psql.charAt(start);
-					if (ch == '\r' || ch == '\n') {
+					if (ch == '\n') { // 不需要/r
 						break;
 					}
 				}
@@ -161,7 +164,7 @@ public class SqlKit {
 					// 一直到行尾
 					while (++start < len) {
 						ch = psql.charAt(start);
-						if (ch == '\r' || ch == '\n') {
+						if (ch == '\n') { // 不需要/r
 							break;
 						}
 					}

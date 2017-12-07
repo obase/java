@@ -1,104 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<obase-mysql namespace="HostsRepos" xmlns="http://obase.github.io/schema/mysql" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://obase.github.io/schema/mysql https://obase.github.io/schema/obase-mysql-1.0.xsd">
-
-	<statement id="resetHost">
-	INSERT INTO Host(hostid, restype, idcid, idcname, sn, ips, ckpt, orig, module1, module2, module3, mname1, mname2, mname3, createTime, createUser, modifyTime, modifyUser) 
-		VALUES(:hostid, :restype, :idcid, :idcname, :sn, :ips, :ckpt, :orig, :module1, :module2, :module3, :mname1, :mname2, :mname3,  NOW(), 'SYS', NOW(), 'SYS') 
-	ON DUPLICATE KEY UPDATE 
-	    restype=IFNULL(:restype,restype),
-		idcid=IFNULL(:idcid,idcid),
-		idcname=IFNULL(:idcname,idcname),
-		sn=IFNULL(:sn,sn),
-		ips=IFNULL(:ips,ips),
-		ckpt=:ckpt,
-		module1=IFNULL(:module1,module1),
-		module2=IFNULL(:module2,module2),
-		module3=IFNULL(:module3,module3),
-		mname1=IFNULL(:mname1,mname1),
-		mname2=IFNULL(:mname2,mname2),
-		mname3=IFNULL(:mname3,mname3),
-		modifyTime=NOW(),
-		modifyUser='SYS'
-	</statement>
-
-	<!-- 删除Servers表来自CMDB并且ckpt过时的记录 -->
-	<statement id="cleanHost">
-	<![CDATA[
-	DELETE FROM Host WHERE orig=2 AND ckpt<:ckpt
-	]]>
-	</statement>
-
+<obase-mysql namespace="HostsRepos" xmlns="http://obase.github.io/schema/mysql" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://obase.github.io/schema/mysql https://obase.github.io/schema/obase-mysql-1.2.xsd">
 	<statement id="selectHostByPattern">
-	<![CDATA[
-	SELECT h.* FROM Host h 
-	WHERE (:module IS NULL OR module1=:module OR module2=:module OR module3=:module OR (:module='other' AND module3 IS NULL))
-	AND (:pattern IS NULL 
-		OR hostid LIKE :pattern 
-		OR idcname LIKE :pattern 
-		OR sn LIKE :pattern 
-		OR ips LIKE :pattern
-		OR mname1 LIKE :pattern
-		OR mname2 LIKE :pattern
-		OR mname3 LIKE :pattern) 
-	AND (:passport IS NULL OR EXISTS(
-		SELECT 1 FROM Grants g WHERE g.passport=:passport AND ((g.scope=1 AND g.target=h.hostid) OR (g.scope=2 AND g.target IN(h.module3, h.module2, h.module1)))
-	))
-	]]>
-	</statement>
-
-	<statement id="matchByHostId">
-	<![CDATA[
-	SELECT hostid FROM Host WHERE (hostid=:hostid)
-	]]>
-	</statement>
-	<statement id="matchBySn">
-	<![CDATA[
-	SELECT hostid FROM Host WHERE (sn=:sn)
-	]]>
-	</statement>
-	<statement id="matchByIps">
-	<![CDATA[
-	SELECT hostid FROM Host WHERE find_in_set(:ip,ips)
-	]]>
-	</statement>
-
-	<statement id="getModuleHostInfos">
-	<![CDATA[
-	SELECT hostid, module3, module2, module1
-	FROM Host
-	WHERE module1=:value
-	OR module2=:value
-	OR module3=:value
-	]]>
-	</statement>
-
-	<statement id="canonicalHost">
-	<![CDATA[
-	SELECT hostid
-	FROM Host
-	WHERE hostid=:value
-	OR sn=:value
-	OR find_in_set(:value, ips)
-	LIMIT 2
-	]]>
-	</statement>
-	
-	<statement id="selectHost">
-	<![CDATA[
-		SELECT h.* FROM Host h 
-		WHERE :passport IS NULL OR EXISTS(
-			SELECT 1 FROM Grants g WHERE g.passport=:passport AND ((g.scope=1 AND g.target=h.hostid) OR (g.scope=2 AND g.target IN(h.module3, h.module2, h.module1)))
-		)
-	]]>
-	</statement>
-	
-	<statement id="getHostNumber">
-	<![CDATA[
-		SELECT COUNT(*) FROM Host h
-		WHERE :passport IS NULL OR EXISTS(
-			SELECT 1 FROM Grants g WHERE g.passport=:passport AND ((g.scope=1 AND g.target=h.hostid) OR (g.scope=2 AND g.target IN(h.module3, h.module2, h.module1)))
-		)
-	]]>
+		SELECT h.* FROM Host h --this is a test
+		<where>
+			<and>
+				<or>module1=<x>:module</x></or>
+				<or>module2=:module</or>
+				<or>module3=:module</or>
+				<or>:module='other' AND module3 IS NULL</or>
+			</and>
+			<and>
+				<or>hostid LIKE :pattern</or>
+				<or>idcname LIKE :pattern</or>
+				<or>sn LIKE :pattern</or>
+				<or>ips LIKE :pattern</or>
+				<or>mname1 LIKE :pattern</or>
+				<or>mname2 LIKE :pattern</or>
+				<or>mname3 LIKE :pattern</or>
+			</and>
+			<and>EXISTS(
+				SELECT 1 FROM Grants g WHERE g.passport=:passport AND ((g.scope=1 AND g.target=h.hostid) OR (g.scope=2 AND g.target IN(h.module3, h.module2, h.module1)))
+				)
+			</and>
+		</where>
 	</statement>
 
 </obase-mysql>

@@ -12,7 +12,11 @@ public class OR extends Generic {
 
 	@Override
 	protected String prefix(int idx) {
-		return idx == 0 ? "" : "OR ";
+		return idx == 0 ? "(" : " OR (";
 	}
 
+	@Override
+	protected String suffix() {
+		return ")";
+	}
 }

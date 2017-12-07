@@ -21,6 +21,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.github.obase.kit.MapKit;
 import com.github.obase.mysql.core.JdbcMeta;
 import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.stmt.Statement;
@@ -43,8 +44,8 @@ public class SchemaTester {
 		for (Statement s : obj.statementList) {
 			System.out.println(s.getPsql());
 			System.out.println(Arrays.toString(s.getParams()));
-			PstmtMeta meta = s.dynamicPstmtMeta(JdbcMeta.String, "abc");
-			System.out.println(meta.psql);
+			PstmtMeta meta = s.dynamicPstmtMeta(JdbcMeta.MAP, MapKit.as("module", Arrays.asList("测试模块"), "pattern","模式"));
+			System.out.println(meta);
 		}
 	}
 

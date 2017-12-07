@@ -12,7 +12,12 @@ public class AND extends Generic {
 
 	@Override
 	protected String prefix(int idx) {
-		return idx == 0 ? "" : "AND ";
+		return idx == 0 ? "(" : " AND (";
+	}
+
+	@Override
+	protected String suffix() {
+		return ")";
 	}
 
 }

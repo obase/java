@@ -65,8 +65,8 @@ public class Generic implements Fragment {
 		this.children = _children.isEmpty() ? Fragment.EMPTY_ARRAY : _children.toArray(new Fragment[_children.size()]);
 		this.s = StringKit.isEmpty(s) ? DEF_SEP : s;
 
-		this.p = this.params.length > 0 ? this.params[0].name : null;
-		this.d = this.params.length > 0 || (dynamic && this.params.length > 0); // 标签本身为动态且有参数
+		this.p = this.params.length > 0 ? this.params[0].name : null; // 如果包含子标签就不会有params
+		this.d = this.children.length > 0 || (dynamic && this.params.length > 0); // 标签本身为动态且有参数
 		// 限制动态标签只允许包含子标签或者至多一个参数
 		if (this.d && this.params.length > 1) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Dynamic fragment contains more than 1 params");
@@ -149,7 +149,7 @@ public class Generic implements Fragment {
 			}
 
 			// 某个动态子标签为true才添加到最终结果
-			if (cret) {
+			if (!d || cret) {
 				psqls.append(prefix(idx));
 				psqls.append(_psql);
 				params.addAll(_params);

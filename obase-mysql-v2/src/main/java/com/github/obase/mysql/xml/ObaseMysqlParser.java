@@ -155,7 +155,7 @@ public final class ObaseMysqlParser {
 	}
 
 	private Static parseStatic(Node node) {
-		String sql = SqlKit.trimLine(node.getTextContent());
+		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
 		if (StringKit.isEmpty(sql)) {
 			return null;
 		}
