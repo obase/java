@@ -129,7 +129,7 @@ public class Generic implements Fragment {
 			StringBuilder _psql = new StringBuilder(2048);
 			List<Param> _params = new LinkedList<Param>();
 
-			boolean cret = false;
+			boolean cret = !d; // 如果静态直接
 			StringBuilder sb = new StringBuilder(1024);
 			List<Param> ps = new LinkedList<Param>();
 			for (int i = 0; i < children.length; i++) {
@@ -149,7 +149,7 @@ public class Generic implements Fragment {
 			}
 
 			// 某个动态子标签为true才添加到最终结果
-			if (!d || cret) {
+			if (cret) {
 				psqls.append(prefix(idx));
 				psqls.append(_psql);
 				params.addAll(_params);
