@@ -100,7 +100,7 @@ public class SqlMetaKit extends SqlKit {
 			}
 			params.add(field);
 		}
-		insertOrUpdate.append("INSERT INTO ").append(classMetaInfo.tableName).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
+		insertOrUpdate.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
 		StringBuilder updateStr = new StringBuilder(128);
 		LinkedHashSet<String> cols = new LinkedHashSet<String>();
@@ -189,10 +189,10 @@ public class SqlMetaKit extends SqlKit {
 			if (whereStr.length() > 0) {
 				whereStr.append(" AND ");
 			}
-			whereStr.append(field).append("=?");
+			whereStr.append(identifier(field)).append("=?");
 			params.add(field);
 		}
-		delete.append("DELETE FROM ").append(classMetaInfo.tableName).append(" WHERE ").append(whereStr);
+		delete.append("DELETE FROM ").append(identifier(classMetaInfo.tableName)).append(" WHERE ").append(whereStr);
 		return PstmtMeta.getInstance(delete.toString(), params);
 	}
 

@@ -74,12 +74,16 @@ public final class ObaseMysqlParser {
 
 	void parseTable(ObaseMysqlObject obj, Element node) throws ClassNotFoundException {
 		String className = node.getTextContent().trim();
-		obj.tableClassList.add(Class.forName(className));
+		if (StringKit.isNotEmpty(className)) {
+			obj.tableClassList.add(Class.forName(className));
+		}
 	}
 
 	void parseMeta(ObaseMysqlObject obj, Element node) throws ClassNotFoundException {
 		String className = node.getTextContent().trim();
-		obj.metaClassList.add(Class.forName(className));
+		if (StringKit.isNotEmpty(className)) {
+			obj.metaClassList.add(Class.forName(className));
+		}
 	}
 
 	void parseStatement(ObaseMysqlObject obj, Element root) {

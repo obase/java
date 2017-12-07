@@ -44,7 +44,14 @@ public class SchemaTester {
 		for (Statement s : obj.statementList) {
 			System.out.println(s.getPsql());
 			System.out.println(Arrays.toString(s.getParams()));
-			PstmtMeta meta = s.dynamicPstmtMeta(JdbcMeta.MAP, MapKit.as("module", Arrays.asList("测试模块"), "pattern","模式"));
+
+			PstmtMeta meta = null;
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < 10000 * 100; i++) {
+				meta = s.dynamicPstmtMeta(JdbcMeta.MAP, MapKit.as("module", Arrays.asList("测试模块"), "pattern", "模式"));
+			}
+			long end = System.currentTimeMillis();
+			System.out.println("used:" + (end - start));
 			System.out.println(meta);
 		}
 	}

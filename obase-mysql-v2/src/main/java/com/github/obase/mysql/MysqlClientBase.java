@@ -85,7 +85,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <T> T queryFirst(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("queryFirst: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -99,7 +99,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -137,7 +137,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public boolean queryFirst2(PstmtMeta pstmt, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("queryFirst: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -150,7 +150,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 			for (Param p : pstmt.params) {
 				++pos;
 				if (p.setted) {
-					JdbcMeta.setParamByType(ps, pos, param);
+					JdbcMeta.setParamByType(ps, pos, p.value);
 				} else {
 					jm.setParam(ps, pos, param, p.name);
 				}
@@ -186,7 +186,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("queryList: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -200,7 +200,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -236,7 +236,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("queryRange: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		if (offset < 0) {
@@ -264,7 +264,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -303,7 +303,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <T> void queryPage(PstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("queryPage: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		int offset = page.start;
@@ -339,7 +339,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -377,7 +377,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 					for (Param p : pstmt.params) {
 						++pos;
 						if (p.setted) {
-							JdbcMeta.setParamByType(ps, pos, param);
+							JdbcMeta.setParamByType(ps, pos, p.value);
 						} else {
 							setjm.setParam(ps, pos, param, p.name);
 						}
@@ -406,7 +406,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public int executeUpdate(PstmtMeta pstmt, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("executeUpdate: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		PreparedStatement ps = null;
@@ -419,7 +419,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -443,7 +443,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <R> R executeUpdate(PstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException {
 
 		if (showSql) {
-			logger.info("executeUpdate: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -457,7 +457,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -486,7 +486,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 	public <T> int[] executeBatch(PstmtMeta pstmt, List<T> params) throws SQLException {
 
 		if (showSql) {
-			logger.info("executeBatch: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		// 如果参数为空直接返回null表示未执行
@@ -504,7 +504,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
@@ -533,7 +533,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 		}
 
 		if (showSql) {
-			logger.info("executeBatch: " + pstmt);
+			logger.info("[SQL] " + pstmt);
 		}
 
 		ResultSet rs = null;
@@ -547,7 +547,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				for (Param p : pstmt.params) {
 					++pos;
 					if (p.setted) {
-						JdbcMeta.setParamByType(ps, pos, param);
+						JdbcMeta.setParamByType(ps, pos, p.value);
 					} else {
 						setjm.setParam(ps, pos, param, p.name);
 					}
