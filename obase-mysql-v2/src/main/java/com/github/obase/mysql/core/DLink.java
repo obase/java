@@ -49,7 +49,7 @@ public final class DLink<T> {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append('[');
 		for (DNode<T> t = head; t != null; t = t.next) {
-			sb.append(t).append(',');
+			sb.append(t.value).append(',');
 		}
 		int len = sb.length();
 		if (len > 1) {
