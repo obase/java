@@ -465,6 +465,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
+			if (conn.getAutoCommit()) {
+				logger.warn("Not setAutoCommit(false) before executingBatch");
+				conn.setAutoCommit(false);
+			}
 			ps = conn.prepareStatement(pstmt.psql);
 			JdbcMeta setjm = JdbcMeta.getByObj(params.get(0));
 			for (T param : params) {
@@ -504,6 +508,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
+			if (conn.getAutoCommit()) {
+				logger.warn("Not setAutoCommit(false) before executingBatch");
+				conn.setAutoCommit(false);
+			}
 			ps = conn.prepareStatement(pstmt.psql);
 			JdbcMeta setjm = JdbcMeta.getByObj(params.get(0));
 			for (T param : params) {
@@ -964,6 +972,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
+			if (conn.getAutoCommit()) {
+				logger.warn("Not setAutoCommit(false) before executingBatch");
+				conn.setAutoCommit(false);
+			}
 			ps = conn.prepareStatement(pstmt.psql);
 			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
 			for (T param : params) {
@@ -1008,6 +1020,10 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
+			if (conn.getAutoCommit()) {
+				logger.warn("Not setAutoCommit(false) before executingBatch");
+				conn.setAutoCommit(false);
+			}
 			ps = conn.prepareStatement(pstmt.psql);
 			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
 			for (T param : params) {
