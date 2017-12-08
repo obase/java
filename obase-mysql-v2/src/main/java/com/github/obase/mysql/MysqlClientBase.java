@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -422,7 +423,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			ps = conn.prepareStatement(pstmt.psql);
+			ps = conn.prepareStatement(pstmt.psql, Statement.RETURN_GENERATED_KEYS);
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.getByObj(param);
 				int pos = 0;
@@ -512,7 +513,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				logger.warn("Not setAutoCommit(false) before executingBatch");
 				conn.setAutoCommit(false);
 			}
-			ps = conn.prepareStatement(pstmt.psql);
+			ps = conn.prepareStatement(pstmt.psql, Statement.RETURN_GENERATED_KEYS);
 			JdbcMeta setjm = JdbcMeta.getByObj(params.get(0));
 			for (T param : params) {
 				int pos = 0;
@@ -924,7 +925,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 		PreparedStatement ps = null;
 		Connection conn = DataSourceUtils.getConnection(dataSource);
 		try {
-			ps = conn.prepareStatement(pstmt.psql);
+			ps = conn.prepareStatement(pstmt.psql, Statement.RETURN_GENERATED_KEYS);
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.getByObj(param);
 				int pos = 0;
@@ -1024,7 +1025,7 @@ public abstract class MysqlClientBase implements MysqlClient {
 				logger.warn("Not setAutoCommit(false) before executingBatch");
 				conn.setAutoCommit(false);
 			}
-			ps = conn.prepareStatement(pstmt.psql);
+			ps = conn.prepareStatement(pstmt.psql, Statement.RETURN_GENERATED_KEYS);
 			JdbcMeta setjm = JdbcMeta.get(params.get(0).getClass());
 			for (T param : params) {
 				int pos = 0;
