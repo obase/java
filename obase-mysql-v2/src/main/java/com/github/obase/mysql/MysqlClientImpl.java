@@ -249,6 +249,15 @@ public class MysqlClientImpl extends MysqlClientBase {
 	}
 
 	@Override
+	public <T> T selectByKeys(Class<T> table, Object... keys) throws SQLException {
+		SPstmtMeta pstmt = selectCache.get(table);
+		if (pstmt == null) {
+			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
+		}
+		return queryFirst(pstmt, table, keys);
+	}
+
+	@Override
 	public int insert(Class<?> table, Object object) throws SQLException {
 		SPstmtMeta pstmt = insertCache.get(table);
 		if (pstmt == null) {
@@ -340,6 +349,15 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int deleteByKey(Class<?> table, Object keys) throws SQLException {
+		SPstmtMeta pstmt = deleteCache.get(table);
+		if (pstmt == null) {
+			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
+		}
+		return executeUpdate(pstmt, keys);
+	}
+
+	@Override
+	public int deleteByKeys(Class<?> table, Object... keys) throws SQLException {
 		SPstmtMeta pstmt = deleteCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);

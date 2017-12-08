@@ -85,6 +85,8 @@ public interface MysqlClient {
 
 	<T> T selectByKey(Class<T> table, Object keys) throws SQLException;
 
+	<T> T selectByKeys(Class<T> table, Object... keys) throws SQLException;
+
 	int insert(Class<?> table, Object object) throws SQLException;
 
 	<R> R insert(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException;
@@ -106,6 +108,8 @@ public interface MysqlClient {
 	int delete(Class<?> table, Object object) throws SQLException;
 
 	int deleteByKey(Class<?> table, Object keys) throws SQLException;
+
+	int deleteByKeys(Class<?> table, Object... keys) throws SQLException;
 
 	<T> int[] batchInsert(Class<?> table, List<T> objects) throws SQLException;
 
