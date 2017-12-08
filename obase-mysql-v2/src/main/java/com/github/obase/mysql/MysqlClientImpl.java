@@ -20,7 +20,7 @@ import com.github.obase.Page;
 import com.github.obase.kit.ClassKit;
 import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.PstmtMeta;
+import com.github.obase.mysql.core.SPstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.stmt.Statement;
 import com.github.obase.mysql.syntax.SqlDdlKit;
@@ -57,14 +57,14 @@ public class MysqlClientImpl extends MysqlClientBase {
 	// insertIgnore, replace等合并到对应的SQL中
 	// =============================================
 	final Map<String, Statement> statementCache = new HashMap<String, Statement>(); // xml中statement缓存
-	final Map<Class<?>, PstmtMeta> selectAllCache = new HashMap<Class<?>, PstmtMeta>(); // 全表查询,同时缓存limit,count
-	final Map<Class<?>, PstmtMeta> selectCache = new HashMap<Class<?>, PstmtMeta>(); // 记录查询
-	final Map<Class<?>, PstmtMeta> insertCache = new HashMap<Class<?>, PstmtMeta>(); // 插入
-	final Map<Class<?>, PstmtMeta> insertIgnoreCache = new HashMap<Class<?>, PstmtMeta>(); // 插入忽略
-	final Map<Class<?>, PstmtMeta> replaceCache = new HashMap<Class<?>, PstmtMeta>(); // 替换
-	final Map<Class<?>, PstmtMeta> mergeCache = new HashMap<Class<?>, PstmtMeta>(); // 合并非null,采用insert or update语法
-	final Map<Class<?>, PstmtMeta> updateCache = new HashMap<Class<?>, PstmtMeta>(); // 更新
-	final Map<Class<?>, PstmtMeta> deleteCache = new HashMap<Class<?>, PstmtMeta>(); // 删除
+	final Map<Class<?>, SPstmtMeta> selectAllCache = new HashMap<Class<?>, SPstmtMeta>(); // 全表查询,同时缓存limit,count
+	final Map<Class<?>, SPstmtMeta> selectCache = new HashMap<Class<?>, SPstmtMeta>(); // 记录查询
+	final Map<Class<?>, SPstmtMeta> insertCache = new HashMap<Class<?>, SPstmtMeta>(); // 插入
+	final Map<Class<?>, SPstmtMeta> insertIgnoreCache = new HashMap<Class<?>, SPstmtMeta>(); // 插入忽略
+	final Map<Class<?>, SPstmtMeta> replaceCache = new HashMap<Class<?>, SPstmtMeta>(); // 替换
+	final Map<Class<?>, SPstmtMeta> mergeCache = new HashMap<Class<?>, SPstmtMeta>(); // 合并非null,采用insert or update语法
+	final Map<Class<?>, SPstmtMeta> updateCache = new HashMap<Class<?>, SPstmtMeta>(); // 更新
+	final Map<Class<?>, SPstmtMeta> deleteCache = new HashMap<Class<?>, SPstmtMeta>(); // 删除
 
 	protected void doInit(Connection conn) throws Exception {
 		final Pattern separator = Pattern.compile("\\s*,\\s*");
@@ -94,8 +94,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 								}
 								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
-											"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 								}
 							}
 						}
@@ -123,8 +122,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 										}
 										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE,
-													"Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 										}
 									}
 								}
@@ -189,7 +187,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> List<T> selectList(Class<T> table) throws SQLException {
-		PstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectAllCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -198,7 +196,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> T selectFirst(Class<T> table) throws SQLException {
-		PstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectAllCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -207,7 +205,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> List<T> selectRange(Class<T> table, int offset, int count) throws SQLException {
-		PstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectAllCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -216,7 +214,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> void selectPage(Class<T> table, Page<T> page) throws SQLException {
-		PstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectAllCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -225,7 +223,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> T select(Class<T> table, Object object) throws SQLException {
-		PstmtMeta pstmt = selectCache.get(table);
+		SPstmtMeta pstmt = selectCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -234,7 +232,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> boolean select2(Class<T> table, Object object) throws SQLException {
-		PstmtMeta pstmt = selectCache.get(table);
+		SPstmtMeta pstmt = selectCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -242,8 +240,8 @@ public class MysqlClientImpl extends MysqlClientBase {
 	}
 
 	@Override
-	public <T> T selectByKey(Class<T> table, Object... keys) throws SQLException {
-		PstmtMeta pstmt = selectCache.get(table);
+	public <T> T selectByKey(Class<T> table, Object keys) throws SQLException {
+		SPstmtMeta pstmt = selectCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -252,7 +250,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int insert(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = insertCache.get(table);
+		SPstmtMeta pstmt = insertCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -261,7 +259,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <R> R insert(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException {
-		PstmtMeta pstmt = insertCache.get(table);
+		SPstmtMeta pstmt = insertCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -270,7 +268,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int insertIgnore(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = insertIgnoreCache.get(table);
+		SPstmtMeta pstmt = insertIgnoreCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -279,7 +277,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <R> R insertIgnore(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException {
-		PstmtMeta pstmt = insertIgnoreCache.get(table);
+		SPstmtMeta pstmt = insertIgnoreCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -288,7 +286,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int replace(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = replaceCache.get(table);
+		SPstmtMeta pstmt = replaceCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -297,7 +295,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <R> R replace(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException {
-		PstmtMeta pstmt = replaceCache.get(table);
+		SPstmtMeta pstmt = replaceCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -306,7 +304,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int merge(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = mergeCache.get(table);
+		SPstmtMeta pstmt = mergeCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -315,7 +313,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <R> R merge(Class<?> table, Class<R> generatedKeyType, Object object) throws SQLException {
-		PstmtMeta pstmt = mergeCache.get(table);
+		SPstmtMeta pstmt = mergeCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -324,7 +322,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int update(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = updateCache.get(table);
+		SPstmtMeta pstmt = updateCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -333,7 +331,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public int delete(Class<?> table, Object object) throws SQLException {
-		PstmtMeta pstmt = deleteCache.get(table);
+		SPstmtMeta pstmt = deleteCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -341,8 +339,8 @@ public class MysqlClientImpl extends MysqlClientBase {
 	}
 
 	@Override
-	public int deleteByKey(Class<?> table, Object... keys) throws SQLException {
-		PstmtMeta pstmt = deleteCache.get(table);
+	public int deleteByKey(Class<?> table, Object keys) throws SQLException {
+		SPstmtMeta pstmt = deleteCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -351,7 +349,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchInsert(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = insertCache.get(table);
+		SPstmtMeta pstmt = insertCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -360,7 +358,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T, R> List<R> batchInsert(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = insertCache.get(table);
+		SPstmtMeta pstmt = insertCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -369,7 +367,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchUpdate(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = updateCache.get(table);
+		SPstmtMeta pstmt = updateCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -378,7 +376,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchInsertIgnore(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = insertIgnoreCache.get(table);
+		SPstmtMeta pstmt = insertIgnoreCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -387,7 +385,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T, R> List<R> batchInsertIgnore(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = insertIgnoreCache.get(table);
+		SPstmtMeta pstmt = insertIgnoreCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -396,7 +394,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchReplace(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = replaceCache.get(table);
+		SPstmtMeta pstmt = replaceCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -405,7 +403,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T, R> List<R> batchReplace(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = replaceCache.get(table);
+		SPstmtMeta pstmt = replaceCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -414,7 +412,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchMerge(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = mergeCache.get(table);
+		SPstmtMeta pstmt = mergeCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -423,7 +421,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T, R> List<R> batchMerge(Class<?> table, Class<R> generatedKeyType, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = mergeCache.get(table);
+		SPstmtMeta pstmt = mergeCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -432,7 +430,7 @@ public class MysqlClientImpl extends MysqlClientBase {
 
 	@Override
 	public <T> int[] batchDelete(Class<?> table, List<T> objects) throws SQLException {
-		PstmtMeta pstmt = deleteCache.get(table);
+		SPstmtMeta pstmt = deleteCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -440,8 +438,8 @@ public class MysqlClientImpl extends MysqlClientBase {
 	}
 
 	@Override
-	public <T> int[] batchDeleteByKey(Class<T> table, List<Object[]> keys) throws SQLException {
-		PstmtMeta pstmt = deleteCache.get(table);
+	public <T> int[] batchDeleteByKey(Class<?> table, List<T> keys) throws SQLException {
+		SPstmtMeta pstmt = deleteCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -454,7 +452,12 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		return queryList(xstmt, elemType, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return queryList(xstmt.staticPstmtMeta, elemType, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return queryList(xstmt.dynamicPstmtMeta(meta, params), elemType, params);
+		}
 	}
 
 	@Override
@@ -463,7 +466,12 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		return queryRange(xstmt, elemType, offset, count, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return queryRange(xstmt.staticPstmtMeta, elemType, offset, count, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return queryRange(xstmt.dynamicPstmtMeta(meta, params), elemType, offset, count, params);
+		}
 	}
 
 	@Override
@@ -472,7 +480,12 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		return queryFirst(xstmt, elemType, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return queryFirst(xstmt.staticPstmtMeta, elemType, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return queryFirst(xstmt.dynamicPstmtMeta(meta, params), elemType, params);
+		}
 	}
 
 	@Override
@@ -481,7 +494,12 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		return queryFirst2(xstmt, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return queryFirst2(xstmt.staticPstmtMeta, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return queryFirst2(xstmt.dynamicPstmtMeta(meta, params), params);
+		}
 	}
 
 	@Override
@@ -490,25 +508,40 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		queryPage(xstmt, elemType, page, params);
+		if (xstmt.staticPstmtMeta != null) {
+			queryPage(xstmt.staticPstmtMeta, elemType, page, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			queryPage(xstmt.dynamicPstmtMeta(meta, params), elemType, page, params);
+		}
 	}
 
 	@Override
-	public int executeUpdate(String updateId, Object param) throws SQLException {
+	public int executeUpdate(String updateId, Object params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		return executeUpdate(xstmt, param);
+		if (xstmt.staticPstmtMeta != null) {
+			return executeUpdate(xstmt.staticPstmtMeta, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return executeUpdate(xstmt.dynamicPstmtMeta(meta, params), params);
+		}
 	}
 
 	@Override
-	public <R> R executeUpdate(String updateId, Class<R> generateKeyType, Object param) throws SQLException {
+	public <R> R executeUpdate(String updateId, Class<R> generateKeyType, Object params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		return executeUpdate(xstmt, generateKeyType, param);
+		if (xstmt.staticPstmtMeta != null) {
+			return executeUpdate(xstmt.staticPstmtMeta, generateKeyType, params);
+		} else {
+			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			return executeUpdate(xstmt.dynamicPstmtMeta(meta, params), generateKeyType, params);
+		}
 	}
 
 	@Override
@@ -517,7 +550,10 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		return executeBatch(xstmt, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return executeBatch(xstmt.staticPstmtMeta, params);
+		}
+		throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
 	}
 
 	@Override
@@ -526,7 +562,10 @@ public class MysqlClientImpl extends MysqlClientBase {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		return executeBatch(xstmt, generateKeyType, params);
+		if (xstmt.staticPstmtMeta != null) {
+			return executeBatch(xstmt.staticPstmtMeta, generateKeyType, params);
+		}
+		throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
 	}
 
 }

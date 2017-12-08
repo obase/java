@@ -4,6 +4,8 @@ import com.github.obase.mysql.stmt.Param;
 
 public interface Part {
 
+	Part[] EMPTY_ARRAY = new Part[0];
+
 	String DEF_SEP = " OR ";
 
 	/**
@@ -19,7 +21,7 @@ public interface Part {
 	 */
 	String getPsql();
 
-	DLink<Param> getParams();
+	Param[] getParams();
 
 	/**
 	 * 处理动态逻辑, 并将结果附加到psqls与params

@@ -21,9 +21,9 @@ public final class DLink<T> {
 	}
 
 	// 注意: 不能重用DNode, 会有隐患
-	public void tail(DLink<T> link) {
-		for (DNode<T> t = link.head; t != null; t = t.next) {
-			tail(t.value);
+	public void tail(T[] array) {
+		for (T v : array) {
+			tail(v);
 		}
 	}
 
@@ -42,31 +42,6 @@ public final class DLink<T> {
 	public void chop(DNode<T> n) {
 		n.next = null;
 		tail = n;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder(2048);
-		sb.append('[');
-		for (DNode<T> t = head; t != null; t = t.next) {
-			sb.append(t.value).append(',');
-		}
-		int len = sb.length();
-		if (len > 1) {
-			sb.setCharAt(len - 1, ']');
-		} else {
-			sb.append(']');
-		}
-
-		return sb.toString();
-	}
-
-	@SuppressWarnings("rawtypes")
-	static final DLink NIL = new DLink();
-
-	@SuppressWarnings("unchecked")
-	public static <T> DLink<T> nil() {
-		return (DLink<T>) NIL;
 	}
 
 }

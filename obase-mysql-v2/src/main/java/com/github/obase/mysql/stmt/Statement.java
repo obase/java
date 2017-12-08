@@ -2,9 +2,10 @@ package com.github.obase.mysql.stmt;
 
 import com.github.obase.mysql.core.DLink;
 import com.github.obase.mysql.core.DNode;
+import com.github.obase.mysql.core.DPstmtMeta;
 import com.github.obase.mysql.core.JdbcMeta;
 import com.github.obase.mysql.core.Part;
-import com.github.obase.mysql.core.PstmtMeta;
+import com.github.obase.mysql.core.SPstmtMeta;
 
 /**
  * 语句Union结构,根据dynamic区分是动态还是静态
@@ -13,33 +14,33 @@ public class Statement {
 
 	public final String id;
 	public final boolean nop;// 如果select或from子句包含参数,请设置nop为true.
-	public final PstmtMeta staticPstmtMeta; // 静态PstmtMeta
-	public final DLink<Part> dynamicChildren;
+	public final SPstmtMeta staticPstmtMeta; // 静态PstmtMeta
+	private final Part[] parts;
 
-	public Statement(String id, boolean nop, DLink<Part> link) {
+	public Statement(String id, boolean nop, Part[] parts) {
 
 		this.id = id;
 		this.nop = nop;
 
-		DNode<Part> dn = link.head;
-		if (dn.next == null) {
-			this.staticPstmtMeta = new PstmtMeta(dn.value.getPsql(), dn.value.getParams());
-			this.dynamicChildren = DLink.nil();
+		if (parts.length == 1) {
+			Part p = parts[0];
+			this.staticPstmtMeta = SPstmtMeta.getInstance(this.nop, p.getPsql(), p.getParams());
+			this.parts = null;
 		} else {
 			this.staticPstmtMeta = null;
-			this.dynamicChildren = link;
+			this.parts = parts == null ? Part.EMPTY_ARRAY : parts;
 		}
 	}
 
-	public PstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
+	public DPstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
+
 		DLink<String> psqls = new DLink<String>();
 		DLink<Param> params = new DLink<Param>();
 
-		int idx = 0;
-		for (DNode<Part> t = dynamicChildren.head; t != null; t = t.next) {
-			Part p = t.value;
+		for (int i = 0, n = parts.length; i < n; i++) {
+			Part p = parts[i];
 			if (p.isDynamic()) {
-				p.processDynamic(meta, bean, psqls, params, idx++);
+				p.processDynamic(meta, bean, psqls, params, i++);
 			} else {
 				psqls.tail(p.getPsql()); // 经过parser自动去掉了空的元素
 				params.tail(p.getParams());
@@ -50,7 +51,8 @@ public class Statement {
 		for (DNode<String> t = psqls.head; t != null; t = t.next) {
 			sb.append(t.value);
 		}
-		return new PstmtMeta(psqls.toString(), params);
+
+		return new DPstmtMeta(this.nop, psqls.toString(), params.head);
 	}
 
 }

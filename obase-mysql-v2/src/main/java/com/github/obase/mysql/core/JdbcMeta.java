@@ -1386,21 +1386,29 @@ public abstract class JdbcMeta {
 		PERM_CACHE.put(byte[].class, Bytes);
 	}
 
-	public static JdbcMeta get(Class<?> type) {
-
+	@SuppressWarnings("rawtypes")
+	public static JdbcMeta get(Class type) {
+		// 根据概率排序各段代码
+		// 查非空
 		if (type == null) {
 			return ARRAY;
-		} else if (Map.class.isAssignableFrom(type)) {
-			return MAP;
-		} else if (List.class.isAssignableFrom(type)) {
-			return LIST;
 		}
+		// 具体类型,大概率
 		JdbcMeta meta = PERM_CACHE.get(type);
 		if (meta == null) {
 			SoftReference<JdbcMeta> ref = TEMP_CACHE.get(type);
 			if (ref == null || (meta = ref.get()) == null) {
-				if (type.isArray() || type.isEnum() || type.isInterface() || type.isAnnotation()) {
-					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support array, enum, interface, or annoation type:" + type.getCanonicalName());
+
+				// 通用类型, 小概率
+				if (Map.class.isAssignableFrom(type)) {
+					return MAP;
+				} else if (List.class.isAssignableFrom(type)) {
+					return LIST;
+				}
+
+				// 创建
+				if (type.isEnum() || type.isInterface() || type.isAnnotation()) {
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support enum, interface, or annoation type:" + type.getCanonicalName());
 				}
 				try {
 					meta = AsmKit.newJdbcMeta(type.getCanonicalName());
@@ -1412,7 +1420,18 @@ public abstract class JdbcMeta {
 			}
 		}
 		return meta;
+	}
 
+	public static JdbcMeta getByObj(Object obj) {
+		// 使用Class reflect的API会较慢
+		if (obj == null || obj instanceof Object[]) {
+			return ARRAY;
+		} else if (obj instanceof Map) {
+			return MAP;
+		} else if (obj instanceof List) {
+			return LIST;
+		}
+		return get(obj.getClass());
 	}
 
 	public static void set(Class<?> type, JdbcMeta meta, boolean override) {

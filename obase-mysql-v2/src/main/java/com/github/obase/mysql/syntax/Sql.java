@@ -1,14 +1,14 @@
 package com.github.obase.mysql.syntax;
 
-import com.github.obase.mysql.core.DLink;
+import java.util.List;
 
 public class Sql {
 
 	public final String content;
-	public final DLink<String> params;
+	public final List<String> params;
 
 	// 构造时必须复制外来参数param
-	public Sql(String content, DLink<String> params) {
+	public Sql(String content, List<String> params) {
 		this.content = content;
 		this.params = params;
 	}

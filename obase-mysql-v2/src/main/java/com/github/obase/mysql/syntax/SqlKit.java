@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.obase.mysql.core.DLink;
-
 /**
  * 针对标准SQL语法处理相关逻辑.另外拓展Mysql的双引号与反引号.
  */
@@ -24,10 +22,10 @@ public class SqlKit {
 		List<Holder> holders = parseHolder(sql);
 		Collections.reverse(holders);
 
-		DLink<String> params = new DLink<String>();
+		LinkedList<String> params = new LinkedList<String>();
 		StringBuilder psql = new StringBuilder(sql);
 		for (Holder h : holders) {
-			params.head(h.name); // 从最后开始遍历的
+			params.addFirst(h.name); // 从最后开始遍历的
 			psql.replace(h.start, h.end, "?");
 		}
 

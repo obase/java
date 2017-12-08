@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.github.obase.Page;
-import com.github.obase.mysql.core.PstmtMeta;
-import com.github.obase.mysql.stmt.Statement;
+import com.github.obase.mysql.core.DPstmtMeta;
+import com.github.obase.mysql.core.SPstmtMeta;
 
 /**
  * Spring-mysqlclient core interface, which provides CRUD its bulk form @Table class.
@@ -29,44 +29,44 @@ public interface MysqlClient {
 	// =====================================================
 	// 静态SQL处理方法
 	// =====================================================
-	<T> T queryFirst(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
+	<T> T queryFirst(SPstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
-	boolean queryFirst2(PstmtMeta pstmt, Object param) throws SQLException;
+	boolean queryFirst2(SPstmtMeta pstmt, Object param) throws SQLException;
 
-	<T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
+	<T> List<T> queryList(SPstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
-	<T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
+	<T> List<T> queryRange(SPstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
 
-	<T> void queryPage(PstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
+	<T> void queryPage(SPstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
 
-	int executeUpdate(PstmtMeta pstmt, Object param) throws SQLException;
+	int executeUpdate(SPstmtMeta pstmt, Object param) throws SQLException;
 
-	<R> R executeUpdate(PstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException;
+	<R> R executeUpdate(SPstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException;
 
-	<T> int[] executeBatch(PstmtMeta pstmt, List<T> params) throws SQLException;
+	<T> int[] executeBatch(SPstmtMeta pstmt, List<T> params) throws SQLException;
 
-	<T, R> List<R> executeBatch(PstmtMeta pstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
+	<T, R> List<R> executeBatch(SPstmtMeta pstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
 
 	// =====================================================
 	// 动态SQL处理方法
 	// =====================================================
-	<T> T queryFirst(Statement xstmt, Class<T> type, Object param) throws SQLException;
+	<T> T queryFirst(DPstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
-	boolean queryFirst2(Statement xstmt, Object param) throws SQLException;
+	boolean queryFirst2(DPstmtMeta pstmt, Object param) throws SQLException;
 
-	<T> List<T> queryList(Statement xstmt, Class<T> type, Object param) throws SQLException;
+	<T> List<T> queryList(DPstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
-	<T> List<T> queryRange(Statement xstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
+	<T> List<T> queryRange(DPstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
 
-	<T> void queryPage(Statement xstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
+	<T> void queryPage(DPstmtMeta pstmt, Class<T> type, Page<T> page, Object param) throws SQLException;
 
-	int executeUpdate(Statement xstmt, Object param) throws SQLException;
+	int executeUpdate(DPstmtMeta pstmt, Object param) throws SQLException;
 
-	<R> R executeUpdate(Statement xstmt, Class<R> generateKeyType, Object param) throws SQLException;
+	<R> R executeUpdate(DPstmtMeta pstmt, Class<R> generateKeyType, Object param) throws SQLException;
 
-	<T> int[] executeBatch(Statement xstmt, List<T> params) throws SQLException;
+	<T> int[] executeBatch(DPstmtMeta pstmt, List<T> params) throws SQLException;
 
-	<T, R> List<R> executeBatch(Statement xstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
+	<T, R> List<R> executeBatch(DPstmtMeta pstmt, Class<R> generateKeyType, List<T> params) throws SQLException;
 
 	// =====================================================
 	// ORM相关方法
@@ -83,7 +83,7 @@ public interface MysqlClient {
 
 	<T> boolean select2(Class<T> table, Object object) throws SQLException;
 
-	<T> T selectByKey(Class<T> table, Object... keys) throws SQLException;
+	<T> T selectByKey(Class<T> table, Object keys) throws SQLException;
 
 	int insert(Class<?> table, Object object) throws SQLException;
 
@@ -105,7 +105,7 @@ public interface MysqlClient {
 
 	int delete(Class<?> table, Object object) throws SQLException;
 
-	int deleteByKey(Class<?> table, Object... keys) throws SQLException;
+	int deleteByKey(Class<?> table, Object keys) throws SQLException;
 
 	<T> int[] batchInsert(Class<?> table, List<T> objects) throws SQLException;
 
@@ -127,10 +127,10 @@ public interface MysqlClient {
 
 	<T> int[] batchDelete(Class<?> table, List<T> objects) throws SQLException;
 
-	<T> int[] batchDeleteByKey(Class<T> table, List<Object[]> keys) throws SQLException;
+	<T> int[] batchDeleteByKey(Class<?> table, List<T> keys) throws SQLException;
 
 	// =====================================================
-	// Query相关方法
+	// XML处理方法
 	// =====================================================
 
 	<T> List<T> queryList(String queryId, Class<T> elemType, Object params) throws SQLException;

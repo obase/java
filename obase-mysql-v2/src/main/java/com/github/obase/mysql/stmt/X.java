@@ -26,30 +26,27 @@ public class X implements Part {
 
 	// 不包含子元素
 	protected String psql;
-	protected DLink<Param> params;
+	protected Param[] params;
 	// 包含子元素
-	protected DLink<Part> parts; // 动态
+	protected Part[] parts; // 动态
 
 	public final X reset(String s, String psql, Param param) {
 		this.s = StringKit.isEmpty(s) ? DEF_SEP : s;
 		this.p = param.name;
 
-		DLink<Param> ps = new DLink<Param>();
-		ps.tail(param);
-
 		this.psql = psql;
-		this.params = ps;
-		this.parts = DLink.nil();
+		this.params = new Param[] { param };
+		this.parts = null;
 
 		return this;
 	}
 
-	public final X reset(String s, DLink<Part> parts) {
+	public final X reset(String s, Part[] parts) {
 		this.s = StringKit.isEmpty(s) ? DEF_SEP : s;
 		this.p = null;
 		this.parts = parts;
 		this.psql = null;
-		this.params = DLink.nil();
+		this.params = null;
 
 		return this;
 	}
@@ -65,7 +62,7 @@ public class X implements Part {
 	}
 
 	@Override
-	public final DLink<Param> getParams() {
+	public final Param[] getParams() {
 		return this.params;
 	}
 
@@ -112,8 +109,7 @@ public class X implements Part {
 
 			boolean cret = false;
 			int sidx = 0;
-			for (DNode<Part> t = parts.head; t != null; t = t.next) {
-				Part f = t.value;
+			for (Part f : parts) {
 				if (f.isDynamic()) {
 					if (f.processDynamic(meta, bean, psqls, params, sidx++)) {
 						cret = true;

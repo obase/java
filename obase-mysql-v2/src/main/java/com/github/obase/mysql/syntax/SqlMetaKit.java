@@ -1,14 +1,15 @@
 package com.github.obase.mysql.syntax;
 
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.github.obase.mysql.core.DLink;
-import com.github.obase.mysql.core.PstmtMeta;
+import com.github.obase.mysql.core.SPstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 
 public class SqlMetaKit extends SqlKit {
 
-	public static PstmtMeta genSelectAllPstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genSelectAllPstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder select = new StringBuilder(512);
 
 		StringBuilder colsStr = new StringBuilder(128);
@@ -20,12 +21,12 @@ public class SqlMetaKit extends SqlKit {
 		}
 		select.append("SELECT ").append(colsStr).append(" FROM ").append(identifier(classMetaInfo.tableName));
 
-		return new PstmtMeta(select.toString(), null);
+		return SPstmtMeta.getInstance(select.toString(), null);
 	}
 
-	public static PstmtMeta genSelectPstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genSelectPstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder select = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		StringBuilder colsStr = new StringBuilder(128);
 		for (String field : classMetaInfo.columns) {
@@ -42,16 +43,16 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.tail(field);
+			params.add(field);
 		}
 		select.append(" WHERE ").append(whereStr);
 
-		return PstmtMeta.getInstance(select.toString(), params);
+		return SPstmtMeta.getInstance(select.toString(), params);
 	}
 
-	public static PstmtMeta genInsertPstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genInsertPstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -69,17 +70,17 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.tail(field);
+			params.add(field);
 		}
 		insert.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
-		return PstmtMeta.getInstance(insert.toString(), params);
+		return SPstmtMeta.getInstance(insert.toString(), params);
 	}
 
-	public static PstmtMeta genMergePstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genMergePstmt(ClassMetaInfo classMetaInfo) {
 
 		StringBuilder insertOrUpdate = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -97,7 +98,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.tail(field);
+			params.add(field);
 		}
 		insertOrUpdate.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
@@ -115,7 +116,7 @@ public class SqlMetaKit extends SqlKit {
 				} else {
 					updateStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 				}
-				params.tail(field);
+				params.add(field);
 			}
 
 		} else {
@@ -127,12 +128,12 @@ public class SqlMetaKit extends SqlKit {
 			}
 		}
 		insertOrUpdate.append(" ON DUPLICATE KEY UPDATE ").append(updateStr);
-		return PstmtMeta.getInstance(insertOrUpdate.toString(), params);
+		return SPstmtMeta.getInstance(insertOrUpdate.toString(), params);
 	}
 
-	public static PstmtMeta genUpdatePstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genUpdatePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder update = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -150,7 +151,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				colsStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.tail(field);
+			params.add(field);
 		}
 		update.append("UPDATE ").append(identifier(classMetaInfo.tableName)).append(" SET ").append(colsStr);
 
@@ -160,7 +161,7 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.tail(field);
+			params.add(field);
 		}
 
 		if (optLckCol != null) {
@@ -168,20 +169,20 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(optLckCol)).append("=?");
-			params.tail(optLckCol);
+			params.add(optLckCol);
 		}
 
 		update.append(" WHERE ").append(whereStr);
-		return PstmtMeta.getInstance(update.toString(), params);
+		return SPstmtMeta.getInstance(update.toString(), params);
 	}
 
-	public static PstmtMeta genDeletePstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genDeletePstmt(ClassMetaInfo classMetaInfo) {
 		if (classMetaInfo.tableAnnotation == null) {
 			return null;
 		}
 
 		StringBuilder delete = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		StringBuilder whereStr = new StringBuilder(128);
 		for (String field : classMetaInfo.keys) {
@@ -189,15 +190,15 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.tail(field);
+			params.add(field);
 		}
 		delete.append("DELETE FROM ").append(identifier(classMetaInfo.tableName)).append(" WHERE ").append(whereStr);
-		return PstmtMeta.getInstance(delete.toString(), params);
+		return SPstmtMeta.getInstance(delete.toString(), params);
 	}
 
-	public static PstmtMeta genInsertIgnorePstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genInsertIgnorePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -215,16 +216,16 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.tail(field);
+			params.add(field);
 		}
 		insert.append("INSERT IGNORE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
-		return PstmtMeta.getInstance(insert.toString(), params);
+		return SPstmtMeta.getInstance(insert.toString(), params);
 	}
 
-	public static PstmtMeta genReplacePstmt(ClassMetaInfo classMetaInfo) {
+	public static SPstmtMeta genReplacePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		DLink<String> params = new DLink<String>();
+		List<String> params = new LinkedList<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -242,11 +243,11 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.tail(field);
+			params.add(field);
 		}
 		insert.append("REPLACE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
-		return PstmtMeta.getInstance(insert.toString(), params);
+		return SPstmtMeta.getInstance(insert.toString(), params);
 	}
 
 }

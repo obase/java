@@ -2,6 +2,9 @@ package com.github.obase.mysql.xml;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -9,9 +12,9 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
-import com.github.obase.mysql.core.DLink;
-import com.github.obase.mysql.core.DNode;
+import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.core.Part;
 import com.github.obase.mysql.stmt.AND;
 import com.github.obase.mysql.stmt.OR;
@@ -73,31 +76,30 @@ public final class ObaseMysqlParser {
 
 	}
 
-	private DLink<Part> optimize(DLink<Part> origs) {
+	private List<Part> optimize(List<Part> parts) {
 
-		DLink<Part> ret = new DLink<Part>();
-		DLink<String> psql = new DLink<String>();
-		DLink<Param> params = new DLink<Param>();
+		LinkedList<Part> ret = new LinkedList<Part>();
+		StringBuilder psql = new StringBuilder(4096);
+		LinkedList<Param> params = new LinkedList<Param>();
 		// 合并优化静态,如果无动态则psqls与params存的是静态
-		for (DNode<Part> t = origs.head; t != null; t = t.next) {
-			Part f = t.value;
+		for (Part f : parts) {
 			if (f.isDynamic()) {
-				if (psql.head != null) {
-					ret.tail(new Static(psql.toString(), params));
-					psql = new DLink<String>();
-					params = new DLink<Param>();
+				if (psql.length() > 0) {
+					ret.add(new Static(psql.toString(), params.toArray(new Param[params.size()])));
+					psql.setLength(0);
+					params.clear();
 				}
-				ret.tail(f);
+				ret.add(f);
 			} else {
 				String s = f.getPsql();
 				if (StringKit.isNotBlank(s)) { // 空元素去除
-					psql.tail(s);
-					params.tail(f.getParams());
+					psql.append(s);
+					Collections.addAll(params, f.getParams());
 				}
 			}
 		}
-		if (psql.head != null) {
-			ret.tail(new Static(psql.toString(), params));
+		if (psql.length() > 0) {
+			ret.add(new Static(psql.toString(), params.toArray(new Param[params.size()])));
 		}
 
 		return ret;
@@ -120,14 +122,14 @@ public final class ObaseMysqlParser {
 	void parseStatement(ObaseMysqlObject obj, Element root) {
 		String id = root.getAttribute(ATTR_ID);
 		String nop = root.getAttribute(ATTR_NOP);
-		DLink<Part> childs = parseChildPart(root);
-		if (childs.head != null) {
-			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), childs));
+		List<Part> parts = parseChildPart(root);
+		if (parts.size() > 0) {
+			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), parts.toArray(new Part[parts.size()])));
 		}
 	}
 
-	private DLink<Part> parseChildPart(Element root) {
-		DLink<Part> ret = new DLink<Part>();
+	private List<Part> parseChildPart(Element root) {
+		List<Part> ret = new LinkedList<Part>();
 
 		for (Node node = root.getFirstChild(); node != null; node = node.getNextSibling()) {
 			short nt = node.getNodeType();
@@ -147,10 +149,10 @@ public final class ObaseMysqlParser {
 				}
 			}
 			if (f != null) {
-				ret.tail(f);
+				ret.add(f);
 			}
 		}
-		if (ret.head != null) {
+		if (ret.size() > 0) {
 			ret = optimize(ret);
 		}
 		return ret;
@@ -158,18 +160,21 @@ public final class ObaseMysqlParser {
 
 	private Part parseX(Element root, X x) {
 		String s = root.getAttribute(ATTR_SEP);
-		DLink<Part> parts = parseChildPart(root);
-		if (parts.head == null) {
+		List<Part> parts = parseChildPart(root);
+		int size = parts.size();
+		if (size == 0) {
 			return null;
-		}
-		if (parts.head == parts.tail) {
+		} else if (size == 1) {
 			// 不或只包含一个子元素
-			Part p = parts.head.value;
-			DNode<Param> ph = p.getParams().head;
-			return ph == null ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph.value);
+			Part p = parts.get(0);
+			Param[] ph = p.getParams();
+			if (ph.length > 1) {
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "dynamic element contains more than 1 params: " + root.getTagName());
+			}
+			return ph.length == 0 ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph[0]);
 		} else {
 			// 包含多个子标签
-			return x.reset(s, parts);
+			return x.reset(s, parts.toArray(new Part[size]));
 		}
 
 	}
