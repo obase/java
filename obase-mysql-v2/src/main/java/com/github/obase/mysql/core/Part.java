@@ -1,14 +1,11 @@
 package com.github.obase.mysql.core;
 
-import java.util.List;
-
 import com.github.obase.mysql.stmt.Param;
 
-public interface Fragment {
+public interface Part {
 
-	Fragment[] EMPTY_ARRAY = new Fragment[0];
 	String DEF_SEP = " OR ";
-	
+
 	/**
 	 * 判断是否动态标签
 	 * 
@@ -22,11 +19,11 @@ public interface Fragment {
 	 */
 	String getPsql();
 
-	Param[] getParams();
+	DLink<Param> getParams();
 
 	/**
 	 * 处理动态逻辑, 并将结果附加到psqls与params
 	 */
-	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, List<Param> params, int idx);
+	boolean processDynamic(JdbcMeta meta, Object bean, DLink<String> psqls, DLink<Param> params, int idx);
 
 }

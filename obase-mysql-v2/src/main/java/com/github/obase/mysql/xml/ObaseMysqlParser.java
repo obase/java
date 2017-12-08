@@ -2,8 +2,6 @@ package com.github.obase.mysql.xml;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -12,13 +10,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.github.obase.kit.StringKit;
-import com.github.obase.mysql.core.Fragment;
+import com.github.obase.mysql.core.DLink;
+import com.github.obase.mysql.core.DNode;
+import com.github.obase.mysql.core.Part;
 import com.github.obase.mysql.stmt.AND;
-import com.github.obase.mysql.stmt.Generic;
 import com.github.obase.mysql.stmt.OR;
+import com.github.obase.mysql.stmt.Param;
 import com.github.obase.mysql.stmt.Statement;
 import com.github.obase.mysql.stmt.Static;
 import com.github.obase.mysql.stmt.WHERE;
+import com.github.obase.mysql.stmt.X;
 import com.github.obase.mysql.syntax.Sql;
 import com.github.obase.mysql.syntax.SqlDqlKit;
 import com.github.obase.mysql.syntax.SqlKit;
@@ -72,6 +73,36 @@ public final class ObaseMysqlParser {
 
 	}
 
+	private DLink<Part> optimize(DLink<Part> origs) {
+
+		DLink<Part> ret = new DLink<Part>();
+		DLink<String> psql = new DLink<String>();
+		DLink<Param> params = new DLink<Param>();
+		// 合并优化静态,如果无动态则psqls与params存的是静态
+		for (DNode<Part> t = origs.head; t != null; t = t.next) {
+			Part f = t.value;
+			if (f.isDynamic()) {
+				if (psql.head != null) {
+					ret.tail(new Static(psql.toString(), params));
+					psql = new DLink<String>();
+					params = new DLink<Param>();
+				}
+				ret.tail(f);
+			} else {
+				String s = f.getPsql();
+				if (StringKit.isNotBlank(s)) { // 空元素去除
+					psql.tail(s);
+					params.tail(f.getParams());
+				}
+			}
+		}
+		if (psql.head != null) {
+			ret.tail(new Static(psql.toString(), params));
+		}
+
+		return ret;
+	}
+
 	void parseTable(ObaseMysqlObject obj, Element node) throws ClassNotFoundException {
 		String className = node.getTextContent().trim();
 		if (StringKit.isNotEmpty(className)) {
@@ -89,82 +120,67 @@ public final class ObaseMysqlParser {
 	void parseStatement(ObaseMysqlObject obj, Element root) {
 		String id = root.getAttribute(ATTR_ID);
 		String nop = root.getAttribute(ATTR_NOP);
-		List<Fragment> fragments = parseChildrenFragment(root);
-		if (!fragments.isEmpty()) {
-			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), fragments));
+		DLink<Part> childs = parseChildPart(root);
+		if (childs.head != null) {
+			obj.statementList.add(new Statement(id, "true".equalsIgnoreCase(nop), childs));
 		}
 	}
 
-	private List<Fragment> parseChildrenFragment(Element root) {
-		List<Fragment> fragments = new LinkedList<Fragment>();
+	private DLink<Part> parseChildPart(Element root) {
+		DLink<Part> ret = new DLink<Part>();
 
 		for (Node node = root.getFirstChild(); node != null; node = node.getNextSibling()) {
 			short nt = node.getNodeType();
-			Fragment f = null;
+			Part f = null;
 			if (nt == Node.TEXT_NODE) {
 				f = parseStatic(node);
 			} else if (nt == Node.ELEMENT_NODE) {
 				String tag = node.getNodeName();
 				if (ELEM_WHERE.equals(tag)) {
-					f = parseWHERE((Element) node);
+					f = parseX((Element) node, new WHERE());
 				} else if (ELEM_AND.equals(tag)) {
-					f = parseAND((Element) node);
+					f = parseX((Element) node, new AND());
 				} else if (ELEM_OR.equals(tag)) {
-					f = parseOR((Element) node);
+					f = parseX((Element) node, new OR());
 				} else if (ELEM_X.equals(tag)) {
-					f = parseGeneric((Element) node);
+					f = parseX((Element) node, new X());
 				}
 			}
 			if (f != null) {
-				fragments.add(f);
+				ret.tail(f);
 			}
 		}
-		return fragments;
-	}
-
-	private WHERE parseWHERE(Element root) {
-		String s = root.getAttribute(ATTR_SEP);
-		List<Fragment> fragments = parseChildrenFragment(root);
-		if (!fragments.isEmpty()) {
-			return new WHERE(s, fragments);
+		if (ret.head != null) {
+			ret = optimize(ret);
 		}
-		return null;
+		return ret;
 	}
 
-	private AND parseAND(Element root) {
+	private Part parseX(Element root, X x) {
 		String s = root.getAttribute(ATTR_SEP);
-		List<Fragment> fragments = parseChildrenFragment(root);
-		if (!fragments.isEmpty()) {
-			return new AND(s, fragments);
-		}
-		return null;
-	}
-
-	private OR parseOR(Element root) {
-		String s = root.getAttribute(ATTR_SEP);
-		List<Fragment> fragments = parseChildrenFragment(root);
-		if (!fragments.isEmpty()) {
-			return new OR(s, fragments);
-		}
-		return null;
-	}
-
-	private Generic parseGeneric(Element root) {
-		String s = root.getAttribute(ATTR_SEP);
-		List<Fragment> fragments = parseChildrenFragment(root);
-		if (!fragments.isEmpty()) {
-			return new Generic(true, s, fragments);
-		}
-		return null;
-	}
-
-	private Static parseStatic(Node node) {
-		String sql = SqlKit.filterWhiteSpaces(node.getTextContent());
-		if (StringKit.isEmpty(sql)) {
+		DLink<Part> parts = parseChildPart(root);
+		if (parts.head == null) {
 			return null;
 		}
-		Sql pstmt = SqlDqlKit.parseSql(sql);
-		return Static.getInstance(pstmt.content, pstmt.params);
+		if (parts.head == parts.tail) {
+			// 不或只包含一个子元素
+			Part p = parts.head.value;
+			DNode<Param> ph = p.getParams().head;
+			return ph == null ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph.value);
+		} else {
+			// 包含多个子标签
+			return x.reset(s, parts);
+		}
+
+	}
+
+	private Part parseStatic(Node node) {
+		String val = SqlKit.filterWhiteSpaces(node.getTextContent());
+		if (StringKit.isEmpty(val)) {
+			return null;
+		}
+		Sql sql = SqlDqlKit.parseSql(val);
+		return Static.getInstance(sql.content, sql.params);
 	}
 
 	/* Lv1 */

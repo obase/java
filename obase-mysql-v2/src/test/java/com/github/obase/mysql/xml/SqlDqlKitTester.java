@@ -1,9 +1,9 @@
 package com.github.obase.mysql.xml;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
+import com.github.obase.mysql.core.DLink;
+import com.github.obase.mysql.core.DNode;
 import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.stmt.Param;
 import com.github.obase.mysql.syntax.Sql;
@@ -14,11 +14,11 @@ public class SqlDqlKitTester extends SqlKitTester {
 	public static void main(String[] args) throws IOException {
 		String sql = readFile("/test.sql");
 		Sql pstmt = SqlDqlKit.parseSql(sql);
-		List<Param> params = new LinkedList<>();
-		for (String p : pstmt.params) {
-			params.add(new Param(p));
+		DLink<Param> params = new DLink<Param>();
+		for (DNode<String> t = pstmt.params.head; t != null; t = t.next) {
+			params.tail(new Param(t.value));
 		}
-		PstmtMeta meta = new PstmtMeta(pstmt.content, params.toArray(new Param[params.size()]));
+		PstmtMeta meta = new PstmtMeta(pstmt.content, params);
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < 10000; i++) {
 			SqlDqlKit.parsePstmtIndex(meta);

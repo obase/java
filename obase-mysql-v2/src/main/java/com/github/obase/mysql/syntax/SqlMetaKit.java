@@ -1,9 +1,8 @@
 package com.github.obase.mysql.syntax;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 
+import com.github.obase.mysql.core.DLink;
 import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 
@@ -26,7 +25,7 @@ public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genSelectPstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder select = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		StringBuilder colsStr = new StringBuilder(128);
 		for (String field : classMetaInfo.columns) {
@@ -43,7 +42,7 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.add(field);
+			params.tail(field);
 		}
 		select.append(" WHERE ").append(whereStr);
 
@@ -52,7 +51,7 @@ public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genInsertPstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -70,7 +69,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.add(field);
+			params.tail(field);
 		}
 		insert.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
@@ -80,7 +79,7 @@ public class SqlMetaKit extends SqlKit {
 	public static PstmtMeta genMergePstmt(ClassMetaInfo classMetaInfo) {
 
 		StringBuilder insertOrUpdate = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -98,7 +97,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.add(field);
+			params.tail(field);
 		}
 		insertOrUpdate.append("INSERT INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
@@ -116,7 +115,7 @@ public class SqlMetaKit extends SqlKit {
 				} else {
 					updateStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 				}
-				params.add(field);
+				params.tail(field);
 			}
 
 		} else {
@@ -133,7 +132,7 @@ public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genUpdatePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder update = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -151,7 +150,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				colsStr.append(identifier(field)).append("=(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.add(field);
+			params.tail(field);
 		}
 		update.append("UPDATE ").append(identifier(classMetaInfo.tableName)).append(" SET ").append(colsStr);
 
@@ -161,7 +160,7 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.add(field);
+			params.tail(field);
 		}
 
 		if (optLckCol != null) {
@@ -169,7 +168,7 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(optLckCol)).append("=?");
-			params.add(optLckCol);
+			params.tail(optLckCol);
 		}
 
 		update.append(" WHERE ").append(whereStr);
@@ -182,7 +181,7 @@ public class SqlMetaKit extends SqlKit {
 		}
 
 		StringBuilder delete = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		StringBuilder whereStr = new StringBuilder(128);
 		for (String field : classMetaInfo.keys) {
@@ -190,7 +189,7 @@ public class SqlMetaKit extends SqlKit {
 				whereStr.append(" AND ");
 			}
 			whereStr.append(identifier(field)).append("=?");
-			params.add(field);
+			params.tail(field);
 		}
 		delete.append("DELETE FROM ").append(identifier(classMetaInfo.tableName)).append(" WHERE ").append(whereStr);
 		return PstmtMeta.getInstance(delete.toString(), params);
@@ -198,7 +197,7 @@ public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genInsertIgnorePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -216,7 +215,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.add(field);
+			params.tail(field);
 		}
 		insert.append("INSERT IGNORE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 
@@ -225,7 +224,7 @@ public class SqlMetaKit extends SqlKit {
 
 	public static PstmtMeta genReplacePstmt(ClassMetaInfo classMetaInfo) {
 		StringBuilder insert = new StringBuilder(512);
-		List<String> params = new LinkedList<String>();
+		DLink<String> params = new DLink<String>();
 
 		// Optimistic Lock
 		String optLckCol = classMetaInfo.optimisticLockAnnotation == null ? null : classMetaInfo.optimisticLockAnnotation.column;
@@ -243,7 +242,7 @@ public class SqlMetaKit extends SqlKit {
 			} else {
 				valsStr.append("(IFNULL(").append(identifier(field)).append(",IFNULL(?,0))+1)");
 			}
-			params.add(field);
+			params.tail(field);
 		}
 		insert.append("REPLACE INTO ").append(identifier(classMetaInfo.tableName)).append('(').append(colsStr).append(") VALUES(").append(valsStr).append(')');
 

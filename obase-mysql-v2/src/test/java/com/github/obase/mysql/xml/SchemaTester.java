@@ -42,9 +42,6 @@ public class SchemaTester {
 			System.out.println("META:" + c);
 		}
 		for (Statement s : obj.statementList) {
-			System.out.println(s.getPsql());
-			System.out.println(Arrays.toString(s.getParams()));
-
 			PstmtMeta meta = null;
 			long start = System.currentTimeMillis();
 			for (int i = 0; i < 10000 * 100; i++) {
@@ -80,6 +77,7 @@ public class SchemaTester {
 
 class XMLErrorHandler implements ErrorHandler {
 	private String errorElement = null;
+	@SuppressWarnings("unused")
 	private XMLStreamReader reader;
 
 	public XMLErrorHandler(XMLStreamReader reader) {

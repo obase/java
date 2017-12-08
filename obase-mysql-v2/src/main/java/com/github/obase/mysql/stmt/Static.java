@@ -1,29 +1,18 @@
 package com.github.obase.mysql.stmt;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import com.github.obase.mysql.core.Fragment;
+import com.github.obase.mysql.core.DLink;
+import com.github.obase.mysql.core.DNode;
 import com.github.obase.mysql.core.JdbcMeta;
+import com.github.obase.mysql.core.Part;
 
-public final class Static implements Fragment {
+public final class Static implements Part {
 
 	public final String psql;
-	public final Param[] params;
+	public final DLink<Param> params;
 
-	public static Static getInstance(String psql, List<String> params) {
-		List<Param> _params = new LinkedList<Param>();
-		if (params != null && params.size() > 0) {
-			for (String p : params) {
-				_params.add(new Param(p));
-			}
-		}
-		return new Static(psql, _params);
-	}
-
-	public Static(String psql, List<Param> params) {
+	public Static(String psql, DLink<Param> params) {
 		this.psql = psql;
-		this.params = params == null ? Param.EMPTY_ARRAY : params.toArray(new Param[params.size()]);
+		this.params = params == null ? DLink.nil() : params;
 	}
 
 	@Override
@@ -37,13 +26,20 @@ public final class Static implements Fragment {
 	}
 
 	@Override
-	public Param[] getParams() {
+	public DLink<Param> getParams() {
 		return this.params;
 	}
 
 	@Override
-	public boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, List<Param> params, int idx) {
+	public boolean processDynamic(JdbcMeta meta, Object bean, DLink<String> psqls, DLink<Param> params, int idx) {
 		throw new UnsupportedOperationException();
 	}
 
+	public static Static getInstance(String psql, DLink<String> params) {
+		DLink<Param> _params = new DLink<Param>();
+		for (DNode<String> t = params.head; t != null; t = t.next) {
+			_params.tail(new Param(t.value));
+		}
+		return new Static(psql, _params);
+	}
 }
