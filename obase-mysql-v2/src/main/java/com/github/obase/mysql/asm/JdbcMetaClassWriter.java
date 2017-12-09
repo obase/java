@@ -10,7 +10,7 @@ import org.springframework.asm.Opcodes;
 import org.springframework.asm.Type;
 
 import com.github.obase.mysql.JavaType;
-import com.github.obase.mysql.core.JdbcMeta;
+import com.github.obase.mysql.JdbcMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.data.MethodMetaInfo;
 

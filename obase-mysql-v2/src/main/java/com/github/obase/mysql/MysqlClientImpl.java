@@ -19,14 +19,12 @@ import com.github.obase.MessageException;
 import com.github.obase.Page;
 import com.github.obase.kit.ClassKit;
 import com.github.obase.mysql.asm.AsmKit;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.SPstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
-import com.github.obase.mysql.stmt.Statement;
 import com.github.obase.mysql.syntax.SqlDdlKit;
 import com.github.obase.mysql.syntax.SqlMetaKit;
 import com.github.obase.mysql.xml.ObaseMysqlObject;
 import com.github.obase.mysql.xml.ObaseMysqlParser;
+import com.github.obase.mysql.xml.Statement;
 
 public class MysqlClientImpl extends MysqlClientOperation {
 

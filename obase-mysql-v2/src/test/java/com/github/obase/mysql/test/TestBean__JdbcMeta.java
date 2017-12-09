@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.github.obase.mysql.core.JdbcMeta;
+import com.github.obase.mysql.JdbcMeta;
 
 public class TestBean__JdbcMeta extends JdbcMeta {
 

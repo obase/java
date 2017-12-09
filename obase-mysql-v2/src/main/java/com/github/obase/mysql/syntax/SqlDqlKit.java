@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.obase.mysql.core.PstmtMeta;
+import com.github.obase.mysql.PstmtMeta;
 
 public class SqlDqlKit extends SqlKit {
 

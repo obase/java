@@ -1,4 +1,4 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
 public final class DNode<T> {
 

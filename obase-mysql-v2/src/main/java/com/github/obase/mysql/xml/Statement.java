@@ -1,11 +1,11 @@
-package com.github.obase.mysql.stmt;
+package com.github.obase.mysql.xml;
 
-import com.github.obase.mysql.core.DLink;
-import com.github.obase.mysql.core.DNode;
-import com.github.obase.mysql.core.DPstmtMeta;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.Part;
-import com.github.obase.mysql.core.SPstmtMeta;
+import com.github.obase.mysql.DLink;
+import com.github.obase.mysql.DNode;
+import com.github.obase.mysql.DPstmtMeta;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.Part;
+import com.github.obase.mysql.SPstmtMeta;
 
 /**
  * 语句Union结构,根据dynamic区分是动态还是静态

@@ -22,9 +22,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.github.obase.kit.MapKit;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.PstmtMeta;
-import com.github.obase.mysql.stmt.Statement;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.PstmtMeta;
 
 public class SchemaTester {
 

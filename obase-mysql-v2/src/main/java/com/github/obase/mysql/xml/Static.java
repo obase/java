@@ -1,11 +1,11 @@
-package com.github.obase.mysql.stmt;
+package com.github.obase.mysql.xml;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.obase.mysql.core.DLink;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.Part;
+import com.github.obase.mysql.DLink;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.Part;
 
 public final class Static implements Part {
 

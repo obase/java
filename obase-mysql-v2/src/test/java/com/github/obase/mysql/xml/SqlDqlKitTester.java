@@ -2,8 +2,8 @@ package com.github.obase.mysql.xml;
 
 import java.io.IOException;
 
-import com.github.obase.mysql.core.PstmtMeta;
-import com.github.obase.mysql.core.SPstmtMeta;
+import com.github.obase.mysql.PstmtMeta;
+import com.github.obase.mysql.SPstmtMeta;
 import com.github.obase.mysql.syntax.Sql;
 import com.github.obase.mysql.syntax.SqlDqlKit;
 

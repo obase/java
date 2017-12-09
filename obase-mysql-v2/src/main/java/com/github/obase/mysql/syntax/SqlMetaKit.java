@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.obase.mysql.core.SPstmtMeta;
+import com.github.obase.mysql.SPstmtMeta;
 import com.github.obase.mysql.data.ClassMetaInfo;
 
 public class SqlMetaKit extends SqlKit {

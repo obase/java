@@ -1,12 +1,12 @@
-package com.github.obase.mysql.stmt;
+package com.github.obase.mysql.xml;
 
 import java.util.Collection;
 
 import com.github.obase.kit.StringKit;
-import com.github.obase.mysql.core.DLink;
-import com.github.obase.mysql.core.DNode;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.Part;
+import com.github.obase.mysql.DLink;
+import com.github.obase.mysql.DNode;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.Part;
 
 /**
  * 标签只有2种情况:

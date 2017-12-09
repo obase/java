@@ -16,8 +16,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.github.obase.Page;
 import com.github.obase.kit.CollectKit;
-import com.github.obase.mysql.core.JdbcMeta;
-import com.github.obase.mysql.core.PstmtMeta;
 import com.github.obase.mysql.syntax.SqlDqlKit;
 import com.github.obase.spring.transaction.DataSourceUtils;
 

@@ -1,4 +1,4 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

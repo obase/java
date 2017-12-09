@@ -12,6 +12,8 @@ import java.sql.Ref;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.asm.Type;
 
@@ -68,22 +70,23 @@ public enum JavaType {
 		this.defaultSqlType = defaultSqlType;
 	}
 
-	public static JavaType match(String descriptor) {
-		for (JavaType type : values()) {
-			if (type.descriptor.equals(descriptor)) {
-				return type;
-			}
+	static final Map<Class<?>, JavaType> IDX1 = new HashMap<Class<?>, JavaType>();
+	static final Map<String, JavaType> IDX2 = new HashMap<String, JavaType>();
+	static {
+		for (JavaType jt : JavaType.values()) {
+			IDX1.put(jt.clazz, jt);
+			IDX2.put(jt.descriptor, jt);
 		}
-		return _Object;
 	}
 
 	public static JavaType match(Class<?> clazz) {
-		for (JavaType type : values()) {
-			if (type.clazz == clazz) {
-				return type;
-			}
-		}
-		return _Object;
+		JavaType type = IDX1.get(clazz);
+		return type != null ? type : JavaType._Object;
+	}
+
+	public static JavaType match(String desc) {
+		JavaType type = IDX2.get(desc);
+		return type != null ? type : JavaType._Object;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
-import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.asm.AsmKit;
 
 /**

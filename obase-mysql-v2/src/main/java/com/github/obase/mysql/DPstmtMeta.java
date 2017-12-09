@@ -1,9 +1,9 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.github.obase.mysql.stmt.Param;
+import com.github.obase.mysql.xml.Param;
 
 /**
  * 用于动态SQL的元数据辅助类

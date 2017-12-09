@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.github.obase.Page;
-import com.github.obase.mysql.core.PstmtMeta;
 
 /**
  * Spring-mysqlclient core interface, which provides CRUD its bulk form @Table class.

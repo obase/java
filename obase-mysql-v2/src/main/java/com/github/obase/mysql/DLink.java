@@ -1,4 +1,4 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
 /**
  * 辅助数据结构: 链结点

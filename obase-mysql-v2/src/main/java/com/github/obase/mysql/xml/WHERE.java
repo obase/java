@@ -1,4 +1,4 @@
-package com.github.obase.mysql.stmt;
+package com.github.obase.mysql.xml;
 
 public class WHERE extends X {
 

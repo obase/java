@@ -1,6 +1,6 @@
-package com.github.obase.mysql.core;
+package com.github.obase.mysql;
 
-import com.github.obase.mysql.stmt.Param;
+import com.github.obase.mysql.xml.Param;
 
 public interface Part {
 
