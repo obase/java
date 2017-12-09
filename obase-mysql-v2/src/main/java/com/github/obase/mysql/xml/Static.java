@@ -23,6 +23,11 @@ public final class Static implements Part {
 	}
 
 	@Override
+	public String getSeparator() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public String getPsql() {
 		return this.psql;
 	}
@@ -48,4 +53,5 @@ public final class Static implements Part {
 		}
 		return new Static(psql, _params);
 	}
+
 }

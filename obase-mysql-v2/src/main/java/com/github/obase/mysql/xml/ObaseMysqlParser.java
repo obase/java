@@ -162,10 +162,18 @@ public final class ObaseMysqlParser {
 			// 不或只包含一个子元素
 			Part p = parts.get(0);
 			Param[] ph = p.getParams();
-			if (ph.length > 1) {
+
+			if (ph.length == 0) {
+				// 无参数退化为静态
+				return new Static(p.getPsql(), null);
+			} else if (ph.length == 1) {
+				// 嵌套简化
+				return x.reset(p.isDynamic() ? p.getSeparator() : s, p.getPsql(), ph[0]);
+			} else {
+				// 动态标签不支持多参数
 				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Statement subtag has more than 1 params: " + traceXPathPath(root) + ", " + Arrays.toString(ph));
 			}
-			return ph.length == 0 ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph[0]);
+
 		} else {
 			// 包含多个子标签
 			return x.reset(s, parts.toArray(new Part[size]));

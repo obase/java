@@ -57,6 +57,11 @@ public class X implements Part {
 	}
 
 	@Override
+	public String getSeparator() {
+		return this.s;
+	}
+
+	@Override
 	public final String getPsql() {
 		return this.psql;
 	}

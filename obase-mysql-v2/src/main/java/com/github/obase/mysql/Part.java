@@ -14,6 +14,8 @@ public interface Part {
 	 * @return
 	 */
 	boolean isDynamic();
+	
+	String getSeparator();
 
 	/**
 	 * 静态标签逻辑
