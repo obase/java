@@ -52,7 +52,7 @@ public class Statement {
 			sb.append(t.value);
 		}
 
-		return new DPstmtMeta(this.nop, psqls.toString(), params.head);
+		return new DPstmtMeta(this.nop, sb.toString(), params.head);
 	}
 
 }
