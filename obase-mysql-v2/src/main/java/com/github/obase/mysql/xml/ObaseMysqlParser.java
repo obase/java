@@ -145,7 +145,7 @@ public final class ObaseMysqlParser {
 				ret.add(f);
 			}
 		}
-		if (ret.size() > 0) {
+		if (ret.size() > 1) { // 多个才需要优化
 			ret = optimize(ret);
 		}
 		return ret;
