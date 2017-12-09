@@ -19,8 +19,9 @@ import com.github.obase.Page;
  */
 public interface MysqlClient {
 
-	String DIRECTION_DESC = "DESC";
-	String DIRECTION_ASC = "ASC";
+	String DESC = "DESC"; // 降序排列
+	String ASC = "ASC"; // 升级排列
+	Object[] NONE = new Object[0]; // 空参数
 
 	void init() throws Exception;
 
