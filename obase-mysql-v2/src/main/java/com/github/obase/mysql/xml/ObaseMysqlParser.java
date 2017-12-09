@@ -2,6 +2,7 @@ package com.github.obase.mysql.xml;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,7 +163,7 @@ public final class ObaseMysqlParser {
 			Part p = parts.get(0);
 			Param[] ph = p.getParams();
 			if (ph.length > 1) {
-				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "dynamic element contains more than 1 params: " + root.getTagName());
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Statement subtag has more than 1 params: " + root.getTagName() + ',' + Arrays.toString(ph));
 			}
 			return ph.length == 0 ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph[0]);
 		} else {
