@@ -1,7 +1,6 @@
 package com.github.obase.mysql.xml;
 
 import com.github.obase.mysql.DLink;
-import com.github.obase.mysql.DNode;
 import com.github.obase.mysql.DPstmtMeta;
 import com.github.obase.mysql.JdbcMeta;
 import com.github.obase.mysql.Part;
@@ -34,7 +33,7 @@ public class Statement {
 
 	public DPstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
 
-		DLink<String> psqls = new DLink<String>();
+		StringBuilder psqls = new StringBuilder(4096); // 默认4K
 		DLink<Param> params = new DLink<Param>();
 
 		for (int i = 0, n = parts.length; i < n; i++) {
@@ -42,17 +41,12 @@ public class Statement {
 			if (p.isDynamic()) {
 				p.processDynamic(meta, bean, psqls, params, i++);
 			} else {
-				psqls.tail(p.getPsql()); // 经过parser自动去掉了空的元素
+				psqls.append(p.getPsql());
 				params.tail(p.getParams());
 			}
 		}
 
-		StringBuilder sb = new StringBuilder(4096);
-		for (DNode<String> t = psqls.head; t != null; t = t.next) {
-			sb.append(t.value);
-		}
-
-		return new DPstmtMeta(this.nop, sb.toString(), params.head);
+		return new DPstmtMeta(this.nop, psqls.toString(), params.head);
 	}
 
 }

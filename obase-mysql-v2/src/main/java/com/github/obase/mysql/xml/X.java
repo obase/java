@@ -68,7 +68,11 @@ public class X implements Part {
 
 	// 该方法执行前提: dynamic=true
 	@SuppressWarnings("rawtypes")
-	public final boolean processDynamic(JdbcMeta meta, Object bean, DLink<String> psqls, DLink<Param> params, int idx) {
+	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, DLink<Param> params, int idx) {
+
+		if (bean == null) {
+			return false; // FIXBUG: 如果参数为null,直接返回false
+		}
 
 		if (p != null) { // 不包含子标签
 
@@ -77,26 +81,26 @@ public class X implements Part {
 			if (v instanceof Collection) {
 				Collection c = (Collection) v;
 				if (c.size() > 0) {
-					psqls.tail(prefix(idx));
+					psqls.append(prefix(idx));
 					// 迭代集合
 					int i = 0;
 					for (Object o : c) {
 						if (i != 0) {
-							psqls.tail(s);
+							psqls.append(s);
 						}
-						psqls.tail(this.psql);
+						psqls.append(this.psql);
 						params.tail(new Param(p, i, o));
 						i++;
 					}
-					psqls.tail(suffix());
+					psqls.append(suffix());
 
 					return true;
 				}
 			} else if (v != null) {
-				psqls.tail(prefix(idx));
-				psqls.tail(this.psql);
+				psqls.append(prefix(idx));
+				psqls.append(this.psql);
 				params.tail(new Param(p, v));
-				psqls.tail(suffix());
+				psqls.append(suffix());
 
 				return true;
 			}
@@ -104,7 +108,7 @@ public class X implements Part {
 			return false;
 		} else { // 包含子标签
 
-			DNode<String> tpsqls = psqls.tail; // 标记尾用于回滚
+			int length = psqls.length(); // 标记尾用于回滚
 			DNode<Param> tparams = params.tail; // 标记尾用于回滚
 
 			boolean cret = false;
@@ -115,14 +119,14 @@ public class X implements Part {
 						cret = true;
 					}
 				} else {
-					psqls.tail(f.getPsql());
+					psqls.append(f.getPsql());
 					params.tail(f.getParams());
 				}
 			}
 
 			// 某个动态子标签为true才添加到最终结果
 			if (!cret) {
-				psqls.chop(tpsqls);
+				psqls.setLength(length);
 				params.chop(tparams);
 				return false;
 			}

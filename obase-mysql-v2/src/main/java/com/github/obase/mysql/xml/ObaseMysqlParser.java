@@ -163,7 +163,7 @@ public final class ObaseMysqlParser {
 			Part p = parts.get(0);
 			Param[] ph = p.getParams();
 			if (ph.length > 1) {
-				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Statement subtag has more than 1 params: " + root.getTagName() + ',' + Arrays.toString(ph));
+				throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_CONFIG_EXCEED_PARAMS, "Statement subtag has more than 1 params: " + traceXPathPath(root) + ", " + Arrays.toString(ph));
 			}
 			return ph.length == 0 ? new Static(p.getPsql(), null) : x.reset(s, p.getPsql(), ph[0]);
 		} else {
@@ -180,6 +180,24 @@ public final class ObaseMysqlParser {
 		}
 		Sql sql = SqlDqlKit.parseSql(val);
 		return Static.getInstance(sql.content, sql.params);
+	}
+
+	private static String traceXPathPath(Element elem) {
+		LinkedList<Element> stack = new LinkedList<Element>();
+		for (Node n = elem; n instanceof Element; n = n.getParentNode()) {
+			stack.addFirst((Element) n);
+		}
+		StringBuilder sb = new StringBuilder(128);
+		String at;
+		for (Element e : stack) {
+			sb.append('/').append(e.getNodeName());
+			if (StringKit.isNotEmpty(at = e.getAttribute(ATTR_ID))) {
+				sb.append("[@").append(ATTR_ID).append("=").append(at).append(']');
+			} else if (StringKit.isNotEmpty(at = e.getAttribute(ATTR_NAMESPACE))) {
+				sb.append("[@").append(ATTR_NAMESPACE).append("=").append(at).append(']');
+			}
+		}
+		return sb.toString();
 	}
 
 	/* Lv1 */

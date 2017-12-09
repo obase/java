@@ -33,7 +33,7 @@ public final class Static implements Part {
 	}
 
 	@Override
-	public boolean processDynamic(JdbcMeta meta, Object bean, DLink<String> psqls, DLink<Param> params, int idx) {
+	public boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, DLink<Param> params, int idx) {
 		throw new UnsupportedOperationException();
 	}
 
