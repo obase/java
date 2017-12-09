@@ -2,7 +2,6 @@ package com.github.obase.mysql;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -34,9 +33,14 @@ import com.github.obase.mysql.asm.AsmKit;
 @SuppressWarnings({})
 public abstract class JdbcMeta {
 
-	/***************************************************
-	 * 接口抽象方法
-	 ***************************************************/
+	// =============================================
+	// 临时对象最大数量,默认1024
+	// =============================================
+	// public static final int TEMP_CACHE_MAX_SIZE = java.lang.Integer.parseInt(System.getProperty("JdbcMeta.TEMP_CACHE_MAX_SIZE", "1024"));
+
+	// =============================================
+	// 接口抽象方法
+	// =============================================
 
 	public abstract Object getValue(Object obj, String name);
 
@@ -1348,7 +1352,7 @@ public abstract class JdbcMeta {
 	// =============================================
 	// 缓存属性: JdbcMetaCache
 	// =============================================
-	static final Map<Class<?>, SoftReference<JdbcMeta>> TEMP_CACHE = new ConcurrentHashMap<Class<?>, SoftReference<JdbcMeta>>();
+	static final Map<Class<?>, JdbcMeta> TEMP_CACHE = new ConcurrentHashMap<Class<?>, JdbcMeta>();
 	static final Map<Class<?>, JdbcMeta> PERM_CACHE = new HashMap<Class<?>, JdbcMeta>(JavaType.values().length + 8);
 	static {
 		// scalar jdbcAction
@@ -1395,8 +1399,8 @@ public abstract class JdbcMeta {
 		// 具体类型,大概率
 		JdbcMeta meta = PERM_CACHE.get(type);
 		if (meta == null) {
-			SoftReference<JdbcMeta> ref = TEMP_CACHE.get(type);
-			if (ref == null || (meta = ref.get()) == null) {
+			meta = TEMP_CACHE.get(type);
+			if (meta == null) {
 
 				// 通用类型, 小概率
 				if (Map.class.isAssignableFrom(type)) {
@@ -1407,13 +1411,16 @@ public abstract class JdbcMeta {
 					return ARRAY;
 				} else if (type.isEnum() || type.isInterface() || type.isAnnotation()) {
 					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support enum, interface, or annoation:" + type.getCanonicalName());
-				}
+				} /*
+					 * else if (TEMP_CACHE.size() > TEMP_CACHE_MAX_SIZE) { throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_EXCEED_MAX_SIZE, "Temp cache size exceed ubound!"); }
+					 */
 				try {
 					meta = AsmKit.newJdbcMeta(type.getCanonicalName());
-					TEMP_CACHE.put(type, new SoftReference<JdbcMeta>(meta));
+					TEMP_CACHE.put(type, meta);
 				} catch (Exception e) {
 					throw new WrappedException(e);
 				}
+
 			}
 		}
 		return meta;
