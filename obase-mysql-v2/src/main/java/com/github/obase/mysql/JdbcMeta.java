@@ -1403,16 +1403,14 @@ public abstract class JdbcMeta {
 					return MAP;
 				} else if (List.class.isAssignableFrom(type)) {
 					return LIST;
-				}
-
-				// 创建
-				if (type.isEnum() || type.isInterface() || type.isAnnotation()) {
-					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support enum, interface, or annoation type:" + type.getCanonicalName());
+				} else if (type.isArray()) {
+					return ARRAY;
+				} else if (type.isEnum() || type.isInterface() || type.isAnnotation()) {
+					throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.JDBC_META_NOT_SUPPORTED, "JdbcMeta don't support enum, interface, or annoation:" + type.getCanonicalName());
 				}
 				try {
 					meta = AsmKit.newJdbcMeta(type.getCanonicalName());
-					ref = new SoftReference<JdbcMeta>(meta);
-					TEMP_CACHE.put(type, ref);
+					TEMP_CACHE.put(type, new SoftReference<JdbcMeta>(meta));
 				} catch (Exception e) {
 					throw new WrappedException(e);
 				}

@@ -1,7 +1,7 @@
 package com.github.obase.webc;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -218,10 +218,10 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			c = ClassKit.defineClass(className, data);
 		}
 
-		SoftReference<ServletMethodHandler> ref = ServletMethodHandlerRefs.get(c);
+		WeakReference<ServletMethodHandler> ref = ServletMethodHandlerRefs.get(c);
 		if (ref == null || ref.get() == null) {
 			try {
-				ref = new SoftReference<ServletMethodHandler>(((ServletMethodHandler) c.newInstance()).bind(bean, filters));
+				ref = new WeakReference<ServletMethodHandler>(((ServletMethodHandler) c.newInstance()).bind(bean, filters));
 			} catch (Exception e) {
 				throw new WrappedException(e);
 			}
@@ -231,5 +231,5 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	}
 
 	/* 全局缓存池. 处理API与WEB同时需要的情况. 注意:为避免不同ClassLoader,不能使用class name作为主键 */
-	private static final Map<Class<?>, SoftReference<ServletMethodHandler>> ServletMethodHandlerRefs = new HashMap<Class<?>, SoftReference<ServletMethodHandler>>();
+	private static final Map<Class<?>, WeakReference<ServletMethodHandler>> ServletMethodHandlerRefs = new HashMap<Class<?>, WeakReference<ServletMethodHandler>>();
 }
