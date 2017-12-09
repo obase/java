@@ -16,9 +16,9 @@ import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.Part;
-import com.github.obase.mysql.syntax.Sql;
-import com.github.obase.mysql.syntax.SqlDqlKit;
-import com.github.obase.mysql.syntax.SqlKit;
+import com.github.obase.mysql.sql.Sql;
+import com.github.obase.mysql.sql.SqlDqlKit;
+import com.github.obase.mysql.sql.SqlKit;
 
 public final class ObaseMysqlParser {
 

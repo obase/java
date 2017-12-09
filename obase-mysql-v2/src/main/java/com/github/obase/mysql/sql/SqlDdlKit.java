@@ -1,4 +1,4 @@
-package com.github.obase.mysql.syntax;
+package com.github.obase.mysql.sql;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

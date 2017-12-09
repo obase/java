@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import com.github.obase.mysql.PstmtMeta;
 import com.github.obase.mysql.SPstmtMeta;
-import com.github.obase.mysql.syntax.Sql;
-import com.github.obase.mysql.syntax.SqlDqlKit;
+import com.github.obase.mysql.sql.Sql;
+import com.github.obase.mysql.sql.SqlDqlKit;
 
 public class SqlDqlKitTester extends SqlKitTester {
 
