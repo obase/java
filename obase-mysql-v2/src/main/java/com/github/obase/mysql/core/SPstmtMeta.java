@@ -1,5 +1,7 @@
 package com.github.obase.mysql.core;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +11,7 @@ public final class SPstmtMeta extends PstmtMeta {
 
 	public static String[] EMPTY_ARRAY = new String[0];
 
-	public final String[] params;
+	final String[] params;
 
 	public SPstmtMeta(boolean nop, String psql, String[] params) {
 		super(nop, psql);
@@ -38,6 +40,15 @@ public final class SPstmtMeta extends PstmtMeta {
 			}
 		}
 		return new SPstmtMeta(nop, psql, ps);
+	}
+
+	@Override
+	public void setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
+		int pos = 0;
+		for (String p : params) {
+			++pos;
+			meta.setParam(ps, pos, bean, p);
+		}
 	}
 
 }

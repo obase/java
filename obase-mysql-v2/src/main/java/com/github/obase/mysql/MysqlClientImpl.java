@@ -28,9 +28,9 @@ import com.github.obase.mysql.syntax.SqlMetaKit;
 import com.github.obase.mysql.xml.ObaseMysqlObject;
 import com.github.obase.mysql.xml.ObaseMysqlParser;
 
-public class MysqlClientImpl extends MysqlClientBase {
+public class MysqlClientImpl extends MysqlClientOperation {
 
-	static final Log logger = LogFactory.getLog(MysqlClientBase.class);
+	static final Log logger = LogFactory.getLog(MysqlClientOperation.class);
 
 	// =============================================
 	// 基础属性及设置

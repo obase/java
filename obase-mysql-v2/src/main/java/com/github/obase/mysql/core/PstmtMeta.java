@@ -1,5 +1,7 @@
 package com.github.obase.mysql.core;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Map;
 
 public abstract class PstmtMeta {
@@ -27,5 +29,7 @@ public abstract class PstmtMeta {
 		this.nop = nop;
 		this.psql = psql;
 	}
+
+	public abstract void setParam(PreparedStatement pstmt, JdbcMeta meta, Object bean) throws SQLException;
 
 }

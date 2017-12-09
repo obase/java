@@ -1,5 +1,8 @@
 package com.github.obase.mysql.core;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import com.github.obase.mysql.stmt.Param;
 
 /**
@@ -26,6 +29,20 @@ public final class DPstmtMeta extends PstmtMeta {
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+
+	@Override
+	public void setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
+		int pos = 0;
+		for (DNode<Param> t = phead; t != null; t = t.next) {
+			Param p = t.value;
+			++pos;
+			if (p.setted) {
+				JdbcMeta.setParamByType(ps, pos, p.value);
+			} else {
+				meta.setParam(ps, pos, bean, p.name);
+			}
+		}
 	}
 
 }
