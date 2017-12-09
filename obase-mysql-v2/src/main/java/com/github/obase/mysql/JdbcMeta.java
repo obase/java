@@ -1386,7 +1386,7 @@ public abstract class JdbcMeta {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static JdbcMeta get(Class type) {
+	public static JdbcMeta getByType(Class type) {
 		// 根据概率排序各段代码
 		// 查非空
 		if (type == null) {
@@ -1423,14 +1423,16 @@ public abstract class JdbcMeta {
 
 	public static JdbcMeta getByObj(Object obj) {
 		// 使用Class reflect的API会较慢
-		if (obj == null || obj instanceof Object[]) {
+		if (obj == null) {
+			return null;
+		} else if (obj instanceof Object[]) {
 			return ARRAY;
 		} else if (obj instanceof Map) {
 			return MAP;
 		} else if (obj instanceof List) {
 			return LIST;
 		}
-		return get(obj.getClass());
+		return getByType(obj.getClass());
 	}
 
 	public static void set(Class<?> type, JdbcMeta meta, boolean override) {

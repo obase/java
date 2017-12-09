@@ -100,7 +100,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 				SqlDqlKit.parsePstmtLabel(rs, pstmt);
 			}
 
-			JdbcMeta getjm = JdbcMeta.get(type);
+			JdbcMeta getjm = JdbcMeta.getByType(type);
 			if (rs.next()) {
 				return (T) getjm.getResult(rs, pstmt.label);
 			}
@@ -185,7 +185,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 				SqlDqlKit.parsePstmtLabel(rs, pstmt);
 			}
 
-			JdbcMeta getjm = JdbcMeta.get(type);
+			JdbcMeta getjm = JdbcMeta.getByType(type);
 			List<T> list = new LinkedList<T>();
 			while (rs.next()) {
 				list.add((T) getjm.getResult(rs, pstmt.label));
@@ -246,7 +246,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 				SqlDqlKit.parsePstmtLabel(rs, pstmt);
 			}
 
-			JdbcMeta getjm = JdbcMeta.get(type);
+			JdbcMeta getjm = JdbcMeta.getByType(type);
 			List<T> list = new LinkedList<T>();
 			while (rs.next()) {
 				list.add((T) getjm.getResult(rs, pstmt.label));
@@ -314,7 +314,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 				SqlDqlKit.parsePstmtLabel(rs, pstmt);
 			}
 
-			JdbcMeta getjm = JdbcMeta.get(type);
+			JdbcMeta getjm = JdbcMeta.getByType(type);
 			List<T> list = new LinkedList<T>();
 			while (rs.next()) {
 				list.add((T) getjm.getResult(rs, pstmt.label));

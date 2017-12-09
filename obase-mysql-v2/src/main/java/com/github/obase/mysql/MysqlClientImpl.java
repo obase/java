@@ -471,7 +471,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return queryList(xstmt.staticPstmtMeta, elemType, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return queryList(xstmt.dynamicPstmtMeta(meta, params), elemType, params);
 		}
 	}
@@ -485,7 +485,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return queryRange(xstmt.staticPstmtMeta, elemType, offset, count, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return queryRange(xstmt.dynamicPstmtMeta(meta, params), elemType, offset, count, params);
 		}
 	}
@@ -499,7 +499,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return queryFirst(xstmt.staticPstmtMeta, elemType, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return queryFirst(xstmt.dynamicPstmtMeta(meta, params), elemType, params);
 		}
 	}
@@ -513,7 +513,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return queryFirst2(xstmt.staticPstmtMeta, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return queryFirst2(xstmt.dynamicPstmtMeta(meta, params), params);
 		}
 	}
@@ -527,7 +527,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			queryPage(xstmt.staticPstmtMeta, elemType, page, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			queryPage(xstmt.dynamicPstmtMeta(meta, params), elemType, page, params);
 		}
 	}
@@ -541,7 +541,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return executeUpdate(xstmt.staticPstmtMeta, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return executeUpdate(xstmt.dynamicPstmtMeta(meta, params), params);
 		}
 	}
@@ -555,7 +555,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt.staticPstmtMeta != null) {
 			return executeUpdate(xstmt.staticPstmtMeta, generateKeyType, params);
 		} else {
-			JdbcMeta meta = params != null ? JdbcMeta.get(params.getClass()) : null;
+			JdbcMeta meta = params != null ? JdbcMeta.getByType(params.getClass()) : null;
 			return executeUpdate(xstmt.dynamicPstmtMeta(meta, params), generateKeyType, params);
 		}
 	}
