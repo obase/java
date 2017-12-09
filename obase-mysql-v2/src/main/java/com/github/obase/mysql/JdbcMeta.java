@@ -86,7 +86,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -124,7 +124,7 @@ public abstract class JdbcMeta {
 
 		@Override
 		public Object getValue(Object obj, String name) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override

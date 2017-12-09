@@ -1,7 +1,9 @@
 package com.github.obase.mysql;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.github.obase.Page;
 
@@ -21,7 +23,7 @@ public interface MysqlClient {
 
 	String DESC = "DESC"; // 降序排列
 	String ASC = "ASC"; // 升级排列
-	Object[] NONE = new Object[0]; // 空参数
+	Map<String, Object> NONE = Collections.emptyMap();
 
 	void init() throws Exception;
 
