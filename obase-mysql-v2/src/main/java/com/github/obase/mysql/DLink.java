@@ -40,8 +40,10 @@ public final class DLink<T> {
 	}
 
 	public void chop(DNode<T> n) {
-		n.next = null;
-		tail = n;
+		if (n != null) {
+			n.next = null;
+			tail = n;
+		}
 	}
 
 }

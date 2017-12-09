@@ -5,23 +5,26 @@ public final class Param {
 	public static final Param[] EMPTY_ARRAY = new Param[0];
 
 	public final String name;
-	public final Object value;
-	public final boolean setted;
+	public final int idx;
+	public final Object val;
+	public final boolean set;
 
 	public Param(String name) {
 		this.name = name;
-		this.value = null;
-		this.setted = false;
-	}
-
-	public Param(String name, int index, Object value) {
-		this(new StringBuilder(name.length() + 8).append(name).append('[').append(index).append(']').toString(), value);
+		this.idx = -1;
+		this.val = null;
+		this.set = false;
 	}
 
 	public Param(String name, Object value) {
+		this(name, -1, value);
+	}
+
+	public Param(String name, int idx, Object value) {
 		this.name = name;
-		this.value = value;
-		this.setted = true;
+		this.idx = idx;
+		this.val = value;
+		this.set = true;
 	}
 
 	/**
@@ -31,7 +34,10 @@ public final class Param {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append(name);
-		if (setted) {
+		if (idx != -1) {
+			sb.append(':').append(idx);
+		}
+		if (set) {
 			sb.append("!");
 		}
 		return sb.toString();

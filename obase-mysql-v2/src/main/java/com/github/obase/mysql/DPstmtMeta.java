@@ -37,8 +37,8 @@ public final class DPstmtMeta extends PstmtMeta {
 		for (DNode<Param> t = phead; t != null; t = t.next) {
 			Param p = t.value;
 			++pos;
-			if (p.setted) {
-				JdbcMeta.setParamByType(ps, pos, p.value);
+			if (p.set) {
+				JdbcMeta.setParamByType(ps, pos, p.val);
 			} else {
 				meta.setParam(ps, pos, bean, p.name);
 			}
