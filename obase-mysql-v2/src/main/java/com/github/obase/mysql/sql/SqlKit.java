@@ -62,9 +62,6 @@ public class SqlKit {
 		int end = 0;
 		int len = psql.length();
 		while (end < len) {
-			if (sb.length() > 0) {
-				sb.append(SPACE);
-			}
 			start = indexOfNot(Matcher.Whitespace, psql, end, len);
 			if (start == -1) {
 				break;
@@ -72,6 +69,9 @@ public class SqlKit {
 			end = indexOf(Matcher.Whitespace, psql, start, len);
 			if (end == -1) {
 				end = len;
+			}
+			if (sb.length() > 0) {
+				sb.append(SPACE);
 			}
 			sb.append(psql, start, end); // 不要反复创建substring
 		}
