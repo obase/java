@@ -108,9 +108,10 @@ public class X implements Part {
 			return false;
 		} else { // 包含子标签
 
-			int length = psqls.length(); // 标记尾用于回滚
+			int tlength = psqls.length(); // 标记尾用于回滚
 			DNode<Param> tparams = params.tail; // 标记尾用于回滚
 
+			psqls.append(prefix(idx));
 			boolean cret = false;
 			int sidx = 0;
 			for (Part f : parts) {
@@ -126,10 +127,11 @@ public class X implements Part {
 
 			// 某个动态子标签为true才添加到最终结果
 			if (!cret) {
-				psqls.setLength(length);
+				psqls.setLength(tlength);
 				params.chop(tparams);
 				return false;
 			}
+			psqls.append(suffix());
 			return true;
 		}
 
