@@ -43,12 +43,13 @@ public final class SPstmtMeta extends PstmtMeta {
 	}
 
 	@Override
-	public void setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
+	public int setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
 		int pos = 0;
 		for (String p : params) {
 			++pos;
 			meta.setParam(ps, pos, bean, p);
 		}
+		return pos;
 	}
 
 }

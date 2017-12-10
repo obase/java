@@ -233,7 +233,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 			int pos = 0;
 			if (param != null) {
 				JdbcMeta setjm = JdbcMeta.getByObj(param);
-				pstmt.setParam(ps, setjm, param);
+				pos = pstmt.setParam(ps, setjm, param);
 			}
 			// 设置最好limit的参数
 			ps.setInt(++pos, offset);
@@ -301,7 +301,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 			int pos = 0;
 			if (param != null) {
 				setjm = JdbcMeta.getByObj(param);
-				pstmt.setParam(ps, setjm, param);
+				pos = pstmt.setParam(ps, setjm, param);
 			}
 			// 设置最好limit的参数
 			ps.setInt(++pos, offset);

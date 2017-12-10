@@ -30,6 +30,7 @@ public abstract class PstmtMeta {
 		this.psql = psql;
 	}
 
-	public abstract void setParam(PreparedStatement pstmt, JdbcMeta meta, Object bean) throws SQLException;
+	// 返回最后的pos位置,方便后续操作
+	public abstract int setParam(PreparedStatement pstmt, JdbcMeta meta, Object bean) throws SQLException;
 
 }

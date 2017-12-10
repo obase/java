@@ -32,7 +32,7 @@ public final class DPstmtMeta extends PstmtMeta {
 	}
 
 	@Override
-	public void setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
+	public int setParam(PreparedStatement ps, JdbcMeta meta, Object bean) throws SQLException {
 		int pos = 0;
 		for (DNode<Param> t = phead; t != null; t = t.next) {
 			Param p = t.value;
@@ -43,6 +43,7 @@ public final class DPstmtMeta extends PstmtMeta {
 				meta.setParam(ps, pos, bean, p.name);
 			}
 		}
+		return pos;
 	}
 
 }
