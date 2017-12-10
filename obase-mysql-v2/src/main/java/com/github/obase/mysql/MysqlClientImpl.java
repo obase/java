@@ -468,11 +468,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return queryList(xstmt.staticPstmtMeta, elemType, params);
-		} else {
-			return queryList(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
-		}
+		return queryList(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
 	}
 
 	@Override
@@ -481,11 +477,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return queryRange(xstmt.staticPstmtMeta, elemType, offset, count, params);
-		} else {
-			return queryRange(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, offset, count, params);
-		}
+		return queryRange(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, offset, count, params);
 	}
 
 	@Override
@@ -494,11 +486,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return queryFirst(xstmt.staticPstmtMeta, elemType, params);
-		} else {
-			return queryFirst(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
-		}
+		return queryFirst(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
 	}
 
 	@Override
@@ -507,11 +495,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return queryFirst2(xstmt.staticPstmtMeta, params);
-		} else {
-			return queryFirst2(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), params);
-		}
+		return queryFirst2(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), params);
 	}
 
 	@Override
@@ -520,11 +504,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			queryPage(xstmt.staticPstmtMeta, elemType, page, params);
-		} else {
-			queryPage(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, page, params);
-		}
+		queryPage(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, page, params);
 	}
 
 	@Override
@@ -533,11 +513,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return executeUpdate(xstmt.staticPstmtMeta, params);
-		} else {
-			return executeUpdate(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), params);
-		}
+		return executeUpdate(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), params);
 	}
 
 	@Override
@@ -546,11 +522,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
-		if (xstmt.staticPstmtMeta != null) {
-			return executeUpdate(xstmt.staticPstmtMeta, generateKeyType, params);
-		} else {
-			return executeUpdate(xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), generateKeyType, params);
-		}
+		return executeUpdate(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), generateKeyType, params);
 	}
 
 	@Override
@@ -560,7 +532,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
 		}
 		if (xstmt.staticPstmtMeta != null) {
-			return executeBatch(xstmt.staticPstmtMeta, params);
+			return executeBatch(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), params);
 		}
 		throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.SQL_DYNAMIC_NOT_SUPPORT, "executeBatch don't support dynamic statement: " + xstmt.id);
 	}
