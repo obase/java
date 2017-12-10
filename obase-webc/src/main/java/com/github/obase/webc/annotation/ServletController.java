@@ -16,6 +16,8 @@ public @interface ServletController {
 
 	String value() default "";
 
-	String path() default "";
+	String pack() default ""; // package path of lookup path
+
+	String path() default ""; // class path of lookup path
 
 }

@@ -86,7 +86,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					}
 
 					String methodName = method.getName();
-					String lookupPath = processor.lookup(servletController, controller, servletMethod, userClass, methodName);
+					String lookupPath = processor.lookup(servletController, controller, userClass, servletMethod, methodName);
 					ServletMethodHandler handler = newServletMethodHandler(methodName, bean, findServletFilter(servletFilters, lookupPath, userClass, method.getName(), servletMethod));
 					ServletMethodObject object = new ServletMethodObject(lookupPath, handler, servletMethod, defaultAuthType);
 
@@ -102,7 +102,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					}
 					for (HttpMethod m : methods) {
 						if (objectMap.put(m, object) != null) {
-							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath);
+							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + ", " + method);
 						}
 					}
 				}
@@ -118,13 +118,17 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			for (Map.Entry<HttpMethod, ServletMethodObject> entry2 : entry.getValue().entrySet()) {
 				HttpMethod method = entry2.getKey();
 				ServletMethodObject object = entry2.getValue();
-				rules.put(method.name() + Kits.getServletPath(params.namespace, lookupPath, null), object);
+				rules.put(rkey(method.name(), Kits.getServletPath(params.namespace, lookupPath, null)), object);
 				if (StringKit.isEmpty(lookupPath)) {
-					rules.put(method.name() + Kits.getServletPath(params.namespace, "/", null), object); // FIXBUG: special for home page
+					rules.put(rkey(method.name(), Kits.getServletPath(params.namespace, "/", null)), object); // FIXBUG: special for home page
 				}
 			}
 
 		}
+	}
+
+	private static final String rkey(String method, String servletPath) {
+		return method + servletPath;
 	}
 
 	@Override
@@ -134,60 +138,59 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		resp.setCharacterEncoding(Webc.CHARSET_NAME);
 
 		final HttpServletRequest request = (HttpServletRequest) req;
-		String rkey = request.getMethod() + request.getServletPath();
-		ServletMethodObject object = rules.get(rkey);
+		ServletMethodObject object = rules.get(rkey(request.getMethod(), request.getServletPath()));
 
-		// FIXBUG: if aysnc not support
-		if (req.isAsyncSupported()) {
-			final AsyncContext asyncContext = req.isAsyncStarted() ? req.getAsyncContext() : req.startAsync();
-			if (listener != null) {
-				asyncContext.addListener(listener);
-			}
-			if (timeout != 0) {
-				asyncContext.setTimeout(timeout);
-			}
-			asyncContext.start(new Runnable() {
-				@Override
-				public void run() {
+		if (object != null) {
 
-					final HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
-					final HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+			req.setAttribute(Webc.ATTR_LOOKUP_PATH, object.lookupPath);
+			req.setAttribute(Webc.ATTR_NAMESPACE, params.namespace);
 
-					HttpServletRequest prerequest = null;
-					try {
-						prerequest = processor.process(request, response, object);
-						if (prerequest != null) {
-							if (object != null) {
+			// FIXBUG: if aysnc not support
+			if (req.isAsyncSupported()) {
+				final AsyncContext asyncContext = req.isAsyncStarted() ? req.getAsyncContext() : req.startAsync();
+				if (listener != null) {
+					asyncContext.addListener(listener);
+				}
+				if (timeout != 0) {
+					asyncContext.setTimeout(timeout);
+				}
+				asyncContext.start(new Runnable() {
+					@Override
+					public void run() {
+
+						final HttpServletRequest request = (HttpServletRequest) asyncContext.getRequest();
+						final HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+
+						HttpServletRequest prerequest = null;
+						try {
+							prerequest = processor.process(request, response, object);
+							if (prerequest != null) {
 								object.handler.service(prerequest, response);
-							} else {
-								chain.doFilter(prerequest, response);
+							}
+						} catch (Throwable t) {
+							processor.error(request, response, t);
+						} finally {
+							if (request.isAsyncStarted()) {
+								asyncContext.complete();
 							}
 						}
-					} catch (Throwable t) {
-						processor.error(request, response, t);
-					} finally {
-						if (request.isAsyncStarted()) {
-							asyncContext.complete();
-						}
 					}
-				}
-			});
-		} else {
-
-			final HttpServletResponse response = (HttpServletResponse) resp;
-			HttpServletRequest prerequest = null;
-			try {
-				prerequest = processor.process(request, response, object);
-				if (prerequest != null) {
-					if (object != null) {
+				});
+			} else {
+				final HttpServletResponse response = (HttpServletResponse) resp;
+				HttpServletRequest prerequest = null;
+				try {
+					prerequest = processor.process(request, response, object);
+					if (prerequest != null) {
 						object.handler.service(prerequest, response);
-					} else {
-						chain.doFilter(prerequest, response);
 					}
+				} catch (Throwable t) {
+					processor.error(request, response, t);
 				}
-			} catch (Throwable t) {
-				processor.error(request, response, t);
 			}
+
+		} else {
+			chain.doFilter(req, resp);
 		}
 	}
 

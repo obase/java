@@ -112,97 +112,124 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 		// for subclass
 	}
 
-	/**
-	 * default uniform lookup path rule:
-	 * 
-	 * 1. if path is "" then use value
-	 * 
-	 * 2. if value is "" the use class name
-	 */
+	// lookup path = package path + class path + method path, it will ignore if "$"
 	@Override
-	public String lookup(ServletController servletController, Controller controller, ServletMethod methodAnnotation, Class<?> targetClass, String methodName) {
+	public String lookup(ServletController servletController, Controller controller, Class<?> targetClass, ServletMethod servletMethod, String methodName) {
 
 		StringBuilder sb = new StringBuilder(512);
+		String tmp;
 
-		String cpath = null;
 		if (servletController != null) {
-			cpath = servletController.path();
+			// 1. lookup package path
+			tmp = servletController.pack();
+			if (!Webc.$.equals(tmp)) {
+				if (StringKit.isNotEmpty(tmp)) {
+					if (tmp.charAt(0) != '/') {
+						sb.append('/');
+					}
+					sb.append(tmp);
+				} else {
+					sb.append('/');
+					sb.append(ltrimControlPrefix(targetClass.getPackage()));
+				}
+			}
+
+			// 2. lookup class path
+			tmp = servletController.path();
+			if (!Webc.$.equals(tmp)) {
+				if (StringKit.isNotEmpty(tmp)) {
+					if (tmp.charAt(0) != '/') {
+						sb.append('/');
+					}
+					sb.append(tmp);
+				} else {
+					sb.append('/');
+					sb.append(rtrimControllSuffix(targetClass));
+				}
+			}
 		} else {
-			cpath = controller.value();
-		}
-
-		if (!Webc.$.equals(cpath)) {
-			if (StringKit.isEmpty(cpath)) {
-
-				String className = targetClass.getCanonicalName();
-				sb.append(className);
-
-				if (ArrayKit.isNotEmpty(controlPrefixArray)) {
-					for (String p : controlPrefixArray) {
-						if (className.startsWith(p)) {
-							sb.delete(0, p.length());
-							break;
-						}
+			// 1. lookup package path & class path
+			tmp = controller.value();
+			if (!Webc.$.equals(tmp)) {
+				if (StringKit.isNotEmpty(tmp)) {
+					if (tmp.charAt(0) != '/') {
+						sb.append('/');
 					}
+					sb.append(tmp);
 				} else {
-					int pos = className.indexOf(Webc.DEFAULT_CONTROL_PREFIX);
-					if (pos == 0 || (pos > 0 && className.charAt(pos - 1) == '.')) {
-						sb.delete(0, pos + Webc.DEFAULT_CONTROL_PREFIX.length());
-					}
+					sb.append('/');
+					sb.append(ltrimControlPrefix(targetClass.getPackage()));
+					sb.append('/');
+					sb.append(rtrimControllSuffix(targetClass));
 				}
+			}
+		}
 
-				if (ArrayKit.isNotEmpty(controlSuffixArray)) {
-					for (String s : controlSuffixArray) {
-						if (className.endsWith(s)) {
-							sb.delete(sb.length() - s.length(), sb.length());
-						}
-					}
-				} else {
-					if (className.endsWith(Webc.DEFAULT_CONTROL_SUFFIX)) {
-						sb.delete(sb.length() - Webc.DEFAULT_CONTROL_SUFFIX.length(), sb.length());
-					}
+		tmp = servletMethod.path();
+		if (StringKit.isEmpty(tmp)) {
+			tmp = servletMethod.value();
+		}
+
+		if (!Webc.$.equals(tmp)) {
+			if (StringKit.isNotEmpty(tmp)) {
+				if (tmp.charAt(0) != '/') {
+					sb.append('/');
 				}
-
-				int pos = -1;
-				for (int i = 0, n = sb.length(); i < n; i++) {
-					if (sb.charAt(i) == '.') {
-						pos = i;
-						sb.setCharAt(i, '/');
-					}
-				}
-
-				pos++;
-				char ch = sb.charAt(pos);
-				if (ch >= 'A' && ch <= 'Z') {
-					ch -= ('A' - 'a');
-					sb.setCharAt(pos, ch);
-				}
-
+				sb.append(tmp);
 			} else {
-				sb.append(cpath);
-			}
-
-			if (sb.charAt(0) != '/') {
-				sb.insert(0, '/');
-			}
-
-			if (sb.charAt(sb.length() - 1) == '/') {
-				sb.deleteCharAt(sb.length() - 1);
+				sb.append('/');
+				sb.append(methodName);
 			}
 		}
 
-		String mpath = methodAnnotation.path();
-		if (StringKit.isEmpty(mpath)) {
-			mpath = methodAnnotation.value();
-		}
-		if (!Webc.$.equals(mpath)) {
-			if (StringKit.isEmpty(mpath)) {
-				sb.append('/').append(methodName);
-			} else {
-				sb.append('/').append(mpath);
+		// 3. lookup method path
+
+		return sb.toString();
+
+	}
+
+	private String ltrimControlPrefix(Package pack) {
+		StringBuilder sb = new StringBuilder(pack.getName());
+		if (ArrayKit.isNotEmpty(controlPrefixArray)) {
+			for (String p : controlPrefixArray) {
+				if (sb.indexOf(p) == 0 || sb.charAt(p.length()) == '.') {
+					sb.delete(0, p.length());
+					break;
+				}
+			}
+		} else {
+			int pos = sb.indexOf(Webc.DEFAULT_CONTROL_PREFIX);
+			if (pos == 0 || (pos > 0 && sb.charAt(pos - 1) == '.')) {
+				sb.delete(0, pos + Webc.DEFAULT_CONTROL_PREFIX.length());
 			}
 		}
+		for (int i = 0, n = sb.length(); i < n; i++) {
+			if (sb.charAt(i) == '.') {
+				sb.setCharAt(i, '/');
+			}
+		}
+		return sb.toString();
+	}
 
+	private String rtrimControllSuffix(Class<?> claz) {
+		StringBuilder sb = new StringBuilder(claz.getName());
+		int idx;
+		if (ArrayKit.isNotEmpty(controlSuffixArray)) {
+			for (String s : controlSuffixArray) {
+				if ((idx = sb.lastIndexOf(s)) == (sb.length() - s.length())) {
+					sb.delete(idx, sb.length());
+					break;
+				}
+			}
+		} else {
+			if ((idx = sb.lastIndexOf(Webc.DEFAULT_CONTROL_SUFFIX)) == (sb.length() - Webc.DEFAULT_CONTROL_SUFFIX.length())) {
+				sb.delete(idx, sb.length());
+			}
+		}
+		char ch = sb.charAt(0);
+		if (ch >= 'A' && ch <= 'Z') {
+			sb.setCharAt(0, (char) (ch + 32));
+		}
 		return sb.toString();
 	}
 

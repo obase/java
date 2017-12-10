@@ -19,7 +19,7 @@ public @interface ServletMethod {
 
 	String value() default ""; // "$": ignore the methodName
 
-	String path() default ""; // composition of lookup path
+	String path() default ""; // method path of lookup path, default value()
 
 	org.springframework.http.HttpMethod[] method() default {}; // if empty support all methods
 

@@ -33,6 +33,6 @@ public interface ServletMethodProcessor {
 	/**
 	 * return the lookupPath for the servlet method
 	 */
-	String lookup(ServletController servletController, Controller controller, ServletMethod methodAnnotation, Class<?> clazz, String methodName);
+	String lookup(ServletController servletController, Controller controller, Class<?> clazz, ServletMethod methodAnnotation, String methodName);
 
 }
