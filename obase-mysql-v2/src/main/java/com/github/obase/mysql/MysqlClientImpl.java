@@ -50,6 +50,42 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		this.updateTable = updateTable;
 	}
 
+	public Statement getStatement(String key) {
+		return statementCache.get(key);
+	}
+
+	public SPstmtMeta getSelectAllPstmtMeta(Class<?> key) {
+		return selectAllCache.get(key);
+	}
+
+	public SPstmtMeta getSelectPstmtMeta(Class<?> key) {
+		return selectCache.get(key);
+	}
+
+	public SPstmtMeta getInsertPstmtMeta(Class<?> key) {
+		return insertCache.get(key);
+	}
+
+	public SPstmtMeta getInsertIgnorePstmtMeta(Class<?> key) {
+		return insertIgnoreCache.get(key);
+	}
+
+	public SPstmtMeta getReplacePstmtMeta(Class<?> key) {
+		return replaceCache.get(key);
+	}
+
+	public SPstmtMeta getMergePstmtMeta(Class<?> key) {
+		return mergeCache.get(key);
+	}
+
+	public SPstmtMeta getUpdatePstmtMeta(Class<?> key) {
+		return updateCache.get(key);
+	}
+
+	public SPstmtMeta getDeletePstmtMeta(Class<?> key) {
+		return deleteCache.get(key);
+	}
+
 	// =============================================
 	// 全局缓存属性, 由metainfo快速生成的缓存.部分如limit,count,
 	// insertIgnore, replace等合并到对应的SQL中
