@@ -6,6 +6,8 @@ import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,13 +57,12 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	@Override
 	public void setup(Collection<ServletMethodObject> objects) throws ServletException {
 		if (logger.isInfoEnabled()) {
-			StringBuilder sb = new StringBuilder(4096);
-			sb.append("Lookup path: ");
+
+			Set<String> set = new HashSet<String>();
 			for (ServletMethodObject object : objects) {
-				sb.append(object.lookupPath).append(',');
+				set.add(object.lookupPath);
 			}
-			sb.setLength(sb.length() - 1);
-			logger.info(sb);
+			logger.info("Setup lookup paths: " + set);
 		}
 	}
 

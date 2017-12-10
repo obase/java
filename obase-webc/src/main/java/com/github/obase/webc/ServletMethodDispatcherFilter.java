@@ -99,7 +99,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					for (HttpMethod m : methods) {
 						ServletMethodObject object = new ServletMethodObject(m, lookupPath, handler, servletMethod, defaultAuthType);
 						if (!objects.add(object)) {
-							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + ", " + method);
+							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + " ==> " + method);
 						}
 					}
 				}
