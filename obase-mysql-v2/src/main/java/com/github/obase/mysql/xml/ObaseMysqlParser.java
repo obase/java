@@ -74,12 +74,12 @@ public final class ObaseMysqlParser {
 
 		LinkedList<Part> ret = new LinkedList<Part>();
 		StringBuilder psql = new StringBuilder(4096);
-		LinkedList<Param> params = new LinkedList<Param>();
+		LinkedList<String> params = new LinkedList<String>();
 		// 合并优化静态,如果无动态则psqls与params存的是静态
 		for (Part f : parts) {
 			if (f.isDynamic()) {
 				if (psql.length() > 0) {
-					ret.add(new Static(psql.toString(), params.toArray(new Param[params.size()])));
+					ret.add(new Static(psql.toString(), params.toArray(new String[params.size()])));
 					psql.setLength(0);
 					params.clear();
 				}
@@ -93,7 +93,7 @@ public final class ObaseMysqlParser {
 			}
 		}
 		if (psql.length() > 0) {
-			ret.add(new Static(psql.toString(), params.toArray(new Param[params.size()])));
+			ret.add(new Static(psql.toString(), params.toArray(new String[params.size()])));
 		}
 
 		return ret;
@@ -161,7 +161,7 @@ public final class ObaseMysqlParser {
 		} else if (size == 1) {
 			// 不或只包含一个子元素
 			Part p = parts.get(0);
-			Param[] ph = p.getParams();
+			String[] ph = p.getParams();
 
 			if (ph.length == 0) {
 				// 无参数退化为静态

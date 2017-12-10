@@ -1,8 +1,8 @@
 package com.github.obase.mysql.xml;
 
-import com.github.obase.mysql.DLink;
 import com.github.obase.mysql.DPstmtMeta;
 import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.ParamBuilder;
 import com.github.obase.mysql.Part;
 import com.github.obase.mysql.SPstmtMeta;
 
@@ -23,7 +23,7 @@ public class Statement {
 
 		if (parts.length == 1) {
 			Part p = parts[0];
-			this.staticPstmtMeta = SPstmtMeta.getInstance(this.nop, p.getPsql(), p.getParams());
+			this.staticPstmtMeta = new SPstmtMeta(this.nop, p.getPsql(), p.getParams());
 			this.parts = null;
 		} else {
 			this.staticPstmtMeta = null;
@@ -34,7 +34,7 @@ public class Statement {
 	public DPstmtMeta dynamicPstmtMeta(JdbcMeta meta, Object bean) {
 
 		StringBuilder psqls = new StringBuilder(4096); // 默认4K
-		DLink<Param> params = new DLink<Param>();
+		ParamBuilder params = new ParamBuilder(128);
 
 		for (int i = 0, n = parts.length; i < n; i++) {
 			Part p = parts[i];
@@ -42,11 +42,11 @@ public class Statement {
 				p.processDynamic(meta, bean, psqls, params, i++);
 			} else {
 				psqls.append(p.getPsql());
-				params.tail(p.getParams());
+				params.append(p.getParams());
 			}
 		}
 
-		return new DPstmtMeta(this.nop, psqls.toString(), params.head);
+		return new DPstmtMeta(this.nop, psqls.toString(), params);
 	}
 
 }

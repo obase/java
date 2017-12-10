@@ -3,9 +3,8 @@ package com.github.obase.mysql.xml;
 import java.util.Collection;
 
 import com.github.obase.kit.StringKit;
-import com.github.obase.mysql.DLink;
-import com.github.obase.mysql.DNode;
 import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.ParamBuilder;
 import com.github.obase.mysql.Part;
 
 /**
@@ -26,16 +25,16 @@ public class X implements Part {
 
 	// 不包含子元素
 	protected String psql;
-	protected Param[] params;
+	protected String[] params;
 	// 包含子元素
 	protected Part[] parts; // 动态
 
-	public final X reset(String s, String psql, Param param) {
+	public final X reset(String s, String psql, String param) {
 		this.s = StringKit.isEmpty(s) ? DEF_SEP : s;
-		this.p = param.name;
+		this.p = param;
 
 		this.psql = psql;
-		this.params = new Param[] { param };
+		this.params = new String[] { param };
 		this.parts = null;
 
 		return this;
@@ -67,13 +66,13 @@ public class X implements Part {
 	}
 
 	@Override
-	public final Param[] getParams() {
+	public final String[] getParams() {
 		return this.params;
 	}
 
 	// 该方法执行前提: dynamic=true
 	@SuppressWarnings("rawtypes")
-	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, DLink<Param> params, int idx) {
+	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, ParamBuilder params, int idx) {
 
 		if (bean == null) {
 			return false; // FIXBUG: 如果参数为null,直接返回false
@@ -88,14 +87,13 @@ public class X implements Part {
 				if (c.size() > 0) {
 					psqls.append(prefix(idx));
 					// 迭代集合
-					int i = 0;
+					int set = 0; // 注意:集合下标从1开始
 					for (Object o : c) {
-						if (i != 0) {
+						if (set != 0) {
 							psqls.append(s);
 						}
 						psqls.append(this.psql);
-						params.tail(new Param(p, i, o));
-						i++;
+						params.append(p, ++set, o); // 注意:集合下标从1开始
 					}
 					psqls.append(suffix());
 
@@ -104,7 +102,7 @@ public class X implements Part {
 			} else if (v != null) {
 				psqls.append(prefix(idx));
 				psqls.append(this.psql);
-				params.tail(new Param(p, v));
+				params.append(p, v);
 				psqls.append(suffix());
 
 				return true;
@@ -114,7 +112,7 @@ public class X implements Part {
 		} else { // 包含子标签
 
 			int tlength = psqls.length(); // 标记尾用于回滚
-			DNode<Param> tparams = params.tail; // 标记尾用于回滚
+			int plength = params.length(); // 标记尾用于回滚
 
 			psqls.append(prefix(idx));
 			boolean cret = false;
@@ -126,14 +124,14 @@ public class X implements Part {
 					}
 				} else {
 					psqls.append(f.getPsql());
-					params.tail(f.getParams());
+					params.append(f.getParams());
 				}
 			}
 
 			// 某个动态子标签为true才添加到最终结果
 			if (!cret) {
 				psqls.setLength(tlength);
-				params.chop(tparams);
+				params.setLength(plength);
 				return false;
 			}
 			psqls.append(suffix());

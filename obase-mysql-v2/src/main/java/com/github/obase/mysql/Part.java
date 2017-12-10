@@ -1,10 +1,9 @@
 package com.github.obase.mysql;
 
-import com.github.obase.mysql.xml.Param;
-
 public interface Part {
 
 	Part[] EMPTY_ARRAY = new Part[0];
+	String[] EMPTY_PARAM = new String[0];
 
 	String DEF_SEP = " OR ";
 
@@ -14,7 +13,7 @@ public interface Part {
 	 * @return
 	 */
 	boolean isDynamic();
-	
+
 	String getSeparator();
 
 	/**
@@ -23,11 +22,11 @@ public interface Part {
 	 */
 	String getPsql();
 
-	Param[] getParams();
+	String[] getParams();
 
 	/**
 	 * 处理动态逻辑, 并将结果附加到psqls与params
 	 */
-	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, DLink<Param> params, int idx);
+	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, ParamBuilder params, int idx);
 
 }

@@ -295,6 +295,9 @@ public abstract class MysqlClientOperation implements MysqlClient {
 			} else {
 				pagePsql = SqlDqlKit.parsePstmtOrderLimit(pstmt, page.field, page.direction);
 			}
+			if (showSql) {
+				logger.info("[ROWS] " + pagePsql);
+			}
 
 			ps = conn.prepareStatement(pagePsql);
 			JdbcMeta setjm = null;
@@ -328,6 +331,9 @@ public abstract class MysqlClientOperation implements MysqlClient {
 			} else {
 				if (pstmt.countPsql == null) {
 					SqlDqlKit.parsePstmtCount(pstmt);
+				}
+				if (showSql) {
+					logger.info("[SIZE] " + pstmt.countPsql);
 				}
 				ps = conn.prepareStatement(pstmt.countPsql);
 				if (param != null) {
