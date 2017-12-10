@@ -179,7 +179,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.info(String.format("Mysqlclient initialization successful, loading %d Tables, %d Metas, and %d SQLs", tableMetaInfoMap.size(), metaMetaInfoMap.size(), statementCache.size()));
+			logger.info(String.format("Mysqlclient initialization successful, load %d Tables, %d Metas, and %d Statements", tableMetaInfoMap.size(), metaMetaInfoMap.size(), statementCache.size()));
 		}
 	}
 
