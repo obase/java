@@ -1,23 +1,118 @@
 package com.github.obase.webc.hiido;
 
-import com.github.obase.webc.WsidSession;
-import com.github.obase.webc.yy.JedisSession;
+import static com.github.obase.webc.Webc.SC_INVALID_ACCOUNT;
 
-import redis.clients.jedis.JedisPool;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpMethod;
+
+import com.github.obase.kit.ObjectKit;
+import com.github.obase.kit.StringKit;
+import com.github.obase.security.Principal;
+import com.github.obase.webc.AuthType;
+import com.github.obase.webc.Kits;
+import com.github.obase.webc.ServletMethodHandler;
+import com.github.obase.webc.ServletMethodObject;
+import com.github.obase.webc.Webc;
+import com.github.obase.webc.Wsid;
+import com.github.obase.webc.support.security.WsidServletMethodProcessor;
+import com.github.obase.webc.yy.UserPrincipal;
 
 /**
- * @deprecated please used HiidoauthServletMethodProcessor2 instead of for convenient
+ * Used to instead of HiidoauthServletMethodProcessor
  */
-@Deprecated
-public abstract class HiidoauthServletMethodProcessor extends HiidoauthServletMethodProcessor2 {
+public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodProcessor {
 
-	protected final WsidSession wsidSession = new JedisSession(getJedisPool());
+	protected abstract String getUdbApi();
+
+	protected abstract String getAgentId();
+
+	protected abstract byte[] getAgentPwd();
+
+	protected abstract String getPublicKey();
+
+	protected abstract String getHomepage();
+
+	protected abstract String getHiidoLoginUrl();
 
 	@Override
-	protected final WsidSession getWsidSession() {
-		return wsidSession;
+	public void setup(Collection<ServletMethodObject> rules) throws ServletException {
+
+		ServletMethodHandler postHiidoLoginObject = new ServletMethodHandler() {
+			@Override
+			public void service(HttpServletRequest request, HttpServletResponse response) throws Exception {
+				String token = Kits.readParam(request, HiidoKit.PARAM_TOKEN);
+				if (!postHiidoLogin(request, response, token)) {
+					sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
+					return;
+				}
+				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String>ifnull(getHomepage(), "/")));
+			}
+		};
+
+		for (HttpMethod method : HttpMethod.values()) {
+			rules.add(new ServletMethodObject(method, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, postHiidoLoginObject, null, AuthType.NONE));
+		}
+
+		super.setup(rules);
 	}
 
-	protected abstract JedisPool getJedisPool();
+	public boolean postHiidoLogin(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException {
 
+		if (StringKit.isEmpty(token)) {
+			return false;
+		}
+		Principal principal = validatePrincipal(HiidoKit.getStaffInfoByToken(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), token));
+		if (principal == null) {
+			return false;
+		}
+
+		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
+		getWsidSession().passivate(wsid.id, encodePrincipal(principal), timeoutMillis);
+
+		request.setAttribute(Webc.ATTR_WSID, wsid);
+		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
+		Kits.writeCookie(response, wsidName, Wsid.encode(wsid), wsidDomain, Wsid.COOKIE_PATH, Wsid.COOKIE_TEMPORY_EXPIRE);
+
+		return true;
+	}
+
+	@Override
+	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Kits.sendRedirect(response, ObjectKit.<String>ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
+	}
+
+	// for subclass override
+	protected Principal validatePrincipal(UserPrincipal staffInfoByToken) {
+		return staffInfoByToken;
+	}
+
+	public final List<Principal> getMyAgentStaffInfo() {
+		return HiidoKit.getMyAgentStaffInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey());
+	}
+
+	public void updateMyStaffAgentInfo(boolean valid, String... users) {
+		HiidoKit.updateMyStaffAgentInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), valid, users);
+	}
+
+	public void updateMyStaffAgentInfo(Map<String, Boolean> users) {
+		HiidoKit.updateMyStaffAgentInfo(ObjectKit.ifnull(getUdbApi(), HiidoKit.HIIDO_UDB_API), getAgentId(), getAgentPwd(), getPublicKey(), users);
+	}
+
+	@Override
+	protected String encodePrincipal(Principal p) {
+		return ((UserPrincipal) p).encode();
+	}
+
+	@Override
+	protected Principal decodePrincipal(String v) {
+		return v == null ? null : new UserPrincipal().decode(v);
+	}
 }
