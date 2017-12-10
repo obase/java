@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.springframework.cglib.beans.BeanMap;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.util.HtmlUtils;
 
 import com.github.obase.Message;
@@ -656,10 +655,6 @@ public abstract class Kits {
 			return lookupPath;
 		}
 		return new StringBuilder(128).append('/').append(namespace).append(lookupPath).toString();
-	}
-
-	public static HttpMethod getHttpMethod(ServletRequest request) {
-		return (HttpMethod) request.getAttribute(Webc.ATTR_HTTP_METHOD);
 	}
 
 	public static Wsid getWsid(ServletRequest request) {

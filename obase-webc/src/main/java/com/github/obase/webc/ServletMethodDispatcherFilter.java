@@ -45,10 +45,13 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	@Override
 	protected final void initFrameworkFilter() throws ServletException {
 
+		// Init the properties
 		processor = Util.findWebcBean(applicationContext, ServletMethodProcessor.class, params.controlProcessor);
 		if (processor == null) {
 			processor = new BaseServletMethodProcessor();
 		}
+		processor.init(params); // @Since 1.2.0
+
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.timeoutSecond * 1000;
 
@@ -57,7 +60,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		Collections.addAll(beanNameSet, applicationContext.getBeanNamesForAnnotation(Controller.class));
 		Collections.addAll(beanNameSet, applicationContext.getBeanNamesForAnnotation(ServletController.class));
 
-		Map<String, Map<HttpMethod, ServletMethodObject>> objects = new HashMap<String, Map<HttpMethod, ServletMethodObject>>();
+		Set<ServletMethodObject> objects = new HashSet<ServletMethodObject>();
 		if (beanNameSet.size() > 0) {
 
 			// get all filters
@@ -88,20 +91,14 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					String methodName = method.getName();
 					String lookupPath = processor.lookup(servletController, controller, userClass, servletMethod, methodName);
 					ServletMethodHandler handler = newServletMethodHandler(methodName, bean, findServletFilter(servletFilters, lookupPath, userClass, method.getName(), servletMethod));
-					ServletMethodObject object = new ServletMethodObject(lookupPath, handler, servletMethod, defaultAuthType);
-
-					Map<HttpMethod, ServletMethodObject> objectMap = objects.get(lookupPath);
-					if (objectMap == null) {
-						objectMap = new HashMap<HttpMethod, ServletMethodObject>(8);
-						objects.put(lookupPath, objectMap);
-					}
 
 					HttpMethod[] methods = servletMethod.method();
 					if (methods.length == 0) {
 						methods = HttpMethod.values(); // default all
 					}
 					for (HttpMethod m : methods) {
-						if (objectMap.put(m, object) != null) {
+						ServletMethodObject object = new ServletMethodObject(m, lookupPath, handler, servletMethod, defaultAuthType);
+						if (!objects.add(object)) {
 							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + ", " + method);
 						}
 					}
@@ -110,20 +107,15 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		}
 
 		// setup by processor
-		processor.setup(params, objects);
+		processor.setup(objects);
 
-		rules = new HashMap<String, ServletMethodObject>();
-		for (Map.Entry<String, Map<HttpMethod, ServletMethodObject>> entry : objects.entrySet()) {
-			String lookupPath = entry.getKey();
-			for (Map.Entry<HttpMethod, ServletMethodObject> entry2 : entry.getValue().entrySet()) {
-				HttpMethod method = entry2.getKey();
-				ServletMethodObject object = entry2.getValue();
-				rules.put(rkey(method.name(), Kits.getServletPath(params.namespace, lookupPath, null)), object);
-				if (StringKit.isEmpty(lookupPath)) {
-					rules.put(rkey(method.name(), Kits.getServletPath(params.namespace, "/", null)), object); // FIXBUG: special for home page
-				}
+		// optimize rules
+		rules = new HashMap<String, ServletMethodObject>(objects.size());
+		for (ServletMethodObject object : objects) {
+			rules.put(rkey(object.method.name(), Kits.getServletPath(params.namespace, object.lookupPath, null)), object);
+			if (StringKit.isEmpty(object.lookupPath)) {
+				rules.put(rkey(object.method.name(), Kits.getServletPath(params.namespace, "/", null)), object); // FIXBUG: special for home page
 			}
-
 		}
 	}
 

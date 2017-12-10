@@ -9,8 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpMethod;
-
 import com.github.obase.Page;
 import com.github.obase.security.Principal;
 
@@ -286,10 +284,6 @@ public final class Kit extends Kits {
 
 	public String getServletPath(String lookupPath) {
 		return Kits.getServletPath(request, lookupPath);
-	}
-
-	public HttpMethod getHttpMethod() {
-		return Kits.getHttpMethod(request);
 	}
 
 	public Wsid getWsid() {

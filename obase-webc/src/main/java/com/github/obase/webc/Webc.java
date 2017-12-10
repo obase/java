@@ -78,7 +78,6 @@ public interface Webc {
 	AuthType DEFAULT_AUTH_TYPE = AuthType.PERMISSION;
 
 	String INVOKER_SERVICE_PREFIX = "HttpInvokerServiceExporter$";
-	String ATTR_HTTP_METHOD = "$_HTTP_METHOD";
 	String ATTR_WSID = "$_WSID";
 	String ATTR_PRINCIPAL = "$_PRINCIPAL";
 	String ATTR_NAMESPACE = "$_NAMESPACE";

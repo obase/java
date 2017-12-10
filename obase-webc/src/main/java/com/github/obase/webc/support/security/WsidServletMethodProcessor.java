@@ -1,30 +1,32 @@
 package com.github.obase.webc.support.security;
 
+import static com.github.obase.webc.Webc.ATTR_PRINCIPAL;
+import static com.github.obase.webc.Webc.ATTR_WSID;
+import static com.github.obase.webc.Webc.COMMA;
+import static com.github.obase.webc.Webc.DEFAULT_TIMEOUT_SECOND;
+import static com.github.obase.webc.Webc.DEFAULT_WSID_TOKEN_BASE;
+import static com.github.obase.webc.Webc.SC_INVALID_ACCESS;
+import static com.github.obase.webc.Webc.SC_PERMISSION_DENIED;
+
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpMethod;
-
 import com.github.obase.json.Jsons;
 import com.github.obase.kit.StringKit;
+import com.github.obase.security.Principal;
 import com.github.obase.webc.AuthType;
 import com.github.obase.webc.Kits;
 import com.github.obase.webc.ServletMethodObject;
 import com.github.obase.webc.Webc;
-
-import static com.github.obase.webc.Webc.*;
-
+import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.Wsid;
 import com.github.obase.webc.WsidSession;
 import com.github.obase.webc.config.WebcConfig.FilterInitParam;
-import com.github.obase.security.Principal;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 /**
@@ -36,13 +38,11 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	protected String wsidDomain;
 	protected String wsidName;
 	protected long timeoutMillis;
-	protected AuthType defaultAuthType;
 	protected final Set<String> refererDomainSet = new HashSet<String>();
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
-		super.setup(params, rules);
-
+	public void init(FilterInitParam params) {
+		super.init(params);
 		wsidTokenBase = params.wsidTokenBase;
 		if (wsidTokenBase == 0) {
 			wsidTokenBase = DEFAULT_WSID_TOKEN_BASE;
@@ -51,12 +51,8 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		if (timeoutMillis == 0) {
 			timeoutMillis = DEFAULT_TIMEOUT_SECOND * 1000;
 		}
-		defaultAuthType = params.defaultAuthType;
-		if (defaultAuthType == null) {
-			defaultAuthType = DEFAULT_AUTH_TYPE;
-		}
 		if (params.refererDomain != null) {
-			Collections.addAll(refererDomainSet, StringKit.split(params.refererDomain, COMMA, true));
+			refererDomainSet.addAll(StringKit.split2List(params.refererDomain, COMMA, true));
 		}
 		if (params.wsidDomain != null) {
 			wsidDomain = params.wsidDomain;
@@ -123,7 +119,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 		}
 		// step2: check permission
 		if (object.auth == AuthType.PERMISSION) {
-			principal = validatePermission(principal, Kits.getHttpMethod(request), object);
+			principal = validatePermission(principal, object);
 			if (principal == null) {
 				sendError(response, SC_PERMISSION_DENIED, SC_PERMISSION_DENIED, "Permission denied!");
 				return null;
@@ -148,7 +144,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	 * 
 	 * Override for subclass
 	 */
-	protected Principal validatePermission(Principal principal, HttpMethod method, ServletMethodObject object) throws IOException {
+	protected Principal validatePermission(Principal principal, ServletMethodObject object) throws IOException {
 		return principal;
 	}
 

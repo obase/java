@@ -5,8 +5,7 @@ import static com.github.obase.webc.Webc.SC_MISSING_TOKEN;
 import static com.github.obase.webc.Webc.SC_MISSING_VERIFIER;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
@@ -43,7 +41,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	protected String[] controlSuffixArray;
 
 	@Override
-	public void setup(FilterInitParam params, Map<String, Map<HttpMethod, ServletMethodObject>> rules) throws ServletException {
+	public void init(FilterInitParam params) {
 		this.params = params;
 		this.sendError = params.sendError;
 		if (params.controlPrefix != null) {
@@ -52,8 +50,18 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 		if (params.controlSuffix != null) {
 			this.controlSuffixArray = StringKit.split(params.controlSuffix, Webc.COMMA, true);
 		}
+	}
+
+	@Override
+	public void setup(Collection<ServletMethodObject> objects) throws ServletException {
 		if (logger.isInfoEnabled()) {
-			logger.info("Load lookupPath:" + rules.keySet());
+			StringBuilder sb = new StringBuilder(4096);
+			sb.append("Lookup path: ");
+			for (ServletMethodObject object : objects) {
+				sb.append(object.lookupPath).append(',');
+			}
+			sb.setLength(sb.length() - 1);
+			logger.info(sb);
 		}
 	}
 
@@ -69,9 +77,6 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 			while (t instanceof WrappedException) {
 				t = t.getCause();
 			}
-
-			// Important
-			logger.error("Error: " + t.getMessage(), t);
 
 			int sc = 0, errno = 0;
 			String errmsg = null;
@@ -93,23 +98,19 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				sc = Webc.SC_SERVER_ERROR;
 				errno = Message.ERRNO_UNDEFINED;
 				errmsg = t.getMessage();
-
-				if (logger.isErrorEnabled()) {
-					logger.error(errmsg, t);
-				}
 			}
 
 			try {
 				sendError(response, sc, errno, errmsg);
 				posterror(sc, errno, errmsg, t);
 			} catch (IOException e) {
-				logger.error("Write error message failed", e);
+				logger.error("Process error failed", e);
 			}
 		}
 	}
 
 	protected void posterror(int sc, int errno, String errmsg, Throwable t) {
-		// for subclass
+		logger.error(String.format("sc=%d,errno=%d,errmsg=%s", sc, errno, errmsg), t);
 	}
 
 	// lookup path = package path + class path + method path, it will ignore if "$"
@@ -188,7 +189,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 	}
 
-	private String ltrimControlPrefix(Package pack) {
+	protected String ltrimControlPrefix(Package pack) {
 		StringBuilder sb = new StringBuilder(pack.getName());
 		if (ArrayKit.isNotEmpty(controlPrefixArray)) {
 			for (String p : controlPrefixArray) {
@@ -211,7 +212,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 		return sb.toString();
 	}
 
-	private String rtrimControllSuffix(Class<?> claz) {
+	protected String rtrimControllSuffix(Class<?> claz) {
 		StringBuilder sb = new StringBuilder(claz.getName());
 		int idx;
 		if (ArrayKit.isNotEmpty(controlSuffixArray)) {
@@ -250,14 +251,6 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				Kits.writeErrorMessage(response, errno, errmsg);
 			}
 		}
-	}
-
-	public static Map<HttpMethod, ServletMethodObject> fillObject(ServletMethodObject object) {
-		Map<HttpMethod, ServletMethodObject> map = new HashMap<HttpMethod, ServletMethodObject>(HttpMethod.values().length);
-		for (HttpMethod m : HttpMethod.values()) {
-			map.put(m, object);
-		}
-		return map;
 	}
 
 }
