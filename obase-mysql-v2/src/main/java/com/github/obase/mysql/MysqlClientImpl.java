@@ -92,7 +92,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 									logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 								}
 								if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+									throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 								}
 							}
 						}
@@ -120,7 +120,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 											logger.info(String.format("Load @Table: %s %s", classMetaInfo.tableName, classMetaInfo.columns));
 										}
 										if ((tableMetaInfo = tableMetaInfoMap.put(classMetaInfo.tableName, classMetaInfo)) != null) {
-											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate @Table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
+											throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_DUBLICATE_TABLE, "Duplicate table: " + classMetaInfo.tableName + ", please check class:" + classMetaInfo.internalName + "," + tableMetaInfo.internalName);
 										}
 									}
 								}
@@ -179,7 +179,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 		}
 
 		if (logger.isInfoEnabled()) {
-			logger.info(String.format("Mysqlclient initialization successful, loading %d Tables, %d Metas, and %d SQLs", tableMetaInfoMap.size(), metaMetaInfoMap.size(), statementCache.size()));
+			logger.info(String.format("Mysqlclient initialization successful, load %d tables, %d metas, and %d statements", tableMetaInfoMap.size(), metaMetaInfoMap.size(), statementCache.size()));
 		}
 	}
 
