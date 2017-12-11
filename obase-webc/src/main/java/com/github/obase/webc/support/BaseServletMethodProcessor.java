@@ -118,7 +118,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	@Override
 	public String lookup(ServletController servletController, Controller controller, Class<?> targetClass, ServletMethod servletMethod, String methodName) {
 
-		StringBuilder sb = new StringBuilder(512);
+		StringBuilder sb = new StringBuilder(128);
 		String tmp;
 
 		if (servletController != null) {
@@ -214,7 +214,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	protected String rtrimControllSuffix(Class<?> claz) {
-		StringBuilder sb = new StringBuilder(claz.getName());
+		StringBuilder sb = new StringBuilder(claz.getSimpleName());
 		int idx;
 		if (ArrayKit.isNotEmpty(controlSuffixArray)) {
 			for (String s : controlSuffixArray) {
