@@ -24,7 +24,7 @@ public final class ServletMethodObject {
 	public ServletMethodObject(HttpMethod method, String lookupPath, AuthType auth, boolean csrf, String api, String category, String remark, ServletMethodHandler handler) {
 		this.method = method;
 		this.lookupPath = lookupPath;
-		this.auth = auth;
+		this.auth = auth == null ? AuthType.NONE : auth; // make sure not null
 		this.csrf = csrf;
 		this.api = api;
 		this.category = category;
@@ -42,7 +42,7 @@ public final class ServletMethodObject {
 			this.category = annotation.category();
 			this.remark = annotation.remark();
 		} else {
-			this.auth = null;
+			this.auth = defaultAuthType;
 			this.csrf = false;
 			this.api = null;
 			this.category = null;
