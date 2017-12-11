@@ -131,8 +131,10 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 					}
 					sb.append(tmp);
 				} else {
-					sb.append('/');
-					sb.append(ltrimControlPrefix(targetClass.getPackage()));
+					tmp = ltrimControlPrefix(targetClass.getPackage());
+					if (StringKit.isNotEmpty(tmp)) {
+						sb.append('/').append(tmp);
+					}
 				}
 			}
 
@@ -145,8 +147,10 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 					}
 					sb.append(tmp);
 				} else {
-					sb.append('/');
-					sb.append(rtrimControllSuffix(targetClass));
+					tmp = rtrimControllSuffix(targetClass);
+					if (StringKit.isNotEmpty(tmp)) {
+						sb.append('/').append(tmp);
+					}
 				}
 			}
 		} else {
@@ -159,10 +163,14 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 					}
 					sb.append(tmp);
 				} else {
-					sb.append('/');
-					sb.append(ltrimControlPrefix(targetClass.getPackage()));
-					sb.append('/');
-					sb.append(rtrimControllSuffix(targetClass));
+					tmp = ltrimControlPrefix(targetClass.getPackage());
+					if (StringKit.isNotEmpty(tmp)) {
+						sb.append('/').append(tmp);
+					}
+					tmp = rtrimControllSuffix(targetClass);
+					if (StringKit.isNotEmpty(tmp)) {
+						sb.append('/').append(tmp);
+					}
 				}
 			}
 		}
@@ -191,44 +199,54 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 	}
 
 	protected String ltrimControlPrefix(Package pack) {
-		StringBuilder sb = new StringBuilder(pack.getName());
+
+		String name = pack.getName();
+		int plen, nlen = name.length();
 		if (ArrayKit.isNotEmpty(controlPrefixArray)) {
 			for (String p : controlPrefixArray) {
-				if (sb.indexOf(p) == 0 || sb.charAt(p.length()) == '.') {
-					sb.delete(0, p.length());
-					break;
+				if (name.startsWith(p)) {
+					plen = p.length();
+					if (plen == nlen) {
+						return "";
+					} else if (p.charAt(plen - 1) == '.') {
+						return name.substring(plen);
+					} else if (name.charAt(plen) == '.') {
+						return name.substring(plen + 1);
+					}
 				}
 			}
 		} else {
-			int pos = sb.indexOf(Webc.DEFAULT_CONTROL_PREFIX);
-			if (pos == 0 || (pos > 0 && sb.charAt(pos - 1) == '.')) {
-				sb.delete(0, pos + Webc.DEFAULT_CONTROL_PREFIX.length());
+			int pos = name.indexOf(Webc.DEFAULT_CONTROL_PREFIX);
+			if (pos != -1) {
+				plen = Webc.DEFAULT_CONTROL_PREFIX.length();
+				if ((pos == 0 || name.charAt(pos - 1) == '.')) {
+					if (pos + plen == nlen) {
+						return "";
+					} else if (name.charAt(pos + plen) == '.') {
+						return name.substring(pos + plen + 1);
+					}
+				}
 			}
 		}
-		for (int i = 0, n = sb.length(); i < n; i++) {
-			if (sb.charAt(i) == '.') {
-				sb.setCharAt(i, '/');
-			}
-		}
-		return sb.toString();
+		return name;
 	}
 
 	protected String rtrimControllSuffix(Class<?> claz) {
-		StringBuilder sb = new StringBuilder(claz.getSimpleName());
-		int idx;
+		String name = claz.getSimpleName();
+		StringBuilder sb = new StringBuilder(name);
 		if (ArrayKit.isNotEmpty(controlSuffixArray)) {
 			for (String s : controlSuffixArray) {
-				if ((idx = sb.lastIndexOf(s)) == (sb.length() - s.length())) {
-					sb.delete(idx, sb.length());
+				if (name.endsWith(s)) {
+					sb.setLength(sb.length() - s.length());
 					break;
 				}
 			}
 		} else {
-			if ((idx = sb.lastIndexOf(Webc.DEFAULT_CONTROL_SUFFIX)) == (sb.length() - Webc.DEFAULT_CONTROL_SUFFIX.length())) {
-				sb.delete(idx, sb.length());
+			if (name.endsWith(Webc.DEFAULT_CONTROL_SUFFIX)) {
+				sb.setLength(sb.length() - Webc.DEFAULT_CONTROL_SUFFIX.length());
 			}
 		}
-		char ch = sb.charAt(0);
+		char ch = name.charAt(0);
 		if (ch >= 'A' && ch <= 'Z') {
 			sb.setCharAt(0, (char) (ch + 32));
 		}
