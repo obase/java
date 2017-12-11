@@ -214,6 +214,10 @@ public class HttpServer {
 - java代码
 
 ```
+
+//注意org.springframework.boot.web.servlet.ServletContextInitializer
+//不是javax.servlet.ServletContainerInitializer
+
 package test.main;
 
 import org.springframework.boot.SpringApplication;
