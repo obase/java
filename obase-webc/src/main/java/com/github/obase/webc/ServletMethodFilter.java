@@ -11,7 +11,7 @@ public interface ServletMethodFilter {
 
 	boolean process(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
-	boolean matches(String lookupPath, Class<?> targetClass, String methodName, ServletMethod annotation);
+	boolean matches(Class<?> targetClass, String methodName, ServletMethod annotation, String lookupPath);
 
 	int getOrder();
 

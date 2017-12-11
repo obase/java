@@ -7,11 +7,10 @@ import com.github.obase.webc.annotation.ServletMethod;
 /**
  * 保存ServletMethod的关系规则
  */
-public class ServletMethodObject {
+public final class ServletMethodObject {
 
 	public final HttpMethod method;
 	public final String lookupPath;
-	public final ServletMethodHandler handler;
 
 	public final AuthType auth;
 	public final boolean csrf; // check csrf
@@ -19,27 +18,42 @@ public class ServletMethodObject {
 	public final String category; // category of the api
 	public final String remark; // summary to the api
 
-	public ServletMethodObject(HttpMethod method, String lookupPath, ServletMethodHandler handler, ServletMethod annotation, AuthType defaultAuthType) {
+	public final ServletMethodHandler handler; // 处理句柄缓存,允许用户替换
+
+	// 提供方便给processor.setup替换
+	public ServletMethodObject(HttpMethod method, String lookupPath, AuthType auth, boolean csrf, String api, String category, String remark, ServletMethodHandler handler) {
 		this.method = method;
 		this.lookupPath = lookupPath;
+		this.auth = auth;
+		this.csrf = csrf;
+		this.api = api;
+		this.category = category;
+		this.remark = remark;
 		this.handler = handler;
-		if (annotation != null) {
-			this.auth = replaceDefault(annotation.auth(), defaultAuthType);
-			this.csrf = annotation.csrf();
-			this.api = annotation.api();
-			this.category = annotation.category();
-			this.remark = annotation.remark();
-		} else {
-			this.auth = null;
-			this.csrf = false;
-			this.api = null;
-			this.category = null;
-			this.remark = null;
-		}
 	}
 
-	private AuthType replaceDefault(AuthType authType, AuthType defaultAuthType) {
-		return authType != AuthType.DEFAULT ? authType : defaultAuthType;
+	public static ServletMethodObject create(HttpMethod method, String lookupPath, ServletMethod annotation, AuthType defaultAuthType, ServletMethodHandler handler) {
+
+		AuthType auth = null;
+		boolean csrf = false;
+		String api = null;
+		String category = null;
+		String remark = null;
+		if (annotation != null) {
+			auth = annotation.auth() == AuthType.DEFAULT ? defaultAuthType : annotation.auth();
+			csrf = annotation.csrf();
+			api = annotation.api();
+			category = annotation.category();
+			remark = annotation.remark();
+		} else {
+			auth = null;
+			csrf = false;
+			api = null;
+			category = null;
+			remark = null;
+		}
+
+		return new ServletMethodObject(method, lookupPath, auth, csrf, api, category, remark, handler);
 	}
 
 	@Override

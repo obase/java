@@ -1,7 +1,7 @@
 package com.github.obase.webc;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -97,7 +97,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 						methods = HttpMethod.values(); // default all
 					}
 					for (HttpMethod m : methods) {
-						ServletMethodObject object = new ServletMethodObject(m, lookupPath, handler, servletMethod, defaultAuthType);
+						ServletMethodObject object = ServletMethodObject.create(m, lookupPath, servletMethod, defaultAuthType, handler);
 						if (!objects.add(object)) {
 							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + " ==> " + method);
 						}
@@ -192,7 +192,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		}
 		LinkedList<ServletMethodFilter> ret = new LinkedList<ServletMethodFilter>();
 		for (ServletMethodFilter filter : servletFilters) {
-			if (filter.matches(lookupPath, userClass, methodName, annotation)) {
+			if (filter.matches(userClass, methodName, annotation, lookupPath)) {
 				ret.add(filter);
 			}
 		}
@@ -213,10 +213,10 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 			c = ClassKit.defineClass(className, data);
 		}
 
-		WeakReference<ServletMethodHandler> ref = ServletMethodHandlerRefs.get(c);
+		SoftReference<ServletMethodHandler> ref = ServletMethodHandlerRefs.get(c);
 		if (ref == null || ref.get() == null) {
 			try {
-				ref = new WeakReference<ServletMethodHandler>(((ServletMethodHandler) c.newInstance()).bind(bean, filters));
+				ref = new SoftReference<ServletMethodHandler>(((ServletMethodHandler) c.newInstance()).bind(bean, filters));
 			} catch (Exception e) {
 				throw new WrappedException(e);
 			}
@@ -226,5 +226,5 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 	}
 
 	/* 全局缓存池. 处理API与WEB同时需要的情况. 注意:为避免不同ClassLoader,不能使用class name作为主键 */
-	private static final Map<Class<?>, WeakReference<ServletMethodHandler>> ServletMethodHandlerRefs = new HashMap<Class<?>, WeakReference<ServletMethodHandler>>();
+	private static final Map<Class<?>, SoftReference<ServletMethodHandler>> ServletMethodHandlerRefs = new HashMap<Class<?>, SoftReference<ServletMethodHandler>>();
 }

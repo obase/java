@@ -176,8 +176,7 @@ public interface Webc {
 				mv.visitEnd();
 			}
 			{
-				mv = cw.visitMethod(ACC_PUBLIC, "service", Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), null,
-						new String[] { Type.getInternalName(Exception.class) });
+				mv = cw.visitMethod(ACC_PUBLIC, "service", Type.getMethodDescriptor(Type.getType(void.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), null, new String[] { Type.getInternalName(Exception.class) });
 				mv.visitCode();
 				Label l0 = new Label();
 				mv.visitLabel(l0);
@@ -194,9 +193,7 @@ public interface Webc {
 				mv.visitJumpInsn(GOTO, l1);
 				Label l2 = new Label();
 				mv.visitLabel(l2);
-				mv.visitFrame(Opcodes.F_FULL, 7,
-						new Object[] { internalName, Type.getInternalName(HttpServletRequest.class), Type.getInternalName(HttpServletResponse.class), Opcodes.TOP, Opcodes.INTEGER, Opcodes.INTEGER, Type.getDescriptor(ServletMethodFilter[].class) }, 0,
-						new Object[] {});
+				mv.visitFrame(Opcodes.F_FULL, 7, new Object[] { internalName, Type.getInternalName(HttpServletRequest.class), Type.getInternalName(HttpServletResponse.class), Opcodes.TOP, Opcodes.INTEGER, Opcodes.INTEGER, Type.getDescriptor(ServletMethodFilter[].class) }, 0, new Object[] {});
 				mv.visitVarInsn(ALOAD, 6);
 				mv.visitVarInsn(ILOAD, 4);
 				mv.visitInsn(AALOAD);
@@ -207,8 +204,7 @@ public interface Webc {
 				mv.visitVarInsn(ALOAD, 3);
 				mv.visitVarInsn(ALOAD, 1);
 				mv.visitVarInsn(ALOAD, 2);
-				mv.visitMethodInsn(INVOKEINTERFACE, Type.getInternalName(ServletMethodFilter.class), "process", Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)),
-						true);
+				mv.visitMethodInsn(INVOKEINTERFACE, Type.getInternalName(ServletMethodFilter.class), "process", Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(HttpServletRequest.class), Type.getType(HttpServletResponse.class)), true);
 
 				Label l4 = new Label();
 				mv.visitJumpInsn(IFNE, l4);
