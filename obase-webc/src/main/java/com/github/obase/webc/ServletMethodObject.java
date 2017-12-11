@@ -42,7 +42,7 @@ public final class ServletMethodObject {
 			this.category = annotation.category();
 			this.remark = annotation.remark();
 		} else {
-			this.auth = null;
+			this.auth = defaultAuthType;
 			this.csrf = false;
 			this.api = null;
 			this.category = null;
