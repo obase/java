@@ -133,7 +133,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				} else {
 					tmp = ltrimControlPrefix(targetClass.getPackage());
 					if (StringKit.isNotEmpty(tmp)) {
-						sb.append('/').append(tmp);
+						sb.append('/').append(tmp.replace('.', '/'));
 					}
 				}
 			}
@@ -165,7 +165,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 				} else {
 					tmp = ltrimControlPrefix(targetClass.getPackage());
 					if (StringKit.isNotEmpty(tmp)) {
-						sb.append('/').append(tmp);
+						sb.append('/').append(tmp.replace('.', '/'));
 					}
 					tmp = rtrimControllSuffix(targetClass);
 					if (StringKit.isNotEmpty(tmp)) {
