@@ -7,6 +7,13 @@ ObaseÏµÁĞÊÇÒ»Ì×»ùÓÚ"spring+mysql+redis"µÄJavaºó¶Ë¿ª·¢¼¼Êõ, ¿ÉÒÔËµÊÇ±ÊÕß¶àÄê¿ª·¢¾
 * obase-test: Ç¶ÈëÊ½Tomcat8 + Junit4, Ö§³Ö»·¾³±äÁ¿µÄ¶¯Ì¬×¢Èë. ¿ÉÒÔÈİÒ×²âÊÔhttpsºÍspring bean.
 * obase-loader: ¼ÓÃÜ×Ö½ÚÂë·¢²¼Ê±ÓÃµÄclassloader. ¶ÔÓÚÉÌÒµ´úÂë±È½ÏÊµÓÃ!
 
+'''
+ĞÂ°æ±¾,ĞÂÆøÏó,obase¾­¹ı0.x°æ±¾¹ı¶Éºó½øÈëÕıÊ½¹ı³Ì. 
+- obase-webÓëspring-bootµÄÉè¼ÆÀíÄîÎŞ·ì¶Ô½Ó, 
+- obase-mysqlÖ§³Ö¶¯Ì¬sql, ÍêÃÀ¼¯³ÉhibernateÓëmybatisµÄÓÅÊÆ! 
+ĞÂÔ´ÂëÔÚ¹«Ë¾ÄÚ²¿ÔËĞĞ²âÊÔ, ´ıÎÈ¶¨ÎŞÎóºóÔÙÕûÀíÏà¹ØÎÄµµ!
+'''
+
 ¿ªÔ´obaseÔú¸ù"spring+mysql+redis", ¿ò¼ÜË¼Â·¿ÉÒÔÀ©Õ¹µ½ÆäËû... Èçmemcache, postsql. ÔÚ´Ë¾Í²»×öÌÖÂÛÁË. 
 
 # obase-webc
