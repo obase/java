@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<properties>
-		<spring.version>4.3.12.RELEASE</spring.version>
+		<spring.version>4.3.13.RELEASE</spring.version>
 		<servlet.version>3.1.0</servlet.version>
 		<jsp.version>2.3.1</jsp.version>
 		<java.version>1.8</java.version>
@@ -17,7 +17,7 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/obase/java</url>
 	<description>
-		技术支撑:Spring4.3.12+/JDK8+/JavaEE6+/Servlet3.1+/JSP2.3+. 
+		技术支撑:Spring4.3.13+/JDK8+/JavaEE6+/Servlet3.1+/JSP2.3+. 
 		具体参见:http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/index.html#6
 	</description>
 
