@@ -71,7 +71,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 	private void setupRules(Collection<ServletMethodObject> rules, String lookupPath, ServletMethodHandler handler) {
 		for (HttpMethod method : HttpMethod.values()) {
-			rules.add(new ServletMethodObject(method, lookupPath, handler, null, AuthType.NONE));
+			rules.add(new ServletMethodObject(method, lookupPath, null, AuthType.NONE, handler));
 		}
 	}
 

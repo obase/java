@@ -32,28 +32,23 @@ public final class ServletMethodObject {
 		this.handler = handler;
 	}
 
-	public static ServletMethodObject create(HttpMethod method, String lookupPath, ServletMethod annotation, AuthType defaultAuthType, ServletMethodHandler handler) {
-
-		AuthType auth = null;
-		boolean csrf = false;
-		String api = null;
-		String category = null;
-		String remark = null;
+	public ServletMethodObject(HttpMethod method, String lookupPath, ServletMethod annotation, AuthType defaultAuthType, ServletMethodHandler handler) {
+		this.method = method;
+		this.lookupPath = lookupPath;
 		if (annotation != null) {
-			auth = annotation.auth() == AuthType.DEFAULT ? defaultAuthType : annotation.auth();
-			csrf = annotation.csrf();
-			api = annotation.api();
-			category = annotation.category();
-			remark = annotation.remark();
+			this.auth = annotation.auth() == AuthType.DEFAULT ? defaultAuthType : annotation.auth();
+			this.csrf = annotation.csrf();
+			this.api = annotation.api();
+			this.category = annotation.category();
+			this.remark = annotation.remark();
 		} else {
-			auth = null;
-			csrf = false;
-			api = null;
-			category = null;
-			remark = null;
+			this.auth = null;
+			this.csrf = false;
+			this.api = null;
+			this.category = null;
+			this.remark = null;
 		}
-
-		return new ServletMethodObject(method, lookupPath, auth, csrf, api, category, remark, handler);
+		this.handler = handler;
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		};
 
 		for (HttpMethod method : HttpMethod.values()) {
-			rules.add(new ServletMethodObject(method, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, postHiidoLoginObject, null, AuthType.NONE));
+			rules.add(new ServletMethodObject(method, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, null, AuthType.NONE, postHiidoLoginObject));
 		}
 
 		super.setup(rules);
