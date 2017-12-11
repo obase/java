@@ -1,7 +1,10 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.PstmtMeta;
 
 /**
  * 用于动态SQL的元数据辅助类

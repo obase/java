@@ -1,9 +1,12 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.PstmtMeta;
 
 public final class SPstmtMeta extends PstmtMeta {
 

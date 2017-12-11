@@ -1,4 +1,7 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.xml;
+
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.impl.ParamBuilder;
 
 public interface Part {
 

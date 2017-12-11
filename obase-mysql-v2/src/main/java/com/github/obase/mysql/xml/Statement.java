@@ -1,10 +1,9 @@
 package com.github.obase.mysql.xml;
 
-import com.github.obase.mysql.DPstmtMeta;
 import com.github.obase.mysql.JdbcMeta;
-import com.github.obase.mysql.ParamBuilder;
-import com.github.obase.mysql.Part;
-import com.github.obase.mysql.SPstmtMeta;
+import com.github.obase.mysql.impl.DPstmtMeta;
+import com.github.obase.mysql.impl.ParamBuilder;
+import com.github.obase.mysql.impl.SPstmtMeta;
 
 /**
  * 语句Union结构,根据dynamic区分是动态还是静态

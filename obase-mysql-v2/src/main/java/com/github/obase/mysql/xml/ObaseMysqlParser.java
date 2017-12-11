@@ -16,7 +16,6 @@ import org.w3c.dom.Node;
 import com.github.obase.MessageException;
 import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.MysqlErrno;
-import com.github.obase.mysql.Part;
 import com.github.obase.mysql.sql.Sql;
 import com.github.obase.mysql.sql.SqlDqlKit;
 import com.github.obase.mysql.sql.SqlKit;

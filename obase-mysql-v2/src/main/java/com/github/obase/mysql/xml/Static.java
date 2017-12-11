@@ -3,8 +3,7 @@ package com.github.obase.mysql.xml;
 import java.util.List;
 
 import com.github.obase.mysql.JdbcMeta;
-import com.github.obase.mysql.ParamBuilder;
-import com.github.obase.mysql.Part;
+import com.github.obase.mysql.impl.ParamBuilder;
 
 public final class Static implements Part {
 

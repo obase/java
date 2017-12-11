@@ -4,8 +4,7 @@ import java.util.Collection;
 
 import com.github.obase.kit.StringKit;
 import com.github.obase.mysql.JdbcMeta;
-import com.github.obase.mysql.ParamBuilder;
-import com.github.obase.mysql.Part;
+import com.github.obase.mysql.impl.ParamBuilder;
 
 /**
  * 标签只有2种情况:

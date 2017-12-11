@@ -1,4 +1,4 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +16,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.github.obase.Page;
 import com.github.obase.kit.CollectKit;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.MysqlClient;
+import com.github.obase.mysql.PstmtMeta;
 import com.github.obase.mysql.sql.SqlDqlKit;
 import com.github.obase.spring.transaction.DataSourceUtils;
 

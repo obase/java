@@ -1,4 +1,4 @@
-package com.github.obase.mysql;
+package com.github.obase.mysql.impl;
 
 import static com.github.obase.kit.StringKit.isNotEmpty;
 
@@ -18,6 +18,8 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import com.github.obase.MessageException;
 import com.github.obase.Page;
 import com.github.obase.kit.ClassKit;
+import com.github.obase.mysql.JdbcMeta;
+import com.github.obase.mysql.MysqlErrno;
 import com.github.obase.mysql.asm.AsmKit;
 import com.github.obase.mysql.data.ClassMetaInfo;
 import com.github.obase.mysql.sql.SqlDdlKit;

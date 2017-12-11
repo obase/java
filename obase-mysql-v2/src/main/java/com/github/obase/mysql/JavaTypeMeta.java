@@ -18,14 +18,14 @@ public abstract class JavaTypeMeta {
 	// ===========================================
 	// 缓存属性
 	// ===========================================
-	static final Map<Class<?>, JavaTypeMeta> EXTENDS = new ConcurrentHashMap<Class<?>, JavaTypeMeta>();
+	static final Map<Class<?>, JavaTypeMeta> CACHE = new ConcurrentHashMap<Class<?>, JavaTypeMeta>();
 
-	public static void extend(Class<?> type, JavaTypeMeta meta) {
-		EXTENDS.put(type, meta);
+	public static void set(Class<?> type, JavaTypeMeta meta) {
+		CACHE.put(type, meta);
 	}
 
 	public static JavaTypeMeta get(Class<?> type) {
-		return EXTENDS.get(type);
+		return CACHE.get(type);
 	}
 
 }
