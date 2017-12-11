@@ -72,7 +72,7 @@ public interface Webc {
 	String DEFAULT_NAMESPACE_FOR_SERVICE = "service";
 	int DEFAULT_TIMEOUT_SECOND = 60 * 60; // default 1 hour timeout
 
-	String DEFAULT_CONTROL_PREFIX = "controller.";
+	String DEFAULT_CONTROL_PREFIX = "controller"; // @Since: 1.2.0, delete the last '.'
 	String DEFAULT_CONTROL_SUFFIX = "Controller";
 	int DEFAULT_WSID_TOKEN_BASE = 49999;
 	AuthType DEFAULT_AUTH_TYPE = AuthType.PERMISSION;
