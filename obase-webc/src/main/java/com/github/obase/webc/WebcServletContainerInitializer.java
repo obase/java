@@ -55,8 +55,11 @@ public class WebcServletContainerInitializer implements ServletContainerInitiali
 						initWebkitFrameworkFilter(ServletMethodDispatcherFilter.class, servletContext, mergeInitParamForServlet(servletContext, fc));
 					}
 				} else {
-					FilterInitParam fc = mergeInitParamForServlet(servletContext, new FilterInitParam());
-					if (StringKit.isNotEmpty(fc.contextConfigLocation)) {
+					String contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION2);
+					if (StringKit.isNotEmpty(contextConfigLocation)) {
+						FilterInitParam params = new FilterInitParam();
+						params.contextConfigLocation = contextConfigLocation;
+						FilterInitParam fc = mergeInitParamForServlet(servletContext, params);
 						initWebkitFrameworkFilter(ServletMethodDispatcherFilter.class, servletContext, fc);
 					}
 				}
@@ -67,8 +70,11 @@ public class WebcServletContainerInitializer implements ServletContainerInitiali
 						initWebkitFrameworkFilter(InvokerServiceDispatcherFilter.class, servletContext, mergeInitParamForService(servletContext, fc));
 					}
 				} else {
-					FilterInitParam fc = mergeInitParamForService(servletContext, new FilterInitParam());
-					if (StringKit.isNotEmpty(fc.contextConfigLocation)) {
+					String contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2);
+					if (StringKit.isNotEmpty(contextConfigLocation)) {
+						FilterInitParam params = new FilterInitParam();
+						params.contextConfigLocation = contextConfigLocation;
+						FilterInitParam fc = mergeInitParamForService(servletContext, params);
 						initWebkitFrameworkFilter(InvokerServiceDispatcherFilter.class, servletContext, fc);
 					}
 				}
@@ -116,9 +122,10 @@ public class WebcServletContainerInitializer implements ServletContainerInitiali
 		if (StringKit.isEmpty(params.namespace)) {
 			params.namespace = Webc.DEFAULT_NAMESPACE_FOR_SERVLET;
 		}
-		if (StringKit.isEmpty(params.contextConfigLocation)) {
-			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION2);
-		}
+		// @Since 1.2.0: Not using default servletContext.xml any more
+		// if (StringKit.isEmpty(params.contextConfigLocation)) {
+		// params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVLET_CONTEXT_CONFIG_LOCATION2);
+		// }
 		return params;
 	}
 
@@ -126,9 +133,10 @@ public class WebcServletContainerInitializer implements ServletContainerInitiali
 		if (StringKit.isEmpty(params.namespace)) {
 			params.namespace = Webc.DEFAULT_NAMESPACE_FOR_SERVICE;
 		}
-		if (StringKit.isEmpty(params.contextConfigLocation)) {
-			params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2);
-		}
+		// @Since 1.2.0: Not using default servletContext.xml any more
+		// if (StringKit.isEmpty(params.contextConfigLocation)) {
+		// params.contextConfigLocation = Webc.Util.getDefaultConfigLocation(servletContext, Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION, this.getClass(), Webc.DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2);
+		// }
 		return params;
 	}
 
