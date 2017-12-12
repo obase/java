@@ -34,7 +34,7 @@ public interface MysqlClient {
 
 	boolean queryFirst2(PstmtMeta pstmt, Object param) throws SQLException;
 
-	<T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
+	<T> List<T> query(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException;
 
 	<T> List<T> queryRange(PstmtMeta pstmt, Class<T> type, int offset, int count, Object param) throws SQLException;
 
@@ -117,7 +117,7 @@ public interface MysqlClient {
 	// XML处理方法
 	// =====================================================
 
-	<T> List<T> queryList(String queryId, Class<T> elemType, Object params) throws SQLException;
+	<T> List<T> query(String queryId, Class<T> elemType, Object params) throws SQLException;
 
 	<T> List<T> queryRange(String queryId, Class<T> elemType, int offset, int count, Object params) throws SQLException;
 
@@ -127,12 +127,12 @@ public interface MysqlClient {
 
 	<T> void queryPage(String queryId, Class<T> elemType, Page<T> page, Object params) throws SQLException;
 
-	int executeUpdate(String updateId, Object params) throws SQLException;
+	int execute(String updateId, Object params) throws SQLException;
 
-	<R> R executeUpdate(String updateId, Class<R> generateKeyType, Object param) throws SQLException;
+	<R> R execute(String updateId, Class<R> generateKeyType, Object param) throws SQLException;
 
-	<T> int[] executeBatch(String updateId, List<T> params) throws SQLException;
+	<T> int[] batchExecute(String updateId, List<T> params) throws SQLException;
 
-	<T, R> List<R> executeBatch(String updateId, Class<R> generateKeyType, List<T> params) throws SQLException;
+	<T, R> List<R> batchExecute(String updateId, Class<R> generateKeyType, List<T> params) throws SQLException;
 
 }

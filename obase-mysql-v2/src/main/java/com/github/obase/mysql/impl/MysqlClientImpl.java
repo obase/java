@@ -57,7 +57,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	public SPstmtMeta getSelectAllPstmtMeta(Class<?> key) {
-		return selectAllCache.get(key);
+		return selectListCache.get(key);
 	}
 
 	public SPstmtMeta getSelectPstmtMeta(Class<?> key) {
@@ -93,7 +93,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	// insertIgnore, replace等合并到对应的SQL中
 	// =============================================
 	final Map<String, Statement> statementCache = new HashMap<String, Statement>(); // xml中statement缓存
-	final Map<Class<?>, SPstmtMeta> selectAllCache = new HashMap<Class<?>, SPstmtMeta>(); // 全表查询,同时缓存limit,count
+	final Map<Class<?>, SPstmtMeta> selectListCache = new HashMap<Class<?>, SPstmtMeta>(); // 全表查询,同时缓存limit,count
 	final Map<Class<?>, SPstmtMeta> selectCache = new HashMap<Class<?>, SPstmtMeta>(); // 记录查询
 	final Map<Class<?>, SPstmtMeta> insertCache = new HashMap<Class<?>, SPstmtMeta>(); // 插入
 	final Map<Class<?>, SPstmtMeta> insertIgnoreCache = new HashMap<Class<?>, SPstmtMeta>(); // 插入忽略
@@ -199,7 +199,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 
 			// 初始化ORM相关的SQL
 			if (classMetaInfo.tableAnnotation != null) {
-				selectAllCache.put(clazz, SqlMetaKit.genSelectAllPstmt(classMetaInfo));
+				selectListCache.put(clazz, SqlMetaKit.genSelectAllPstmt(classMetaInfo));
 				selectCache.put(clazz, SqlMetaKit.genSelectPstmt(classMetaInfo));
 				insertCache.put(clazz, SqlMetaKit.genInsertPstmt(classMetaInfo));
 				insertIgnoreCache.put(clazz, SqlMetaKit.genInsertIgnorePstmt(classMetaInfo));
@@ -223,16 +223,16 @@ public class MysqlClientImpl extends MysqlClientOperation {
 
 	@Override
 	public <T> List<T> selectList(Class<T> table) throws SQLException {
-		SPstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectListCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
-		return queryList(pstmt, table, null);
+		return query(pstmt, table, null);
 	}
 
 	@Override
 	public <T> T selectFirst(Class<T> table) throws SQLException {
-		SPstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectListCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -241,7 +241,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 
 	@Override
 	public <T> List<T> selectRange(Class<T> table, int offset, int count) throws SQLException {
-		SPstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectListCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -250,7 +250,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 
 	@Override
 	public <T> void selectPage(Class<T> table, Page<T> page) throws SQLException {
-		SPstmtMeta pstmt = selectAllCache.get(table);
+		SPstmtMeta pstmt = selectListCache.get(table);
 		if (pstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found table: " + table);
 		}
@@ -501,12 +501,12 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	@Override
-	public <T> List<T> queryList(String queryId, Class<T> elemType, Object params) throws SQLException {
+	public <T> List<T> query(String queryId, Class<T> elemType, Object params) throws SQLException {
 		Statement xstmt = statementCache.get(queryId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + queryId);
 		}
-		return queryList(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
+		return query(xstmt.staticPstmtMeta != null ? xstmt.staticPstmtMeta : xstmt.dynamicPstmtMeta(JdbcMeta.getByObj(params), params), elemType, params);
 	}
 
 	@Override
@@ -546,7 +546,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	@Override
-	public int executeUpdate(String updateId, Object params) throws SQLException {
+	public int execute(String updateId, Object params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
@@ -555,7 +555,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	@Override
-	public <R> R executeUpdate(String updateId, Class<R> generateKeyType, Object params) throws SQLException {
+	public <R> R execute(String updateId, Class<R> generateKeyType, Object params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
@@ -564,7 +564,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	@Override
-	public <T> int[] executeBatch(String updateId, List<T> params) throws SQLException {
+	public <T> int[] batchExecute(String updateId, List<T> params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);
@@ -576,7 +576,7 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	}
 
 	@Override
-	public <T, R> List<R> executeBatch(String updateId, Class<R> generateKeyType, List<T> params) throws SQLException {
+	public <T, R> List<R> batchExecute(String updateId, Class<R> generateKeyType, List<T> params) throws SQLException {
 		Statement xstmt = statementCache.get(updateId);
 		if (xstmt == null) {
 			throw new MessageException(MysqlErrno.SOURCE, MysqlErrno.META_INFO_NOT_FOUND, "Not found statement: " + updateId);

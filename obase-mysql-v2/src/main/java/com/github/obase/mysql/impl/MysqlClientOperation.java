@@ -166,7 +166,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 	}
 
 	@Override
-	public <T> List<T> queryList(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
+	public <T> List<T> query(PstmtMeta pstmt, Class<T> type, Object param) throws SQLException {
 
 		if (showSql) {
 			logger.info("[SQL] " + pstmt);
