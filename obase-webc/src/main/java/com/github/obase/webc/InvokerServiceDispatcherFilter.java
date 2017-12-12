@@ -32,7 +32,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 	InvokerServiceProcessor processor;
 	AsyncListener listener;
 	long timeout;
-	Map<String, InvokerServiceObject> rulesMap;
+	Map<String, InvokerServiceObject> rules;
 
 	protected final void postProcessWebApplicationContext(ConfigurableWebApplicationContext wac) {
 		wac.addBeanFactoryPostProcessor(new InvokerServiceExporterBeanFactoryPostProcessor());
@@ -64,9 +64,9 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 		processor.setup(params, map);
 
 		// For performance: change lookupPath to servletPath and set to servletMethodHandlerMap
-		rulesMap = new HashMap<String, InvokerServiceObject>(map.size());
+		rules = new HashMap<String, InvokerServiceObject>(map.size());
 		for (Map.Entry<Class<?>, InvokerServiceObject> entry : map.entrySet()) {
-			rulesMap.put(Kits.getServletPath(params.namespace, '/' + entry.getKey().getCanonicalName().replace('.', '/'), null), entry.getValue());
+			rules.put(Kits.getServletPath(params.namespace, '/' + entry.getKey().getCanonicalName(), null), entry.getValue());
 		}
 	}
 
@@ -74,7 +74,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest request = (HttpServletRequest) req;
-		final InvokerServiceObject object = rulesMap.get(request.getServletPath());
+		final InvokerServiceObject object = rules.get(request.getServletPath());
 
 		if (object != null) {
 
@@ -84,7 +84,9 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				if (listener != null) {
 					actx.addListener(listener);
 				}
-				actx.setTimeout(timeout); // millis
+				if (timeout != 0) {
+					actx.setTimeout(timeout); // millis
+				}
 				actx.start(new Runnable() {
 					@Override
 					public void run() {
