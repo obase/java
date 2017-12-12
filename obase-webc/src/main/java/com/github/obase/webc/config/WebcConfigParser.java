@@ -48,7 +48,7 @@ public class WebcConfigParser extends DefaultHandler2 {
 
 		} else if (Props.asyncListener.equals(localName)) {
 
-		} else if (Props.timeoutSecond.equals(localName)) {
+		} else if (Props.asyncTimeout.equals(localName)) {
 
 		} else if (Props.sendError.equals(localName)) {
 
@@ -63,6 +63,10 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.wsidDomain.equals(localName)) {
 
 		} else if (Props.wsidName.equals(localName)) {
+
+		} else if (Props.wsidTimeout.equals(localName)) {
+
+		} else if (Props.offCsrf.equals(localName)) {
 
 		} else if (Props.defaultAuthType.equals(localName)) {
 
@@ -102,8 +106,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 			param.namespace = cleanContentAsString(null);
 		} else if (Props.asyncListener.equals(localName)) {
 			param.asyncListener = cleanContentAsString(null);
-		} else if (Props.timeoutSecond.equals(localName)) {
-			param.timeoutSecond = cleanContentAsInt(Webc.DEFAULT_TIMEOUT_SECOND);
+		} else if (Props.asyncTimeout.equals(localName)) {
+			param.asyncTimeout = cleanContentAsInt(0);
 		} else if (Props.sendError.equals(localName)) {
 			param.sendError = cleanContentAsBoolean(false);
 		} else if (Props.controlProcessor.equals(localName)) {
@@ -117,11 +121,17 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.wsidDomain.equals(localName)) {
 			param.wsidDomain = cleanContentAsString(null);
 		} else if (Props.wsidName.equals(localName)) {
-			param.wsidName = cleanContentAsString(null);
+			param.wsidName = cleanContentAsString(Webc.DEFAULT_WSID_NAME);
+		} else if (Props.wsidTimeout.equals(localName)) {
+			param.wsidTimeout = cleanContentAsInt(Webc.DEFAULT_WSID_TIMEOUT * 1000);
+		} else if (Props.offCsrf.equals(localName)) {
+			param.offCsrf = cleanContentAsBoolean(false);
 		} else if (Props.defaultAuthType.equals(localName)) {
 			String str = cleanContentAsString(null);
 			if (str != null) {
 				param.defaultAuthType = AuthType.valueOf(str);
+			} else {
+				param.defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
 			}
 		} else if (Props.refererDomain.equals(localName)) {
 			param.refererDomain = cleanContentAsString(null);

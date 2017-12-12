@@ -23,7 +23,7 @@ public class WebcConfig {
 		String service = "service";
 		String namespace = "namespace";
 		String asyncListener = "asyncListener";
-		String timeoutSecond = "timeoutSecond";
+		String asyncTimeout = "asyncTimeout";
 		String sendError = "sendError";
 		String controlProcessor = "controlProcessor";
 		String controlPrefix = "controlPrefix";
@@ -31,6 +31,8 @@ public class WebcConfig {
 		String wsidTokenBase = "wsidTokenBase";
 		String wsidDomain = "wsidDomain"; // For shared by multiple domain
 		String wsidName = "wsidName"; // For avoid cookie confict
+		String wsidTimeout = "wsidTimeout";
+		String offCsrf = "offCsrf";
 		String defaultAuthType = "defaultAuthType";
 		String refererDomain = "refererDomain";
 	}
@@ -46,7 +48,7 @@ public class WebcConfig {
 		public String namespace;
 		public String contextConfigLocation;
 		public String asyncListener;
-		public int timeoutSecond;
+		public int asyncTimeout; // 异步超时(毫秒) @Since 1.2.0
 		public boolean sendError;
 		public String controlProcessor;
 		public String controlPrefix; // multi values by comma
@@ -54,6 +56,8 @@ public class WebcConfig {
 		public int wsidTokenBase; // BKDRHash的base,默认为0
 		public String wsidDomain;
 		public String wsidName;
+		public int wsidTimeout; // 后台wsid超时(毫秒). @Since 1.2.0
+		public boolean offCsrf; // 是否关闭csrf. @Since 1.2.0
 		public AuthType defaultAuthType;
 		public String refererDomain; // multi values by comma
 	}
@@ -73,7 +77,7 @@ public class WebcConfig {
 		ret.namespace = getStringParam(filterConfig, Props.namespace, null);
 		ret.contextConfigLocation = getStringParam(filterConfig, Props.contextConfigLocation, null);
 		ret.asyncListener = getStringParam(filterConfig, Props.asyncListener, null);
-		ret.timeoutSecond = getIntParam(filterConfig, Props.timeoutSecond, 0);
+		ret.asyncTimeout = getIntParam(filterConfig, Props.asyncTimeout, 0);
 		ret.sendError = getBooleanParam(filterConfig, Props.sendError, false);
 		ret.controlProcessor = getStringParam(filterConfig, Props.controlProcessor, null);
 		ret.controlPrefix = getStringParam(filterConfig, Props.controlPrefix, null);
@@ -81,6 +85,8 @@ public class WebcConfig {
 		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
 		ret.wsidDomain = getStringParam(filterConfig, Props.wsidDomain, null);
 		ret.wsidName = getStringParam(filterConfig, Props.wsidName, null);
+		ret.wsidTimeout = getIntParam(filterConfig, Props.wsidTimeout, 0);
+		ret.offCsrf = getBooleanParam(filterConfig, Props.offCsrf, false);
 		String authTypeStr = getStringParam(filterConfig, Props.defaultAuthType, null);
 		if (authTypeStr != null) {
 			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
@@ -104,8 +110,8 @@ public class WebcConfig {
 			dynamic.setInitParameter(Props.asyncListener, param.asyncListener);
 		}
 
-		if (param.timeoutSecond != 0) {
-			dynamic.setInitParameter(Props.timeoutSecond, String.valueOf(param.timeoutSecond));
+		if (param.asyncTimeout != 0) {
+			dynamic.setInitParameter(Props.asyncTimeout, String.valueOf(param.asyncTimeout));
 		}
 
 		if (param.sendError) {
@@ -132,6 +138,14 @@ public class WebcConfig {
 		}
 		if (param.wsidName != null) {
 			dynamic.setInitParameter(Props.wsidName, param.wsidName);
+		}
+
+		if (param.wsidTimeout != 0) {
+			dynamic.setInitParameter(Props.wsidTimeout, String.valueOf(param.wsidTimeout));
+		}
+
+		if (param.offCsrf) {
+			dynamic.setInitParameter(Props.offCsrf, String.valueOf(param.offCsrf));
 		}
 
 		if (param.defaultAuthType != null) {

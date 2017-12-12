@@ -3,8 +3,6 @@ package com.github.obase.webc.support.security;
 import static com.github.obase.webc.Webc.ATTR_PRINCIPAL;
 import static com.github.obase.webc.Webc.ATTR_WSID;
 import static com.github.obase.webc.Webc.COMMA;
-import static com.github.obase.webc.Webc.DEFAULT_TIMEOUT_SECOND;
-import static com.github.obase.webc.Webc.DEFAULT_WSID_TOKEN_BASE;
 import static com.github.obase.webc.Webc.SC_INVALID_ACCESS;
 import static com.github.obase.webc.Webc.SC_PERMISSION_DENIED;
 
@@ -37,30 +35,20 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 	protected int wsidTokenBase;
 	protected String wsidDomain;
 	protected String wsidName;
-	protected long timeoutMillis;
+	protected int wsidTimeout;
 	protected final Set<String> refererDomainSet = new HashSet<String>();
 
 	@Override
 	public void init(FilterInitParam params) {
 		super.init(params);
 		wsidTokenBase = params.wsidTokenBase;
-		if (wsidTokenBase == 0) {
-			wsidTokenBase = DEFAULT_WSID_TOKEN_BASE;
-		}
-		timeoutMillis = params.timeoutSecond * 1000;
-		if (timeoutMillis == 0) {
-			timeoutMillis = DEFAULT_TIMEOUT_SECOND * 1000;
-		}
-		if (params.refererDomain != null) {
-			refererDomainSet.addAll(StringKit.split2List(params.refererDomain, COMMA, true));
-		}
 		if (params.wsidDomain != null) {
 			wsidDomain = params.wsidDomain;
 		}
-		if (params.wsidName != null) {
-			wsidName = params.wsidName;
-		} else {
-			wsidName = Wsid.COOKIE_NAME;
+		wsidName = params.wsidName;
+		wsidTimeout = params.wsidTimeout;
+		if (params.refererDomain != null) {
+			refererDomainSet.addAll(StringKit.split2List(params.refererDomain, COMMA, true));
 		}
 	}
 
@@ -88,7 +76,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 
 			// step1.2: check csrf
 			if (object.csrf) {
-				if (!wsid.validate(wsidTokenBase, timeoutMillis)) {
+				if (!wsid.validate(wsidTokenBase, wsidTimeout)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Wsid validate fail:" + Jsons.writeAsString(wsid));
 					}
@@ -107,7 +95,7 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 			}
 
 			// step1.3: validate and extend principal timeout
-			principal = decodePrincipal(getWsidSession().activate(wsid.id, timeoutMillis));
+			principal = decodePrincipal(getWsidSession().activate(wsid.id, wsidTimeout));
 			if (principal == null) {
 				redirectLoginPage(request, response);
 				return null;

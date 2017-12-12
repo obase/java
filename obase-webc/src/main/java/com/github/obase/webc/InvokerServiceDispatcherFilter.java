@@ -46,7 +46,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 			processor = new BaseInvokerServiceProcessor();
 		}
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
-		timeout = params.timeoutSecond * 1000;
+		timeout = params.asyncTimeout;
 
 		Map<Class<?>, InvokerServiceObject> map = new HashMap<Class<?>, InvokerServiceObject>();
 		Map<String, InvokerServiceObject> beans = applicationContext.getBeansOfType(InvokerServiceObject.class);

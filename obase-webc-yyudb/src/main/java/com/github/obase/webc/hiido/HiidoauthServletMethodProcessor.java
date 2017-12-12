@@ -58,7 +58,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		};
 
 		for (HttpMethod method : HttpMethod.values()) {
-			rules.add(new ServletMethodObject(method, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, null, AuthType.NONE, postHiidoLoginObject));
+			rules.add(new ServletMethodObject(method, HiidoKit.LOOKUP_PATH_POST_HIIDO_LOGIN, null, AuthType.NONE, true, postHiidoLoginObject));
 		}
 
 		super.setup(rules);
@@ -75,7 +75,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 		}
 
 		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
-		getWsidSession().passivate(wsid.id, encodePrincipal(principal), timeoutMillis);
+		getWsidSession().passivate(wsid.id, encodePrincipal(principal), wsidTimeout);
 
 		request.setAttribute(Webc.ATTR_WSID, wsid);
 		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);

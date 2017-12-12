@@ -53,7 +53,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		processor.init(params); // @Since 1.2.0
 
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
-		timeout = params.timeoutSecond * 1000;
+		timeout = params.asyncTimeout;
 
 		// @Controller + @ServletController
 		Set<String> beanNameSet = new HashSet<String>();
@@ -65,7 +65,6 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 			// get all filters
 			Collection<ServletMethodFilter> servletFilters = applicationContext.getBeansOfType(ServletMethodFilter.class).values();
-			AuthType defaultAuthType = params.defaultAuthType == null ? AuthType.PERMISSION : params.defaultAuthType;
 
 			for (String beanName : beanNameSet) {
 				Controller controller = applicationContext.findAnnotationOnBean(beanName, Controller.class);
@@ -97,7 +96,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 						methods = HttpMethod.values(); // default all
 					}
 					for (HttpMethod m : methods) {
-						ServletMethodObject object = new ServletMethodObject(m, lookupPath, servletMethod, defaultAuthType, handler);
+						ServletMethodObject object = new ServletMethodObject(m, lookupPath, servletMethod, params.defaultAuthType, params.offCsrf, handler);
 						if (!objects.add(object)) {
 							throw new IllegalStateException("Duplicate lookupPath : " + m + " " + lookupPath + " ==> " + method);
 						}
@@ -139,13 +138,21 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 
 			// FIXBUG: if aysnc not support
 			if (req.isAsyncSupported()) {
-				final AsyncContext asyncContext = req.isAsyncStarted() ? req.getAsyncContext() : req.startAsync();
-				if (listener != null) {
-					asyncContext.addListener(listener);
+
+				// Must require java 8
+				AsyncContext asyncContext;
+				if (req.isAsyncStarted()) {
+					asyncContext = req.getAsyncContext();
+				} else {
+					asyncContext = req.startAsync();
+					if (listener != null) {
+						asyncContext.addListener(listener);
+					}
+					if (timeout != 0) {
+						asyncContext.setTimeout(timeout);
+					}
 				}
-				if (timeout != 0) {
-					asyncContext.setTimeout(timeout);
-				}
+
 				asyncContext.start(new Runnable() {
 					@Override
 					public void run() {

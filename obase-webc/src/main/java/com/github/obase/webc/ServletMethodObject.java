@@ -32,18 +32,18 @@ public final class ServletMethodObject {
 		this.handler = handler;
 	}
 
-	public ServletMethodObject(HttpMethod method, String lookupPath, ServletMethod annotation, AuthType defaultAuthType, ServletMethodHandler handler) {
+	public ServletMethodObject(HttpMethod method, String lookupPath, ServletMethod annotation, AuthType defaultAuthType, boolean offCsrf, ServletMethodHandler handler) {
 		this.method = method;
 		this.lookupPath = lookupPath;
 		if (annotation != null) {
 			this.auth = annotation.auth() == AuthType.DEFAULT ? defaultAuthType : annotation.auth();
-			this.csrf = annotation.csrf();
+			this.csrf = offCsrf ? false : annotation.csrf();
 			this.api = annotation.api();
 			this.category = annotation.category();
 			this.remark = annotation.remark();
 		} else {
 			this.auth = defaultAuthType;
-			this.csrf = false;
+			this.csrf = offCsrf ? false : true;
 			this.api = null;
 			this.category = null;
 			this.remark = null;

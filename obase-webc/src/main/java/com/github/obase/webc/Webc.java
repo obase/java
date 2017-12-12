@@ -70,11 +70,11 @@ public interface Webc {
 	String DEFAULT_SERVICE_CONTEXT_CONFIG_LOCATION2 = "/META-INF/serviceContext.xml";
 	String DEFAULT_NAMESPACE_FOR_SERVLET = null;
 	String DEFAULT_NAMESPACE_FOR_SERVICE = "service";
-	int DEFAULT_TIMEOUT_SECOND = 60 * 60; // default 1 hour timeout
-
+	int DEFAULT_WSID_TIMEOUT = 60 * 60 * 1000; // (ms), default 1 hour timeout
+	int DEFAULT_WSID_TOKEN_BASE = 49999;
+	String DEFAULT_WSID_NAME = Wsid.COOKIE_NAME;
 	String DEFAULT_CONTROL_PREFIX = "controller"; // @Since: 1.2.0, delete the last '.'
 	String DEFAULT_CONTROL_SUFFIX = "Controller";
-	int DEFAULT_WSID_TOKEN_BASE = 49999;
 	AuthType DEFAULT_AUTH_TYPE = AuthType.PERMISSION;
 
 	String INVOKER_SERVICE_PREFIX = "HttpInvokerServiceExporter$";

@@ -71,7 +71,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 
 	private void setupRules(Collection<ServletMethodObject> rules, String lookupPath, ServletMethodHandler handler) {
 		for (HttpMethod method : HttpMethod.values()) {
-			rules.add(new ServletMethodObject(method, lookupPath, null, AuthType.NONE, handler));
+			rules.add(new ServletMethodObject(method, lookupPath, null, AuthType.NONE, true, handler));
 		}
 	}
 
@@ -84,7 +84,7 @@ public abstract class UdbauthServletMethodProcessor extends WsidServletMethodPro
 		}
 
 		Wsid wsid = Wsid.valueOf(principal.getKey()).resetToken(wsidTokenBase); // csrf
-		getWsidSession().passivate(wsid.id, encodePrincipal(principal), timeoutMillis);
+		getWsidSession().passivate(wsid.id, encodePrincipal(principal), wsidTimeout);
 
 		request.setAttribute(Webc.ATTR_WSID, wsid);
 		request.setAttribute(Webc.ATTR_PRINCIPAL, principal);
