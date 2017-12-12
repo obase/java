@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.github.obase.kit.StringKit;
 import com.github.obase.webc.config.WebcConfig;
 
 /**
@@ -56,6 +57,9 @@ public abstract class WebcFrameworkFilter implements Filter {
 
 		// init params
 		this.params = WebcConfig.decodeFilterInitParam(filterConfig);
+		if(StringKit.isEmpty(this.params.contextConfigLocation)) {
+			this.servletContext.log("Not contextConfigLocation found for '" + this.filterConfig.getFilterName() + "'");
+		}
 
 		// init application context
 		String ctxAttrName = getFilterContextAttributeName();
@@ -74,7 +78,8 @@ public abstract class WebcFrameworkFilter implements Filter {
 		WebcProxyApplicationContext wac = new WebcProxyApplicationContext(); // use custom application context
 
 		wac.setParent(rootContext);
-		wac.setConfigLocation(this.filterConfig.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM)); // contextConfigLocation
+		wac.setConfigLocation(params.contextConfigLocation); // contextConfigLocation
+
 		wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + ObjectUtils.getDisplayString(this.servletContext.getContextPath()) + "/" + this.filterConfig.getFilterName());
 
 		wac.setServletContext(this.servletContext);
@@ -143,9 +148,8 @@ public abstract class WebcFrameworkFilter implements Filter {
 			Class<?> initializerClass = ClassUtils.forName(className, wac.getClassLoader());
 			Class<?> initializerContextClass = GenericTypeResolver.resolveTypeArgument(initializerClass, ApplicationContextInitializer.class);
 			if (initializerContextClass != null) {
-				Assert.isAssignable(initializerContextClass, wac.getClass(),
-						String.format("Could not add context initializer [%s] since its generic parameter [%s] " + "is not assignable from the type of application context used by this "
-								+ "framework servlet [%s]: ", initializerClass.getName(), initializerContextClass.getName(), wac.getClass().getName()));
+				Assert.isAssignable(initializerContextClass, wac.getClass(), String.format("Could not add context initializer [%s] since its generic parameter [%s] " + "is not assignable from the type of application context used by this " + "framework servlet [%s]: ", initializerClass.getName(),
+						initializerContextClass.getName(), wac.getClass().getName()));
 			}
 			return BeanUtils.instantiateClass(initializerClass, ApplicationContextInitializer.class);
 		} catch (Exception ex) {
