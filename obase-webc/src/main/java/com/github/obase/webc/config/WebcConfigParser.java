@@ -125,7 +125,7 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.wsidTimeout.equals(localName)) {
 			param.wsidTimeout = cleanContentAsInt(Webc.DEFAULT_WSID_TIMEOUT * 1000);
 		} else if (Props.offCsrf.equals(localName)) {
-			param.offCsrf = cleanContentAsBoolean(false);
+			param.offCsrf = cleanContentAsBoolean(true);
 		} else if (Props.defaultAuthType.equals(localName)) {
 			String str = cleanContentAsString(null);
 			if (str != null) {
