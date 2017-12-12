@@ -20,7 +20,7 @@ public @interface InvokerService {
 
 	String value() default "";
 
-	Class<?> target(); // target interface to invoke
+	Class<?> service(); // target interface to invoke
 
 	String remark() default ""; // summary to the service
 

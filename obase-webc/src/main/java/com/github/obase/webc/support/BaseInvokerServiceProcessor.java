@@ -1,7 +1,8 @@
 package com.github.obase.webc.support;
 
-import java.util.Map;
+import java.util.Collection;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,10 +20,14 @@ public class BaseInvokerServiceProcessor implements InvokerServiceProcessor {
 	protected FilterInitParam params;
 
 	@Override
-	public void setup(FilterInitParam params, Map<Class<?>, InvokerServiceObject> rules) {
+	public void init(FilterInitParam params) {
 		this.params = params;
+	}
+
+	@Override
+	public void setup(Collection<InvokerServiceObject> rules) throws ServletException {
 		if (logger.isInfoEnabled()) {
-			logger.info("Load service : " + rules.keySet());
+			logger.info("Setup invoker service : " + rules);
 		}
 	}
 

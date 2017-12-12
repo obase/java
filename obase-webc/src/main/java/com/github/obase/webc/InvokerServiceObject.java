@@ -2,21 +2,30 @@ package com.github.obase.webc;
 
 import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 
-import com.github.obase.webc.annotation.InvokerService;
-
 public final class InvokerServiceObject extends HttpInvokerServiceExporter {
 
-	InvokerService annotation;
+	String remark; // summary to the service
 
-	public InvokerService getAnnotation() {
-		return annotation;
+	String category; // category of the service
+
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setAnnotation(InvokerService annotation) {
-		this.annotation = annotation;
+	public String getCategory() {
+		return category;
 	}
 
-	public final String toString() {
-		return new StringBuilder(512).append("{serviceInterface=").append(getServiceInterface()).append(",service=").append(getService()).append("}").toString();
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	@Override
+	public String toString() {
+		return getServiceInterface().getCanonicalName();
 	}
 }

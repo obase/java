@@ -1,6 +1,6 @@
 package com.github.obase.webc;
 
-import java.util.Map;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +10,9 @@ import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 
 public interface InvokerServiceProcessor {
 
-	void setup(FilterInitParam params, Map<Class<?>, InvokerServiceObject> rules) throws ServletException;
+	void init(FilterInitParam params);
+
+	void setup(Collection<InvokerServiceObject> rules) throws ServletException;
 
 	HttpServletRequest process(HttpServletRequest request, HttpServletResponse response, InvokerServiceObject object) throws Throwable;
 

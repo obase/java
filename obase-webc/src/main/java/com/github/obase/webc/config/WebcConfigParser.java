@@ -85,11 +85,11 @@ public class WebcConfigParser extends DefaultHandler2 {
 		if (Props.webc.equals(localName)) {
 
 		} else if (Props.withoutApplicationContext.equals(localName)) {
-			target.withoutApplicationContext = cleanContentAsBoolean(false);
+			target.withoutApplicationContext = cleanContentAsBoolean(true);
 		} else if (Props.withoutServletContext.equals(localName)) {
-			target.withoutServletContext = cleanContentAsBoolean(false);
+			target.withoutServletContext = cleanContentAsBoolean(true);
 		} else if (Props.withoutServiceContext.equals(localName)) {
-			target.withoutServiceContext = cleanContentAsBoolean(false);
+			target.withoutServiceContext = cleanContentAsBoolean(true);
 		} else if (Props.contextConfigLocation.equals(localName)) {
 			if (param == null) {
 				target.contextConfigLocation = cleanContentAsString(null);
@@ -109,7 +109,7 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.asyncTimeout.equals(localName)) {
 			param.asyncTimeout = cleanContentAsInt(0);
 		} else if (Props.sendError.equals(localName)) {
-			param.sendError = cleanContentAsBoolean(false);
+			param.sendError = cleanContentAsBoolean(true);
 		} else if (Props.controlProcessor.equals(localName)) {
 			param.controlProcessor = cleanContentAsString(null);
 		} else if (Props.controlPrefix.equals(localName)) {

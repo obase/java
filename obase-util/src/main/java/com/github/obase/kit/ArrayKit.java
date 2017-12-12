@@ -44,39 +44,39 @@ public class ArrayKit {
 	}
 
 	public static boolean isNotEmpty(boolean[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(byte[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(char[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(short[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(int[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(long[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(float[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(double[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean isNotEmpty(Object[] arr) {
-		return arr != null && arr.length >= 0;
+		return arr != null && arr.length > 0;
 	}
 
 	public static boolean[] append(boolean[] arr, boolean... news) {

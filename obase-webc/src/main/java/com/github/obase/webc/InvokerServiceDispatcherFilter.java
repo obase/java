@@ -2,7 +2,9 @@ package com.github.obase.webc;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncListener;
@@ -48,25 +50,25 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
 		timeout = params.asyncTimeout;
 
-		Map<Class<?>, InvokerServiceObject> map = new HashMap<Class<?>, InvokerServiceObject>();
+		Set<InvokerServiceObject> objects = new HashSet<InvokerServiceObject>();
 		Map<String, InvokerServiceObject> beans = applicationContext.getBeansOfType(InvokerServiceObject.class);
 		if (beans.size() > 0) {
 			for (Map.Entry<String, InvokerServiceObject> entry : beans.entrySet()) {
 				if (entry.getKey().startsWith(Webc.INVOKER_SERVICE_PREFIX)) {
 					InvokerServiceObject exporter = entry.getValue();
-					if (map.put(exporter.getServiceInterface(), exporter) != null) {
+					if (!objects.add(exporter)) {
 						throw new IllegalStateException("Duplicate invoker service : " + exporter.getServiceInterface());
 					}
 				}
 			}
 		}
 
-		processor.setup(params, map);
+		processor.setup(objects);
 
 		// For performance: change lookupPath to servletPath and set to servletMethodHandlerMap
-		rules = new HashMap<String, InvokerServiceObject>(map.size());
-		for (Map.Entry<Class<?>, InvokerServiceObject> entry : map.entrySet()) {
-			rules.put(Kits.getServletPath(params.namespace, '/' + entry.getKey().getCanonicalName(), null), entry.getValue());
+		rules = new HashMap<String, InvokerServiceObject>(objects.size());
+		for (InvokerServiceObject object : objects) {
+			rules.put(Kits.getServletPath(params.namespace, '/' + object.getServiceInterface().getCanonicalName(), null), object);
 		}
 	}
 
@@ -130,20 +132,21 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 
 		@Override
 		public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-
+			System.out.println(beanFactory.getBeansOfType(Object.class).keySet());
 			String[] beanNames = beanFactory.getBeanNamesForAnnotation(InvokerService.class);
 			if (ArrayKit.isNotEmpty(beanNames)) {
 				DefaultListableBeanFactory dbf = (DefaultListableBeanFactory) beanFactory;
 				for (String beanName : beanNames) {
 					InvokerService invokerServiceAnnotation = beanFactory.findAnnotationOnBean(beanName, InvokerService.class);
 					if (invokerServiceAnnotation != null) {
-						Class<?> serviceInterface = invokerServiceAnnotation.target();
+						Class<?> serviceInterface = invokerServiceAnnotation.service();
 						GenericBeanDefinition bf = new GenericBeanDefinition();
 						bf.setBeanClass(InvokerServiceObject.class);
 						MutablePropertyValues props = bf.getPropertyValues();
 						props.add("service", new RuntimeBeanReference(beanName));
 						props.add("serviceInterface", serviceInterface);
-						props.add("annotation", invokerServiceAnnotation);
+						props.add("remark", invokerServiceAnnotation.remark());
+						props.add("category", invokerServiceAnnotation.category());
 						dbf.registerBeanDefinition(Webc.INVOKER_SERVICE_PREFIX + serviceInterface.getCanonicalName(), bf);
 					}
 				}
