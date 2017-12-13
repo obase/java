@@ -1,3 +1,1 @@
-select * from --this is a test
-(select * from xxx where zzz in(/*ORDER*/:zzz/*:abc*/) group by xxx  order by iii limit 2) GROUP BY zaa 
-HAVING eee order by zzzz limit 5
+SELECT a.aid, a.tid, a.name, a.category, a.type, a.content, a.path, a.url, a.mode, a.target_aid, a.environJson, a.urgent, a.groupname, a.username, a.sudo, a.createUser, a.createTime, a.reviewUser,a.reviewTime, a.reviewStatus FROM Action a ORDER BY a.createTime DESC

@@ -47,19 +47,21 @@ public class SqlDqlKit extends SqlKit {
 				if (end == -1) {
 					end = len;
 				}
-				if (sql.regionMatches(true, start, SELECT, 0, SELECT.length())) {
+				// FIXBUG: must be the same length firstly
+				int n = (end - start);
+				if (n == SELECT.length() && sql.regionMatches(true, start, SELECT, 0, SELECT.length())) {
 					meta.select = start;
-				} else if (sql.regionMatches(true, start, FROM, 0, FROM.length())) {
+				} else if (n == FROM.length() && sql.regionMatches(true, start, FROM, 0, FROM.length())) {
 					meta.from = start;
-				} else if (sql.regionMatches(true, start, WHERE, 0, WHERE.length())) {
+				} else if (n == WHERE.length() && sql.regionMatches(true, start, WHERE, 0, WHERE.length())) {
 					meta.where = start;
-				} else if (sql.regionMatches(true, start, GROUP, 0, GROUP.length())) {
+				} else if (n == GROUP.length() && sql.regionMatches(true, start, GROUP, 0, GROUP.length())) {
 					meta.group = start;
-				} else if (sql.regionMatches(true, start, HAVING, 0, HAVING.length())) {
+				} else if (n == HAVING.length() && sql.regionMatches(true, start, HAVING, 0, HAVING.length())) {
 					meta.having = start;
-				} else if (sql.regionMatches(true, start, ORDER, 0, ORDER.length())) {
+				} else if (n == ORDER.length() && sql.regionMatches(true, start, ORDER, 0, ORDER.length())) {
 					meta.order = start;
-				} else if (sql.regionMatches(true, start, LIMIT, 0, LIMIT.length())) {
+				} else if (n == LIMIT.length() && sql.regionMatches(true, start, LIMIT, 0, LIMIT.length())) {
 					meta.limit = start;
 				}
 			}
