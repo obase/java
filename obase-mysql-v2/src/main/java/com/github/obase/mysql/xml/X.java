@@ -115,15 +115,17 @@ public class X implements Part {
 
 			psqls.append(prefix(idx));
 			boolean cret = false;
-			for (int i = 0; i < parts.length; i++) {
-				Part f = parts[i];
+			int i = 0;
+			for (Part f : parts) {
 				if (f.isDynamic()) {
 					if (f.processDynamic(meta, bean, psqls, params, i)) {
 						cret = true;
+						i++; // FIXBUG: 只有成功执行才把下标加1
 					}
 				} else {
 					psqls.append(f.getPsql());
 					params.append(f.getParams());
+					i++; // FIXBUG: 只有成功执行才把下标加1
 				}
 			}
 

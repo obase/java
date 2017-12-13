@@ -35,13 +35,16 @@ public class Statement {
 		StringBuilder psqls = new StringBuilder(4096); // 默认4K
 		ParamBuilder params = new ParamBuilder(128);
 
-		for (int i = 0, n = parts.length; i < n; i++) {
-			Part p = parts[i];
+		int i = 0;
+		for (Part p : parts) {
 			if (p.isDynamic()) {
-				p.processDynamic(meta, bean, psqls, params, i);
+				if (p.processDynamic(meta, bean, psqls, params, i)) {
+					i++;
+				}
 			} else {
 				psqls.append(p.getPsql());
 				params.append(p.getParams());
+				i++;
 			}
 		}
 
