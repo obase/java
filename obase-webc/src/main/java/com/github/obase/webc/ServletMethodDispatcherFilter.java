@@ -148,9 +148,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					if (listener != null) {
 						asyncContext.addListener(listener);
 					}
-					if (timeout != 0) {
-						asyncContext.setTimeout(timeout);
-					}
+					asyncContext.setTimeout(timeout); // @Since 1.2.0: never timeout
 				}
 
 				asyncContext.start(new Runnable() {

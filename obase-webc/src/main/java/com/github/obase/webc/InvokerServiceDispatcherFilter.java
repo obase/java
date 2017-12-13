@@ -86,9 +86,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 				if (listener != null) {
 					actx.addListener(listener);
 				}
-				if (timeout != 0) {
-					actx.setTimeout(timeout); // millis
-				}
+				actx.setTimeout(timeout); // @Since 1.2.0: never timeout any more
 				actx.start(new Runnable() {
 					@Override
 					public void run() {
