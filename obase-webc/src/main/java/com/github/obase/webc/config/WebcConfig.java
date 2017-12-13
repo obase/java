@@ -10,6 +10,7 @@ import com.github.obase.WrappedException;
 import com.github.obase.kit.ClassKit;
 import com.github.obase.kit.StringKit;
 import com.github.obase.webc.AuthType;
+import com.github.obase.webc.Webc;
 
 public class WebcConfig {
 
@@ -82,15 +83,12 @@ public class WebcConfig {
 		ret.controlProcessor = getStringParam(filterConfig, Props.controlProcessor, null);
 		ret.controlPrefix = getStringParam(filterConfig, Props.controlPrefix, null);
 		ret.controlSuffix = getStringParam(filterConfig, Props.controlSuffix, null);
-		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, 0);
+		ret.wsidTokenBase = getIntParam(filterConfig, Props.wsidTokenBase, Webc.DEFAULT_WSID_TOKEN_BASE);
 		ret.wsidDomain = getStringParam(filterConfig, Props.wsidDomain, null);
-		ret.wsidName = getStringParam(filterConfig, Props.wsidName, null);
-		ret.wsidTimeout = getIntParam(filterConfig, Props.wsidTimeout, 0);
+		ret.wsidName = getStringParam(filterConfig, Props.wsidName, Webc.DEFAULT_WSID_NAME);
+		ret.wsidTimeout = getIntParam(filterConfig, Props.wsidTimeout, Webc.DEFAULT_WSID_TIMEOUT);
 		ret.offCsrf = getBooleanParam(filterConfig, Props.offCsrf, false);
-		String authTypeStr = getStringParam(filterConfig, Props.defaultAuthType, null);
-		if (authTypeStr != null) {
-			ret.defaultAuthType = AuthType.valueOf(authTypeStr);
-		}
+		ret.defaultAuthType = AuthType.valueOf(getStringParam(filterConfig, Props.defaultAuthType, AuthType.PERMISSION.name()));
 		ret.refererDomain = getStringParam(filterConfig, Props.refererDomain, null);
 
 		return ret;

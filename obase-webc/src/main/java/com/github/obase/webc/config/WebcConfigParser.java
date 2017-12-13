@@ -127,12 +127,7 @@ public class WebcConfigParser extends DefaultHandler2 {
 		} else if (Props.offCsrf.equals(localName)) {
 			param.offCsrf = cleanContentAsBoolean(true);
 		} else if (Props.defaultAuthType.equals(localName)) {
-			String str = cleanContentAsString(null);
-			if (str != null) {
-				param.defaultAuthType = AuthType.valueOf(str);
-			} else {
-				param.defaultAuthType = Webc.DEFAULT_AUTH_TYPE;
-			}
+			param.defaultAuthType = AuthType.valueOf(cleanContentAsString(AuthType.PERMISSION.name()));
 		} else if (Props.refererDomain.equals(localName)) {
 			param.refererDomain = cleanContentAsString(null);
 		}
