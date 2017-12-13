@@ -121,11 +121,13 @@ public class X implements Part {
 					if (f.processDynamic(meta, bean, psqls, params, i)) {
 						cret = true;
 						i++; // FIXBUG: 只有成功执行才把下标加1
+						psqls.append(' '); // 后面追加一个SPACE
 					}
 				} else {
 					psqls.append(f.getPsql());
 					params.append(f.getParams());
 					i++; // FIXBUG: 只有成功执行才把下标加1
+					psqls.append(' '); // 后面追加一个SPACE
 				}
 			}
 

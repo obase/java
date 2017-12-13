@@ -37,10 +37,13 @@ public class Statement {
 
 		for (Part p : parts) {
 			if (p.isDynamic()) {
-				p.processDynamic(meta, bean, psqls, params, 1); // FIXBUG: statement is not dynamic element
+				if (p.processDynamic(meta, bean, psqls, params, 1)) { // FIXBUG: statement is not dynamic element
+					psqls.append(' '); // 后面追加一个SPACE
+				}
 			} else {
 				psqls.append(p.getPsql());
 				params.append(p.getParams());
+				psqls.append(' '); // 后面追加一个SPACE
 			}
 		}
 
