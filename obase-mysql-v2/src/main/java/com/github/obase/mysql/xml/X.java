@@ -115,10 +115,10 @@ public class X implements Part {
 
 			psqls.append(prefix(idx));
 			boolean cret = false;
-			int sidx = 0;
-			for (Part f : parts) {
+			for (int i = 0; i < parts.length; i++) {
+				Part f = parts[i];
 				if (f.isDynamic()) {
-					if (f.processDynamic(meta, bean, psqls, params, sidx++)) {
+					if (f.processDynamic(meta, bean, psqls, params, i)) {
 						cret = true;
 					}
 				} else {

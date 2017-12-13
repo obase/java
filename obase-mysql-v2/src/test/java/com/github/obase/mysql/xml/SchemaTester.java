@@ -28,28 +28,10 @@ import com.github.obase.mysql.PstmtMeta;
 public class SchemaTester {
 
 	public static void main(String[] args) throws Exception {
-		// File xsdFile = new File("D:\\Workspace\\git\\obase.github.io\\schema\\obase-mysql-1.2.xsd");
-		File xmlFile = new File("D:\\Workspace\\git\\java\\obase-mysql-v2\\src\\test\\resources\\HostsRepos.xml");
-		// validateXMLWithXSD(xmlFile, xsdFile);
+		File xsdFile = new File("D:\\Workspace\\git\\obase.github.io\\schema\\obase-webc-1.2.xsd");
+		File xmlFile = new File("D:\\Workspace\\obase\\test-web\\src\\main\\resources\\META-INF\\webc.xml");
+		validateXMLWithXSD(xmlFile, xsdFile);
 
-		ObaseMysqlParser parser = new ObaseMysqlParser();
-		ObaseMysqlObject obj = parser.parse(new FileSystemResource(xmlFile));
-		for (Class<?> c : obj.metaClassList) {
-			System.out.println("META:" + c);
-		}
-		for (Class<?> c : obj.tableClassList) {
-			System.out.println("META:" + c);
-		}
-		for (Statement s : obj.statementList) {
-			PstmtMeta meta = null;
-			long start = System.currentTimeMillis();
-			for (int i = 0; i < 10000 * 100; i++) {
-				meta = s.dynamicPstmtMeta(JdbcMeta.MAP, MapKit.as("module", Arrays.asList("测试模块"), "pattern", "模式"));
-			}
-			long end = System.currentTimeMillis();
-			System.out.println("used:" + (end - start));
-			System.out.println(meta);
-		}
 	}
 
 	public static String validateXMLWithXSD(File xmlFile, File xsdFile) {

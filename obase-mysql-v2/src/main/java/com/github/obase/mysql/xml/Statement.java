@@ -38,7 +38,7 @@ public class Statement {
 		for (int i = 0, n = parts.length; i < n; i++) {
 			Part p = parts[i];
 			if (p.isDynamic()) {
-				p.processDynamic(meta, bean, psqls, params, i++);
+				p.processDynamic(meta, bean, psqls, params, i);
 			} else {
 				psqls.append(p.getPsql());
 				params.append(p.getParams());
