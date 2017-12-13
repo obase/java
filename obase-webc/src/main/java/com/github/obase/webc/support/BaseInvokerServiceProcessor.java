@@ -17,11 +17,10 @@ import com.github.obase.webc.config.WebcConfig.FilterInitParam;
 public class BaseInvokerServiceProcessor implements InvokerServiceProcessor {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	protected FilterInitParam params;
 
 	@Override
 	public void init(FilterInitParam params) {
-		this.params = params;
+		// nothing
 	}
 
 	@Override

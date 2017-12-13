@@ -40,16 +40,14 @@ public abstract class WsidServletMethodProcessor extends BaseServletMethodProces
 
 	@Override
 	public void init(FilterInitParam params) {
-		super.init(params);
 		wsidTokenBase = params.wsidTokenBase;
-		if (params.wsidDomain != null) {
-			wsidDomain = params.wsidDomain;
-		}
+		wsidDomain = params.wsidDomain;
 		wsidName = params.wsidName;
 		wsidTimeout = params.wsidTimeout;
 		if (params.refererDomain != null) {
 			refererDomainSet.addAll(StringKit.split2List(params.refererDomain, COMMA, true));
 		}
+		super.init(params);
 	}
 
 	@Override
