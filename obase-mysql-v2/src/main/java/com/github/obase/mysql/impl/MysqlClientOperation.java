@@ -296,7 +296,7 @@ public abstract class MysqlClientOperation implements MysqlClient {
 				}
 				pagePsql = pstmt.limitPsql;
 			} else {
-				pagePsql = SqlDqlKit.parsePstmtOrderLimit(pstmt, page.field, page.direction);
+				pagePsql = SqlDqlKit.parsePstmtOrderLimit(pstmt, page.field, page.desc);
 			}
 			if (showSql) {
 				logger.info("[ROWS] " + pagePsql);

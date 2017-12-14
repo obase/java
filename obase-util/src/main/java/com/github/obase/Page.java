@@ -11,24 +11,24 @@ public class Page<T> {
 	public final int limit; // param _limit
 
 	public final String field; // param _field
-	public final String direction; // param _direction
+	public final boolean desc; // param _direction
 
 	int results;
 	List<T> rows;
 
 	public Page() {
-		this(0, 0, null, null);
+		this(0, 0, null, false);
 	}
 
 	public Page(int start, int limit) {
-		this(start, limit, null, null);
+		this(start, limit, null, false);
 	}
 
-	public Page(int start, int limit, String field, String direction) {
+	public Page(int start, int limit, String field, boolean desc) {
 		this.start = start;
 		this.limit = limit;
 		this.field = field;
-		this.direction = direction;
+		this.desc = desc;
 	}
 
 	public int getResults() {
@@ -59,8 +59,8 @@ public class Page<T> {
 		return field;
 	}
 
-	public String getDirection() {
-		return direction;
+	public boolean isDesc() {
+		return desc;
 	}
 
 }

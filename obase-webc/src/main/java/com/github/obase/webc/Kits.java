@@ -793,7 +793,7 @@ public abstract class Kits {
 		int _limit = readIntParam(request, pageParams[1], 0);
 		String _field = readParam(request, pageParams[2]);
 		String _direction = readParam(request, pageParams[3]);
-		return new Page<>(_start, _limit, _field, _direction);
+		return new Page<>(_start, _limit, _field, "DESC".equalsIgnoreCase(_direction));
 	}
 
 }
