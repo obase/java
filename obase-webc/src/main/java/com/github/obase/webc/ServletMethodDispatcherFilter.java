@@ -31,6 +31,7 @@ import com.github.obase.kit.StringKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.ServletController;
 import com.github.obase.webc.annotation.ServletMethod;
+import com.github.obase.webc.support.BaseAsyncListener;
 import com.github.obase.webc.support.BaseServletMethodProcessor;
 
 @SuppressWarnings("rawtypes")
@@ -53,6 +54,9 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 		processor.init(params); // @Since 1.2.0
 
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
+		if (listener == null) {
+			listener = new BaseAsyncListener();
+		}
 		timeout = params.asyncTimeout;
 
 		// @Controller + @ServletController
@@ -145,9 +149,7 @@ public class ServletMethodDispatcherFilter extends WebcFrameworkFilter {
 					asyncContext = req.getAsyncContext();
 				} else {
 					asyncContext = req.startAsync();
-					if (listener != null) {
-						asyncContext.addListener(listener);
-					}
+					asyncContext.addListener(listener);
 					asyncContext.setTimeout(timeout); // @Since 1.2.0: never timeout
 				}
 

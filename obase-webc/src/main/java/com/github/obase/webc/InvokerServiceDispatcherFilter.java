@@ -27,6 +27,7 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import com.github.obase.kit.ArrayKit;
 import com.github.obase.webc.Webc.Util;
 import com.github.obase.webc.annotation.InvokerService;
+import com.github.obase.webc.support.BaseAsyncListener;
 import com.github.obase.webc.support.BaseInvokerServiceProcessor;
 
 public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
@@ -48,6 +49,9 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 			processor = new BaseInvokerServiceProcessor();
 		}
 		listener = Util.findWebcBean(applicationContext, AsyncListener.class, params.asyncListener);
+		if (listener == null) {
+			listener = new BaseAsyncListener();
+		}
 		timeout = params.asyncTimeout;
 
 		Set<InvokerServiceObject> objects = new HashSet<InvokerServiceObject>();
@@ -83,9 +87,7 @@ public class InvokerServiceDispatcherFilter extends WebcFrameworkFilter {
 			if (req.isAsyncSupported()) {
 
 				final AsyncContext actx = request.startAsync(request, resp);
-				if (listener != null) {
-					actx.addListener(listener);
-				}
+				actx.addListener(listener);
 				actx.setTimeout(timeout); // @Since 1.2.0: never timeout any more
 				actx.start(new Runnable() {
 					@Override

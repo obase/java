@@ -268,12 +268,18 @@ public abstract class Kits {
 	}
 
 	public static void writeResponse(HttpServletResponse response, String contentType, int sc, CharSequence content) throws IOException {
+		if (response.isCommitted()) {
+			return;
+		}
 		response.setContentType(contentType);
 		response.setStatus(sc);
 		response.getWriter().write(content.toString());
 	}
 
 	public static void writePlain(HttpServletResponse response, int sc, CharSequence content) throws IOException {
+		if (response.isCommitted()) {
+			return;
+		}
 		writeResponse(response, Webc.CONTENT_TYPE_PLAIN, sc, content);
 	}
 
@@ -290,6 +296,9 @@ public abstract class Kits {
 	}
 
 	public static void writeJsonObject(HttpServletResponse response, int sc, Object object) throws IOException {
+		if (response.isCommitted()) {
+			return;
+		}
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
 		Jsons.writeValue(response.getWriter(), object);
@@ -316,6 +325,9 @@ public abstract class Kits {
 	}
 
 	public static <T> void writeMessage(HttpServletResponse response, int sc, String src, int errno, String errmsg, T data) throws IOException {
+		if (response.isCommitted()) {
+			return;
+		}
 		response.setContentType(Webc.CONTENT_TYPE_JSON);
 		response.setStatus(sc);
 		Message<T> sm = new Message<T>(src, errno, errmsg, data);
