@@ -14,12 +14,12 @@ public class BaseAsyncListener implements AsyncListener {
 
 	@Override
 	public void onTimeout(AsyncEvent event) throws IOException {
-		event.getAsyncContext().getResponse().flushBuffer(); // commit response
+		event.getAsyncContext().complete();
 	}
 
 	@Override
 	public void onError(AsyncEvent event) throws IOException {
-		event.getAsyncContext().getResponse().flushBuffer(); // commit response
+		event.getAsyncContext().complete();
 	}
 
 	@Override
