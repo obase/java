@@ -1,1 +1,2 @@
-SELECT a.aid, a.tid, a.name, a.category, a.type, a.content, a.path, a.url, a.mode, a.target_aid, a.environJson, a.urgent, a.groupname, a.username, a.sudo, a.createUser, a.createTime, a.reviewUser,a.reviewTime, a.reviewStatus FROM Action a ORDER BY a.createTime DESC
+SELECT a.aid, a.tid, a.name, a.category, --this is a test 
+a.type, a.content, a.path, a.url, a.mode, a.target_aid, a.environJson, a.urgent, a.groupname, a.username, a.sudo, a.createUser, a.createTime, a.reviewUser,a.reviewTime, a.reviewStatus FROM Action a ORDER BY a.createTime DESC
