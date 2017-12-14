@@ -71,7 +71,7 @@ public class X implements Part {
 
 	// 该方法执行前提: dynamic=true
 	@SuppressWarnings("rawtypes")
-	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, ParamBuilder params, int idx) {
+	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, ParamBuilder params, boolean appended) {
 
 		if (bean == null) {
 			return false; // FIXBUG: 如果参数为null,直接返回false
@@ -84,7 +84,7 @@ public class X implements Part {
 			if (v instanceof Collection) {
 				Collection c = (Collection) v;
 				if (c.size() > 0) {
-					psqls.append(prefix(idx));
+					psqls.append(prefix(appended));
 					// 迭代集合
 					int set = 0; // 注意:集合下标从1开始
 					for (Object o : c) {
@@ -99,7 +99,7 @@ public class X implements Part {
 					return true;
 				}
 			} else if (v != null) {
-				psqls.append(prefix(idx));
+				psqls.append(prefix(appended));
 				psqls.append(this.psql);
 				params.append(p, v);
 				psqls.append(suffix());
@@ -113,21 +113,22 @@ public class X implements Part {
 			int tlength = psqls.length(); // 标记尾用于回滚
 			int plength = params.length(); // 标记尾用于回滚
 
-			psqls.append(prefix(idx));
-			boolean cret = false;
-			int i = 0;
-			for (Part f : parts) {
+			psqls.append(prefix(appended));
+			boolean cret = false, capp = false;
+			for (int i = 0; i < parts.length; i++) {
+				Part f = parts[i];
 				if (f.isDynamic()) {
-					if (f.processDynamic(meta, bean, psqls, params, i)) {
+					if (f.processDynamic(meta, bean, psqls, params, capp)) {
 						cret = true;
-						psqls.append(' '); // 后面追加一个SPACE
-						i++; // FIXBUG: 只有成功执行才把下标加1
+						capp = true;
 					}
 				} else {
 					psqls.append(f.getPsql());
 					params.append(f.getParams());
-					psqls.append(' '); // 后面追加一个SPACE
-					i++; // FIXBUG: 只有成功执行才把下标加1
+					capp = true;
+				}
+				if (capp && i > 0) {
+					psqls.append(SPACE);
 				}
 			}
 
@@ -143,7 +144,7 @@ public class X implements Part {
 
 	}
 
-	protected String prefix(int idx) {
+	protected String prefix(boolean appended) {
 		return "";
 	}
 

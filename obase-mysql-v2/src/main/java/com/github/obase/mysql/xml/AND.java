@@ -3,8 +3,8 @@ package com.github.obase.mysql.xml;
 public class AND extends X {
 
 	@Override
-	protected String prefix(int idx) {
-		return idx == 0 ? "(" : "AND (";
+	protected String prefix(boolean appended) {
+		return appended ? "AND (" : "(";
 	}
 
 	@Override

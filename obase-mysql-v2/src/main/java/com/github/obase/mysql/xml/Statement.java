@@ -35,18 +35,20 @@ public class Statement {
 		StringBuilder psqls = new StringBuilder(4096); // 默认4K
 		ParamBuilder params = new ParamBuilder(128);
 
-		int i = 0;
-		for (Part p : parts) {
+		boolean appended = false;
+		for (int i = 0; i < parts.length; i++) {
+			Part p = parts[i];
 			if (p.isDynamic()) {
-				if (p.processDynamic(meta, bean, psqls, params, i)) { // FIXBUG: statement is not dynamic element
-					psqls.append(' '); // 后面追加一个SPACE
-					i++;
+				if (p.processDynamic(meta, bean, psqls, params, appended)) { // FIXBUG: statement is not dynamic element
+					appended = true;
 				}
 			} else {
 				psqls.append(p.getPsql());
 				params.append(p.getParams());
-				psqls.append(' '); // 后面追加一个SPACE
-				i++;
+				appended = true;
+			}
+			if (appended && i > 0) {
+				psqls.append(Part.SPACE); // 后面追加一个SPACE
 			}
 		}
 

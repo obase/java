@@ -9,6 +9,7 @@ public interface Part {
 	String[] EMPTY_PARAM = new String[0];
 
 	String DEF_SEP = " OR ";
+	char SPACE = '\u0020';
 
 	/**
 	 * 判断是否动态标签
@@ -30,6 +31,6 @@ public interface Part {
 	/**
 	 * 处理动态逻辑, 并将结果附加到psqls与params
 	 */
-	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, ParamBuilder params, int idx);
+	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, ParamBuilder params, boolean appended);
 
 }
