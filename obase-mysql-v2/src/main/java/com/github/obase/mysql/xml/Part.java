@@ -31,6 +31,6 @@ public interface Part {
 	/**
 	 * 处理动态逻辑, 并将结果附加到psqls与params
 	 */
-	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, ParamBuilder params, boolean appended);
+	boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psql, ParamBuilder params, int idx);
 
 }

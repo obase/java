@@ -71,7 +71,7 @@ public class X implements Part {
 
 	// 该方法执行前提: dynamic=true
 	@SuppressWarnings("rawtypes")
-	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, ParamBuilder params, boolean appended) {
+	public final boolean processDynamic(JdbcMeta meta, Object bean, StringBuilder psqls, ParamBuilder params, int idx) {
 
 		if (bean == null) {
 			return false; // FIXBUG: 如果参数为null,直接返回false
@@ -84,7 +84,7 @@ public class X implements Part {
 			if (v instanceof Collection) {
 				Collection c = (Collection) v;
 				if (c.size() > 0) {
-					psqls.append(prefix(appended));
+					psqls.append(prefix(idx));
 					// 迭代集合
 					int set = 0; // 注意:集合下标从1开始
 					for (Object o : c) {
@@ -99,7 +99,7 @@ public class X implements Part {
 					return true;
 				}
 			} else if (v != null) {
-				psqls.append(prefix(appended));
+				psqls.append(prefix(idx));
 				psqls.append(this.psql);
 				params.append(p, v);
 				psqls.append(suffix());
@@ -113,25 +113,25 @@ public class X implements Part {
 			int tlength = psqls.length(); // 标记尾用于回滚
 			int plength = params.length(); // 标记尾用于回滚
 
-			psqls.append(prefix(appended));
-			boolean cret = false, capp = false;
-			for (int i = 0; i < parts.length; i++) {
-				Part f = parts[i];
+			psqls.append(prefix(idx));
+			boolean cret = false;
+			int cidx = 0;
+			for (Part f : parts) {
 				if (f.isDynamic()) {
-					if (f.processDynamic(meta, bean, psqls, params, capp)) {
+					if (f.processDynamic(meta, bean, psqls, params, cidx)) {
+						psqls.append(SPACE);
 						cret = true;
-						capp = true;
+						idx++;
 					}
 				} else {
-					psqls.append(f.getPsql());
+					psqls.append(f.getPsql()).append(SPACE);
 					params.append(f.getParams());
-					capp = true;
-				}
-				if (capp && i > 0) {
-					psqls.append(SPACE);
+					idx++;
 				}
 			}
-
+			if (idx > 0) {
+				psqls.setLength(psqls.length() - 1);
+			}
 			// 某个动态子标签为true才添加到最终结果
 			if (!cret) {
 				psqls.setLength(tlength);
@@ -144,7 +144,7 @@ public class X implements Part {
 
 	}
 
-	protected String prefix(boolean appended) {
+	protected String prefix(int idx) {
 		return "";
 	}
 

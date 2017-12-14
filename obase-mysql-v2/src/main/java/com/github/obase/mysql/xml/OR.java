@@ -3,8 +3,8 @@ package com.github.obase.mysql.xml;
 public class OR extends X {
 
 	@Override
-	protected String prefix(boolean appended) {
-		return appended ? "OR (" : "(";
+	protected String prefix(int idx) {
+		return idx != 0 ? "OR (" : "(";
 	}
 
 	@Override
