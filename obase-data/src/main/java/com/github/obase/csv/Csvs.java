@@ -13,7 +13,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.github.obase.WrappedException;
+import com.github.obase.MessageException;
+import com.github.obase.data.DataErrno;
 
 public final class Csvs {
 
@@ -41,7 +42,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -49,7 +50,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -57,7 +58,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -65,7 +66,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -73,7 +74,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -81,7 +82,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -89,7 +90,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -97,7 +98,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(xml, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -105,7 +106,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -113,7 +114,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -121,7 +122,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -129,7 +130,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -137,7 +138,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -145,7 +146,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -153,7 +154,7 @@ public final class Csvs {
 		try {
 			return OM.readValue(in, TF.constructParametricType(parametrized, parameterClasses));
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -161,7 +162,7 @@ public final class Csvs {
 		try {
 			return OM.writeValueAsString(value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -169,7 +170,7 @@ public final class Csvs {
 		try {
 			return OM.writeValueAsBytes(value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -177,7 +178,7 @@ public final class Csvs {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
@@ -185,7 +186,7 @@ public final class Csvs {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.CSV_CODEC_FAILED, e.getMessage());
 		}
 	}
 
