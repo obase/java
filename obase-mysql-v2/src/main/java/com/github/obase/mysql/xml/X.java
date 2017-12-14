@@ -121,12 +121,12 @@ public class X implements Part {
 					if (f.processDynamic(meta, bean, psqls, params, cidx)) {
 						psqls.append(SPACE);
 						cret = true;
-						idx++;
+						cidx++;
 					}
 				} else {
 					psqls.append(f.getPsql()).append(SPACE);
 					params.append(f.getParams());
-					idx++;
+					cidx++;
 				}
 			}
 			if (idx > 0) {
