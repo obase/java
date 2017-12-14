@@ -14,7 +14,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.github.obase.WrappedException;
+import com.github.obase.MessageException;
+import com.github.obase.data.DataErrno;
 
 public final class Jsons {
 	private Jsons() {
@@ -42,7 +43,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -50,7 +51,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -58,7 +59,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -77,7 +78,7 @@ public final class Jsons {
 				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -85,7 +86,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -93,7 +94,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -101,7 +102,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(json, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -120,7 +121,7 @@ public final class Jsons {
 				return (T) OM.readValue(json, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -128,7 +129,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, Object);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -136,7 +137,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -144,7 +145,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -163,7 +164,7 @@ public final class Jsons {
 				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -171,7 +172,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, ObjectList);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -179,7 +180,7 @@ public final class Jsons {
 		try {
 			return OM.readValue(in, type);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -198,7 +199,7 @@ public final class Jsons {
 				return (T) OM.readValue(in, TF.constructType(parametrized));
 			}
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -206,7 +207,7 @@ public final class Jsons {
 		try {
 			return OM.writeValueAsString(value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -214,7 +215,7 @@ public final class Jsons {
 		try {
 			return OM.writeValueAsBytes(value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -222,7 +223,7 @@ public final class Jsons {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
@@ -230,7 +231,7 @@ public final class Jsons {
 		try {
 			OM.writeValue(out, value);
 		} catch (IOException e) {
-			throw new WrappedException(e);
+			throw new MessageException(DataErrno.SOURCE, DataErrno.JSON_CODEC_FAILED, e.getClass().getCanonicalName() + ": " + e.getMessage());
 		}
 	}
 
