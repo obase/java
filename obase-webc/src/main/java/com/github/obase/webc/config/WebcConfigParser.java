@@ -66,7 +66,7 @@ public class WebcConfigParser extends DefaultHandler2 {
 
 		} else if (Props.wsidTimeout.equals(localName)) {
 
-		} else if (Props.offCsrf.equals(localName)) {
+		} else if (Props.csrfOff.equals(localName)) {
 
 		} else if (Props.defaultAuthType.equals(localName)) {
 
@@ -124,8 +124,8 @@ public class WebcConfigParser extends DefaultHandler2 {
 			param.wsidName = cleanContentAsString(Webc.DEFAULT_WSID_NAME);
 		} else if (Props.wsidTimeout.equals(localName)) {
 			param.wsidTimeout = cleanContentAsInt(Webc.DEFAULT_WSID_TIMEOUT * 1000);
-		} else if (Props.offCsrf.equals(localName)) {
-			param.offCsrf = cleanContentAsBoolean(true);
+		} else if (Props.csrfOff.equals(localName)) {
+			param.csrfOff = cleanContentAsBoolean(true);
 		} else if (Props.defaultAuthType.equals(localName)) {
 			param.defaultAuthType = AuthType.valueOf(cleanContentAsString(AuthType.PERMISSION.name()));
 		} else if (Props.refererDomain.equals(localName)) {

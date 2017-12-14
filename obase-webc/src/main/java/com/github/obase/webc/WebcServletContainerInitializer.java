@@ -94,7 +94,7 @@ public class WebcServletContainerInitializer implements ServletContainerInitiali
 	private void initWebkitFrameworkFilter(Class<? extends WebcFrameworkFilter> filterClass, ServletContext servletContext, FilterInitParam config) {
 		String filterName = filterClass.getSimpleName() + "$" + (config.namespace == null ? "" : replaceInvalidIdentifier(config.namespace)) + "$" + (config.hashCode() & 0xFFFFFFFFL);
 		FilterRegistration.Dynamic dynamic = servletContext.addFilter(filterName, filterClass);
-		dynamic.setAsyncSupported(true);
+		dynamic.setAsyncSupported(!config.asyncOff);
 		dynamic.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.FORWARD), false, Webc.Util.getUrlPatternForNamespace(config.namespace));
 		WebcConfig.encodeFilterInitParam(dynamic, config);
 	}
