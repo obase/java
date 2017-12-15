@@ -427,7 +427,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 						updateDynamicConfiguration(dataSource, jedisPool);
 					}
 				}, timer, timer, TimeUnit.SECONDS);
-				service.shutdown();
+				// Couldn't shutdown here
 			}
 		} else {
 			// check required at last...
