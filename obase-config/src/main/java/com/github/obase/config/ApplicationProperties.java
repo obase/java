@@ -44,10 +44,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
 import com.github.obase.env.Envs;
+import com.github.obase.kit.StringKit;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.crypto.AES;
@@ -140,6 +140,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	public static final String DEFAULT_HASH = "app_properties";
 	public static final String DEFAULT_ABSOLUTE_CONFIG_APP_PROPERTIES = Envs.APP_PROPERTIES_PATH;
 	public static final String DEFAULT_RELATIVE_CONFIG_APP_PROPERTIES = "../config/" + Envs.DWENV + "/app.properties";
+	public static final String VERSION = "version";
 
 	static final Map<String, String> EMPTY_MAP = Collections.emptyMap();
 	static final Properties EMPTY_PROPS = new Properties();
@@ -148,7 +149,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	String locations; // app配置路径,支持多值,用逗号分隔
 
 	boolean ignoreSystemEnvironment; // 是否忽略System.getenv()变量
-	boolean ignoreSystemProperties = !Envs.IS_DEV; // 是否忽略System.getProperties()变量
+	boolean ignoreSystemProperties; // 是否忽略System.getProperties()变量
 	boolean ignorePropertyPlaceholder; // 是否忽略PropertySourcePlaceholderResolver功能
 	boolean ignoreUnresolvablePlaceholder; // 是 否忽略不能解析的占位符
 	boolean fatalIfError; // 如果错误,直接抛出异常.默认输出错误日志.
@@ -213,26 +214,6 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		this.jedisPool = jedisPool;
 	}
 
-	public void setService(ScheduledExecutorService service) {
-		this.service = service;
-	}
-
-	public void setSystemEnvironment(Map<String, String> systemEnvironment) {
-		this.systemEnvironment = systemEnvironment;
-	}
-
-	public void setSystemProperties(Properties systemProperties) {
-		this.systemProperties = systemProperties;
-	}
-
-	public void setStatics(Map<String, String> statics) {
-		this.statics = statics;
-	}
-
-	public void setObjects(Map<String, Object> objects) {
-		this.objects = objects;
-	}
-
 	String beanName;
 	BeanFactory beanFactory;
 
@@ -254,11 +235,9 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	// 静态配置
 	Map<String, String> systemEnvironment = EMPTY_MAP;
 	Properties systemProperties = EMPTY_PROPS;
-	Map<String, String> statics = EMPTY_MAP;
+	final Map<String, String> statics = new HashMap<String, String>();
 	// 动态配置，可能为空
-	volatile Map<String, String> dynamic; // 存储动态配置string值
-	volatile Map<String, Object> objects; // 存储动态配置根据rule转换后的值
-
+	final Map<String, String> dynamic = new ConcurrentHashMap<String, String>(); // 存储动态配置string值
 	final Map<String, List<PropertyChangeListener>> propertyChangeListenerMap = new ConcurrentHashMap<String, List<PropertyChangeListener>>();
 
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
@@ -292,7 +271,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		// 先解析
-		if (!StringUtils.isEmpty(rules)) {
+		if (StringKit.isNotEmpty(rules)) {
 			try {
 				// 默认取第一个
 				Resource rs = resolver.getResources(rules)[0];
@@ -316,11 +295,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		}
 
 		// 静态配置
-		statics = new HashMap<String, String>();
 		try {
-			if (StringUtils.isEmpty(locations)) {
+			if (StringKit.isEmpty(locations)) {
 				FileSystemResource fsr = new FileSystemResource(DEFAULT_ABSOLUTE_CONFIG_APP_PROPERTIES);
-				if (!fsr.exists() && Envs.IS_DEV) {
+				if (!fsr.exists()) {
 					fsr = new FileSystemResource(DEFAULT_RELATIVE_CONFIG_APP_PROPERTIES);
 				}
 				if (fsr.exists()) {
@@ -329,7 +307,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 					}
 				}
 			} else {
-				String[] arr = StringUtils.tokenizeToStringArray(locations, ",");
+				String[] arr = StringKit.split(locations, ',', true);
 				if (arr != null && arr.length > 0) {
 					Properties temp = new Properties();
 					for (String loc : arr) {
@@ -359,13 +337,11 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		if (statics.size() > 0 && checkRules != null) {
 			for (Rule rule : checkRules.rules) {
 				String val = statics.get(rule.name);
-				if (StringUtils.isEmpty(val)) {
-					if (!StringUtils.isEmpty(rule.default_)) {
-						statics.put(rule.name, val = rule.default_);
-					}
+				if (StringKit.isEmpty(val)) {
+					val = rule.default_;
 				} else if (rule.crypted) {
 					try {
-						statics.put(rule.name, val = AES.decrypt(rule.passwd, val));
+						val = AES.decrypt(rule.passwd, val);
 					} catch (Exception e) {
 						if (fatalIfError) {
 							throw new WrappedException("[ApplicationProperties] decrpty property failed: " + rule.name, e);
@@ -374,6 +350,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 						}
 					}
 				}
+				statics.put(rule.name, val);
 			}
 		}
 
@@ -395,7 +372,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				@Override
 				public String resolveStringValue(String strVal) {
 					String resolved = ignoreUnresolvablePlaceholder ? propertyResolver.resolvePlaceholders(strVal) : propertyResolver.resolveRequiredPlaceholders(strVal);
-					return StringUtils.isEmpty(resolved) ? null : resolved.trim();
+					return StringKit.isEmpty(resolved) ? null : resolved.trim();
 				}
 			};
 
@@ -425,10 +402,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			service.shutdownNow();
 		}
 		ApplicationContext appCtx = event.getApplicationContext();
-		if (!StringUtils.isEmpty(dataSourceRef)) {
+		if (StringKit.isNotEmpty(dataSourceRef)) {
 			dataSource = appCtx.getBean(dataSourceRef, DataSource.class);
 		}
-		if (!StringUtils.isEmpty(jedisPoolRef)) {
+		if (StringKit.isNotEmpty(jedisPoolRef)) {
 			jedisPool = appCtx.getBean(jedisPoolRef, JedisPool.class);
 		}
 		if (dataSource != null || jedisPool != null) {
@@ -450,30 +427,18 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 						updateDynamicConfiguration(dataSource, jedisPool);
 					}
 				}, timer, timer, TimeUnit.SECONDS);
+				service.shutdown();
 			}
 		} else {
 			// check required at last...
 			if (checkRules != null) {
 				for (Rule rule : checkRules.rules) {
-					String val = coalesceNotDynamic(rule.name);
-					if (rule.required && StringUtils.isEmpty(val)) {
+					String val = getNotDynamic(rule.name);
+					if (rule.required && StringKit.isEmpty(val)) {
 						if (fatalIfError) {
 							throw new MessageException(ConfigErrno.SOURCE, ConfigErrno.PROPERTY_REQUIRED, "[ApplicationProperties] application property required: " + rule.name);
 						} else {
 							logger.error("[ApplicationProperties] application property required: " + rule.name);
-						}
-					}
-					if (rule.type != Type.String && !StringUtils.isEmpty(val)) {
-						try {
-							Object obj = Type.parseType(rule.type, val);
-							// initial
-							if (objects == null) {
-								objects = new HashMap<String, Object>();
-							}
-							objects.put(rule.name, obj);
-						} catch (Exception e) {
-							logger.error("[ApplicationProperties] parse type value failed: type=" + rule.type + ", val=" + val + ", error=" + e.getMessage());
-							continue;
 						}
 					}
 				}
@@ -493,88 +458,80 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 		logger.debug("[ApplicationProperties] update dynamic configuration...");
 
-		Map<String, String> _dynamic = new HashMap<String, String>();
-		Map<String, Object> _objects = new HashMap<String, Object>();
+		Map<String, String> _dynamic = new HashMap<String, String>(); // 原始值
 
-		if (dataSource != null) {
-			loadDynamicConfigurationFromQuery(_dynamic, dataSource, query);
-		}
+		// 只有版本变化才需要更新
+		if (loadDynamicConfigurationFromQuery(_dynamic, dataSource, query) || loadDynamicConfigurationFromHash(_dynamic, jedisPool, hash)) {
+			// process type and required in the rule
+			if (checkRules != null) {
+				for (Rule rule : checkRules.rules) {
 
-		if (jedisPool != null) {
-			loadDynamicConfigurationFromHash(_dynamic, jedisPool, hash);
-		}
-
-		// process type and required in the rule
-		if (_dynamic.size() > 0 && checkRules != null) {
-			for (Rule rule : checkRules.rules) {
-
-				String val = _dynamic.get(rule.name);
-				if (StringUtils.isEmpty(val)) {
-					val = coalesceNotDynamic(rule.name);
-					if (StringUtils.isEmpty(val)) {
-						if (!StringUtils.isEmpty(rule.default_)) {
-							_dynamic.put(rule.name, val = rule.default_);
+					String val = _dynamic.get(rule.name);
+					if (StringKit.isEmpty(val)) {
+						val = getNotDynamic(rule.name);
+						if (StringKit.isEmpty(val)) {
+							if (StringKit.isNotEmpty(rule.default_)) {
+								val = rule.default_;
+							}
 						}
-					} else {
-						_dynamic.put(rule.name, val);
+					} else if (rule.crypted) {
+						try {
+							val = AES.decrypt(rule.passwd, val);
+						} catch (Exception e) {
+							if (fatalIfError) {
+								throw new WrappedException("[ApplicationProperties] decrpty property failed: " + rule.name, e);
+							} else {
+								logger.error("[ApplicationProperties] decrpty property failed: " + rule.name + ", error: " + e.getMessage());
+							}
+						}
 					}
-				} else if (rule.crypted) {
-					try {
-						_dynamic.put(rule.name, val = AES.decrypt(rule.passwd, val));
-					} catch (Exception e) {
+					if (rule.required && StringKit.isEmpty(val)) {
 						if (fatalIfError) {
-							throw new WrappedException("[ApplicationProperties] decrpty property failed: " + rule.name, e);
+							throw new MessageException(ConfigErrno.SOURCE, ConfigErrno.PROPERTY_REQUIRED, "[ApplicationProperties] application property required: " + rule.name);
 						} else {
-							logger.error("[ApplicationProperties] decrpty property failed: " + rule.name + ", error: " + e.getMessage());
+							logger.error("[ApplicationProperties] application property required: " + rule.name);
 						}
 					}
+
+					_dynamic.put(rule.name, val);
 				}
-				if (rule.required && StringUtils.isEmpty(val)) {
-					if (fatalIfError) {
-						throw new MessageException(ConfigErrno.SOURCE, ConfigErrno.PROPERTY_REQUIRED, "[ApplicationProperties] application property required: " + rule.name);
-					} else {
-						logger.error("[ApplicationProperties] application property required: " + rule.name);
-					}
-				}
-				if (rule.type != Type.String && !StringUtils.isEmpty(val)) {
-					try {
-						Object obj = Type.parseType(rule.type, val);
-						_objects.put(rule.name, obj);
-					} catch (Exception e) {
-						logger.error("[ApplicationProperties] parse type value failed: type=" + rule.type + ", val=" + val + ", error=" + e.getMessage());
-						continue;
+			}
+
+			Set<String> set = new HashSet<String>();
+
+			// 更新旧值并触发change事件
+			set.addAll(_dynamic.keySet());
+			set.retainAll(this.dynamic.keySet()); // 求同集
+			for (String key : set) {
+				String nval = _dynamic.get(key);
+				String oval = this.dynamic.get(key);
+				if (!StringKit.equals(nval, oval)) {
+					List<PropertyChangeListener> listeners = propertyChangeListenerMap.get(key);
+					if (listeners != null) {
+						PropertyChangeEvent evt = new PropertyChangeEvent(this.dynamic, key, oval, nval);
+						for (PropertyChangeListener listener : listeners) {
+							listener.propertyChange(evt);
+						}
 					}
 				}
 			}
-		}
 
-		// replace the reference
-		Map<String, String> oldmap = this.dynamic;
-		this.dynamic = _dynamic;
-		this.objects = _objects;
-
-		// trigger change events
-		if (propertyChangeListenerMap.size() > 0) {
-			Set<String> allKeys = new HashSet<String>(Math.max(oldmap.size(), this.dynamic.size()) + 64);
-			allKeys.addAll(oldmap.keySet());
-			allKeys.addAll(this.dynamic.keySet());
-			allKeys.containsAll(propertyChangeListenerMap.keySet());
-			for (String key : allKeys) {
-				String oldVal = oldmap.get(key);
-				String newVal = _dynamic.get(key);
-				if (oldVal == null || newVal == null || !oldVal.equals(newVal)) {
-					PropertyChangeEvent evt = new PropertyChangeEvent(this.dynamic, key, oldVal, newVal);
-					for (PropertyChangeListener listener : propertyChangeListenerMap.get(key)) {
-						listener.propertyChange(evt);
-					}
-				}
+			// 添加新值
+			set.addAll(_dynamic.keySet());
+			set.removeAll(this.dynamic.keySet());
+			for (String key : set) {
+				this.dynamic.put(key, _dynamic.get(key));
 			}
 		}
 	}
 
-	private void loadDynamicConfigurationFromQuery(Map<String, String> props, DataSource dataSource, String query) {
+	private boolean loadDynamicConfigurationFromQuery(Map<String, String> props, DataSource dataSource, String query) {
 
-		if (StringUtils.isEmpty(query)) {
+		if (dataSource == null) {
+			return false;
+		}
+
+		if (StringKit.isEmpty(query)) {
 			query = DEFAULT_QUERY;
 		}
 
@@ -590,8 +547,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				props.put(rs.getString(1), rs.getString(2)); // 固定第1,2个字段
 			}
 
+			return !StringKit.equals(props.get(VERSION), dynamic.get(VERSION)); // 版本不同才会更新
 		} catch (Exception e) {
 			logger.error("[ApplicationProperties] load dynamic configuration from query failed: " + query + ", error: " + e.getMessage());
+			return false;
 		} finally {
 
 			if (rs != null) {
@@ -618,10 +577,16 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 				}
 			}
 		}
+
 	}
 
-	private void loadDynamicConfigurationFromHash(Map<String, String> props, JedisPool jedisPool, String hash) {
-		if (StringUtils.isEmpty(hash)) {
+	private boolean loadDynamicConfigurationFromHash(Map<String, String> props, JedisPool jedisPool, String hash) {
+
+		if (jedisPool == null) {
+			return false;
+		}
+
+		if (StringKit.isEmpty(hash)) {
 			hash = DEFAULT_HASH;
 		}
 
@@ -632,8 +597,11 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			if (kvs != null && kvs.size() > 0) {
 				props.putAll(kvs);
 			}
+
+			return !StringKit.equals(props.get(VERSION), dynamic.get(VERSION));
 		} catch (Exception e) {
 			logger.error("[ApplicationProperties] load dynamic configuration from hash failed: " + hash + ", error: " + e.getMessage());
+			return false;
 		} finally {
 			if (jedis != null) {
 				jedis.close();
@@ -648,7 +616,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		}
 	}
 
-	private String coalesceNotDynamic(String key) {
+	private String getNotDynamic(String key) {
 		String val = statics.get(key);
 		if (val != null) {
 			return val;
@@ -660,117 +628,15 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		return systemEnvironment.get(key);
 	}
 
-	public boolean contains(String key) {
-		if (dynamic != null) {
-			if (dynamic.containsKey(key)) {
-				return true;
-			}
+	public String get(String key) {
+		String val = dynamic.get(key);
+		if (val == null) {
+			val = getNotDynamic(key);
 		}
-		return false;
+		return val;
 	}
 
-	// 提供类型转换等一些辅助性方法
-	public String getString(String key) {
-		if (dynamic != null) {
-			String val = dynamic.get(key);
-			if (val != null) {
-				return val;
-			}
-		}
-		return null;
-	}
-
-	public Boolean getBoolean(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Boolean) {
-				return (Boolean) val;
-			}
-		}
-		return null;
-	}
-
-	public Integer getInteger(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer) {
-				return (Integer) val;
-			}
-		}
-		return null;
-	}
-
-	public Long getLong(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Long) {
-				return (Long) val;
-			}
-		}
-		return null;
-	}
-
-	public Double getDouble(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Double) {
-				return (Double) val;
-			}
-		}
-		return null;
-	}
-
-	public String[] getStringArray(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof String[]) {
-				return (String[]) val;
-			}
-		}
-		return null;
-	}
-
-	public Boolean[] getBooleanArray(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Boolean[]) {
-				return (Boolean[]) val;
-			}
-		}
-		return null;
-	}
-
-	public Integer[] getIntegerArray(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Integer[]) val;
-			}
-		}
-		return null;
-	}
-
-	public Long[] getLongArray(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Long[]) val;
-			}
-		}
-		return null;
-	}
-
-	public Double[] getDoubleArray(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Double[]) val;
-			}
-		}
-		return null;
-	}
-
-	public boolean contains2(String key) {
+	public boolean containsNotDynamic(String key) {
 		if (dynamic != null) {
 			if (dynamic.containsKey(key)) {
 				return true;
@@ -785,105 +651,8 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		return systemEnvironment.containsKey(key);
 	}
 
-	// 提供类型转换等一些辅助性方法
-	public String getString2(String key) {
-		if (dynamic != null) {
-			String val = dynamic.get(key);
-			if (val != null) {
-				return val;
-			}
-		}
-		return coalesceNotDynamic(key);
-	}
-
-	public Boolean getBoolean2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Boolean) {
-				return (Boolean) val;
-			}
-		}
-		return (Boolean) Type.parseType(Type.Boolean, getString(key));
-	}
-
-	public Integer getInteger2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer) {
-				return (Integer) val;
-			}
-		}
-		return (Integer) Type.parseType(Type.Integer, getString(key));
-	}
-
-	public Long getLong2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Long) {
-				return (Long) val;
-			}
-		}
-		return (Long) Type.parseType(Type.Long, getString(key));
-	}
-
-	public Double getDouble2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Double) {
-				return (Double) val;
-			}
-		}
-		return (Double) Type.parseType(Type.Double, getString(key));
-	}
-
-	public String[] getStringArray2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof String[]) {
-				return (String[]) val;
-			}
-		}
-		return (String[]) Type.parseType(Type.StringArray, getString(key));
-	}
-
-	public Boolean[] getBooleanArray2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Boolean[]) {
-				return (Boolean[]) val;
-			}
-		}
-		return (Boolean[]) Type.parseType(Type.BooleanArray, getString(key));
-	}
-
-	public Integer[] getIntegerArray2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Integer[]) val;
-			}
-		}
-		return (Integer[]) Type.parseType(Type.IntegerArray, getString(key));
-	}
-
-	public Long[] getLongArray2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Long[]) val;
-			}
-		}
-		return (Long[]) Type.parseType(Type.LongArray, getString(key));
-	}
-
-	public Double[] getDoubleArray2(String key) {
-		if (objects != null) {
-			Object val = objects.get(key);
-			if (val instanceof Integer[]) {
-				return (Double[]) val;
-			}
-		}
-		return (Double[]) Type.parseType(Type.DoubleArray, getString(key));
+	public boolean contains(String key) {
+		return dynamic.containsKey(key) || containsNotDynamic(key);
 	}
 
 }
