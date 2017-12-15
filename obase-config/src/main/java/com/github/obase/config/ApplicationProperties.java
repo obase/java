@@ -298,7 +298,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		try {
 			if (StringKit.isEmpty(locations)) {
 				FileSystemResource fsr = new FileSystemResource(DEFAULT_ABSOLUTE_CONFIG_APP_PROPERTIES);
-				if (!fsr.exists()) {
+				if (!fsr.exists() && Envs.DEBUG) {
 					fsr = new FileSystemResource(DEFAULT_RELATIVE_CONFIG_APP_PROPERTIES);
 				}
 				if (fsr.exists()) {
