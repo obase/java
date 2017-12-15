@@ -46,11 +46,11 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringValueResolver;
 
-import com.github.obase.env.Envs;
-import com.github.obase.kit.StringKit;
 import com.github.obase.MessageException;
 import com.github.obase.WrappedException;
 import com.github.obase.crypto.AES;
+import com.github.obase.env.Envs;
+import com.github.obase.kit.StringKit;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -460,8 +460,20 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 		Map<String, String> _dynamic = new HashMap<String, String>(); // 原始值
 
+		boolean updated = false;
+		Map<String, String> tmp;
+		if ((tmp = loadDynamicConfigurationFromQuery(dataSource, query)) != null) {
+			_dynamic.putAll(tmp);
+			updated = true;
+		}
+
+		if ((tmp = loadDynamicConfigurationFromHash(jedisPool, hash)) != null) {
+			_dynamic.putAll(tmp);
+			updated = true;
+		}
+
 		// 只有版本变化才需要更新
-		if (loadDynamicConfigurationFromQuery(_dynamic, dataSource, query) || loadDynamicConfigurationFromHash(_dynamic, jedisPool, hash)) {
+		if (updated) {
 			// process type and required in the rule
 			if (checkRules != null) {
 				for (Rule rule : checkRules.rules) {
@@ -525,10 +537,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		}
 	}
 
-	private boolean loadDynamicConfigurationFromQuery(Map<String, String> props, DataSource dataSource, String query) {
+	private Map<String, String> loadDynamicConfigurationFromQuery(DataSource dataSource, String query) {
 
 		if (dataSource == null) {
-			return false;
+			return null;
 		}
 
 		if (StringKit.isEmpty(query)) {
@@ -543,14 +555,19 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
 
+			Map<String, String> tmp = new HashMap<String, String>();
 			while (rs.next()) {
-				props.put(rs.getString(1), rs.getString(2)); // 固定第1,2个字段
+				tmp.put(rs.getString(1), rs.getString(2)); // 固定第1,2个字段
 			}
 
-			return !StringKit.equals(props.get(VERSION), dynamic.get(VERSION)); // 版本不同才会更新
+			// 版本发生变化才会更新
+			if (!StringKit.equals(tmp.get(VERSION), dynamic.get(VERSION))) {
+				return tmp;
+			}
+			return null;
 		} catch (Exception e) {
 			logger.error("[ApplicationProperties] load dynamic configuration from query failed: " + query + ", error: " + e.getMessage());
-			return false;
+			return null;
 		} finally {
 
 			if (rs != null) {
@@ -580,10 +597,10 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 	}
 
-	private boolean loadDynamicConfigurationFromHash(Map<String, String> props, JedisPool jedisPool, String hash) {
+	private Map<String, String> loadDynamicConfigurationFromHash(JedisPool jedisPool, String hash) {
 
 		if (jedisPool == null) {
-			return false;
+			return null;
 		}
 
 		if (StringKit.isEmpty(hash)) {
@@ -594,14 +611,13 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 		try {
 			jedis = jedisPool.getResource();
 			Map<String, String> kvs = jedis.hgetAll(hash);
-			if (kvs != null && kvs.size() > 0) {
-				props.putAll(kvs);
+			if (kvs != null && !StringKit.equals(kvs.get(VERSION), dynamic.get(VERSION))) {
+				return kvs;
 			}
-
-			return !StringKit.equals(props.get(VERSION), dynamic.get(VERSION));
+			return null;
 		} catch (Exception e) {
 			logger.error("[ApplicationProperties] load dynamic configuration from hash failed: " + hash + ", error: " + e.getMessage());
-			return false;
+			return null;
 		} finally {
 			if (jedis != null) {
 				jedis.close();
