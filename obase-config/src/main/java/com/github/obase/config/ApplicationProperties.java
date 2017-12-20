@@ -531,13 +531,14 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 			Set<String> set = new HashSet<String>();
 
-			// 更新旧值并触发change事件
+			// 修改旧值
 			set.addAll(_dynamic.keySet());
 			set.retainAll(this.dynamic.keySet()); // 求同集
 			for (String key : set) {
 				String nval = _dynamic.get(key);
 				String oval = this.dynamic.get(key);
 				if (!StringKit.equals(nval, oval)) {
+					this.dynamic.put(key, nval);
 					List<PropertyChangeListener> listeners = propertyChangeListenerMap.get(key);
 					if (listeners != null) {
 						PropertyChangeEvent evt = new PropertyChangeEvent(this.dynamic, key, oval, nval);
@@ -549,10 +550,34 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			}
 
 			// 添加新值
+			set.clear();
 			set.addAll(_dynamic.keySet());
 			set.removeAll(this.dynamic.keySet());
 			for (String key : set) {
-				this.dynamic.put(key, _dynamic.get(key));
+				String nval = _dynamic.get(key);
+				this.dynamic.put(key, nval);
+				List<PropertyChangeListener> listeners = propertyChangeListenerMap.get(key);
+				if (listeners != null) {
+					PropertyChangeEvent evt = new PropertyChangeEvent(this.dynamic, key, null, nval);
+					for (PropertyChangeListener listener : listeners) {
+						listener.propertyChange(evt);
+					}
+				}
+			}
+
+			// 移除旧值
+			set.clear();
+			set.addAll(this.dynamic.keySet());
+			set.removeAll(_dynamic.keySet());
+			for (String key : set) {
+				String oval = this.dynamic.remove(key);
+				List<PropertyChangeListener> listeners = propertyChangeListenerMap.get(key);
+				if (listeners != null) {
+					PropertyChangeEvent evt = new PropertyChangeEvent(this.dynamic, key, oval, null);
+					for (PropertyChangeListener listener : listeners) {
+						listener.propertyChange(evt);
+					}
+				}
 			}
 		}
 	}
