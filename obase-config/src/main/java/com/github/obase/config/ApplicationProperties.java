@@ -37,9 +37,6 @@ import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -132,7 +129,7 @@ import redis.clients.jedis.JedisPool;
  * 
  * </pre>
  */
-public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, DisposableBean {
+public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, InitializingBean, DisposableBean {
 
 	private static final Log logger = LogFactory.getLog(ApplicationProperties.class);
 
@@ -220,6 +217,7 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
+		processDynamic();
 	}
 
 	@Override
@@ -396,23 +394,19 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	}
 
 	// 动态配置处理
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		if (service != null) {
-			service.shutdownNow();
-		}
-		ApplicationContext appCtx = event.getApplicationContext();
+	private void processDynamic() {
+
 		if (StringKit.isNotEmpty(dataSourceRef)) {
-			dataSource = appCtx.getBean(dataSourceRef, DataSource.class);
+			dataSource = beanFactory.getBean(dataSourceRef, DataSource.class);
 		}
 		if (StringKit.isNotEmpty(jedisPoolRef)) {
-			jedisPool = appCtx.getBean(jedisPoolRef, JedisPool.class);
+			jedisPool = beanFactory.getBean(jedisPoolRef, JedisPool.class);
 		}
 		if (dataSource != null || jedisPool != null) {
 
 			updateDynamicConfiguration(dataSource, jedisPool);
 
-			if (timer > 0) {
+			if (timer > 0 && service == null) {
 				service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
