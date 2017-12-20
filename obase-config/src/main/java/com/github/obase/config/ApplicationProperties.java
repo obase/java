@@ -414,7 +414,15 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 			service.shutdownNow();
 		}
 
+		if (!this.applicationContext.equals(event.getApplicationContext())) {
+			return;
+		}
+
+		if (service != null) {
+			service.shutdownNow();
+		}
 		if (StringKit.isNotEmpty(dataSourceRef)) {
+
 			dataSource = applicationContext.getBean(dataSourceRef, DataSource.class);
 		}
 		if (StringKit.isNotEmpty(jedisPoolRef)) {
