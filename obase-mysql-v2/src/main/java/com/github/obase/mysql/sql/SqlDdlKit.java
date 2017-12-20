@@ -229,7 +229,7 @@ public class SqlDdlKit extends SqlKit {
 				}
 			}
 		} else if (!equalsIgnoreOrder(keys, classMetaInfo.keys)) {
-			logger.warn("Table primary keys conflict: meta" + classMetaInfo.keys + ",ddl" + keys);
+			logger.warn("Table primary keys conflict: " + classMetaInfo.tableName + " meta" + classMetaInfo.keys + ",ddl" + keys);
 		}
 	}
 
