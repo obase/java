@@ -841,56 +841,54 @@ public abstract class JdbcMeta {
 			return;
 		}
 
-		// 高频排前
-		Class<?> type = param.getClass();
-		if (type == String.class) {
+		if (param instanceof String) {
 			pstmt.setString(pos, (String) param);
-		} else if (type == Integer.class || type == int.class) {
+		} else if (param instanceof Integer) {
 			pstmt.setInt(pos, (Integer) param);
-		} else if (type == Long.class || type == long.class) {
+		} else if (param instanceof Long) {
 			pstmt.setLong(pos, (Long) param);
-		} else if (type == Double.class || type == double.class) {
+		} else if (param instanceof Double) {
 			pstmt.setDouble(pos, (Double) param);
-		} else if (type == Float.class || type == float.class) {
+		} else if (param instanceof Float) {
 			pstmt.setFloat(pos, (Float) param);
-		} else if (type == Short.class || type == short.class) {
+		} else if (param instanceof Short) {
 			pstmt.setShort(pos, (Short) param);
-		} else if (type == java.util.Date.class) {
+		} else if (param instanceof java.util.Date) {
 			pstmt.setDate(pos, new Date(((java.util.Date) param).getTime()));
-		} else if (type == Date.class) {
+		} else if (param instanceof Date) {
 			pstmt.setDate(pos, (Date) param);
-		} else if (type == Boolean.class || type == boolean.class) {
+		} else if (param instanceof Boolean) {
 			pstmt.setBoolean(pos, (Boolean) param);
-		} else if (type == Character.class || type == char.class) {
+		} else if (param instanceof Character) {
 			pstmt.setString(pos, param.toString());
-		} else if (type == Byte.class || type == byte.class) {
+		} else if (param instanceof Byte) {
 			pstmt.setByte(pos, (Byte) param);
-		} else if (type == BigDecimal.class) {
+		} else if (param instanceof BigDecimal) {
 			pstmt.setBigDecimal(pos, (BigDecimal) param);
-		} else if (type == BigInteger.class) {
+		} else if (param instanceof BigInteger) {
 			pstmt.setBigDecimal(pos, new BigDecimal((BigInteger) param));
-		} else if (type == Time.class) {
+		} else if (param instanceof Time) {
 			pstmt.setTime(pos, (Time) param);
-		} else if (type == Timestamp.class) {
+		} else if (param instanceof Timestamp) {
 			pstmt.setTimestamp(pos, (Timestamp) param);
-		} else if (type == byte[].class) {
+		} else if (param instanceof byte[]) {
 			pstmt.setBytes(pos, (byte[]) param);
-		} else if (type == Ref.class) {
+		} else if (param instanceof Ref) {
 			pstmt.setRef(pos, (Ref) param);
-		} else if (type == URL.class) {
+		} else if (param instanceof URL) {
 			pstmt.setURL(pos, (URL) param);
-		} else if (type == SQLXML.class) {
+		} else if (param instanceof SQLXML) {
 			pstmt.setSQLXML(pos, (SQLXML) param);
-		} else if (type == Blob.class) {
+		} else if (param instanceof Blob) {
 			pstmt.setBlob(pos, (Blob) param);
-		} else if (type == Clob.class) {
+		} else if (param instanceof Clob) {
 			pstmt.setClob(pos, (Clob) param);
-		} else if (type == InputStream.class) {
+		} else if (param instanceof InputStream) {
 			pstmt.setBinaryStream(pos, (InputStream) param);
-		} else if (type == Reader.class) {
+		} else if (param instanceof Reader) {
 			pstmt.setCharacterStream(pos, (Reader) param);
 		} else {
-			JavaTypeMeta meta = JavaTypeMeta.get(type);
+			JavaTypeMeta meta = JavaTypeMeta.get(param.getClass());
 			if (meta != null) {
 				meta.set(pstmt, pos, param);
 			} else {
