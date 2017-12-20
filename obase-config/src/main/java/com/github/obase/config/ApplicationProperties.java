@@ -37,6 +37,10 @@ import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -129,7 +133,7 @@ import redis.clients.jedis.JedisPool;
  * 
  * </pre>
  */
-public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, InitializingBean, DisposableBean {
+public class ApplicationProperties implements BeanFactoryPostProcessor, BeanNameAware, BeanFactoryAware, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, DisposableBean {
 
 	private static final Log logger = LogFactory.getLog(ApplicationProperties.class);
 
@@ -213,16 +217,21 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 
 	String beanName;
 	BeanFactory beanFactory;
+	ApplicationContext applicationContext;
 
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
-		processDynamic();
 	}
 
 	@Override
 	public void setBeanName(String beanName) {
 		this.beanName = beanName;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	Rules checkRules;
@@ -394,19 +403,28 @@ public class ApplicationProperties implements BeanFactoryPostProcessor, BeanName
 	}
 
 	// 动态配置处理
-	private void processDynamic() {
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+
+		if (!this.applicationContext.equals(event.getApplicationContext())) {
+			return;
+		}
+
+		if (service != null) {
+			service.shutdownNow();
+		}
 
 		if (StringKit.isNotEmpty(dataSourceRef)) {
-			dataSource = beanFactory.getBean(dataSourceRef, DataSource.class);
+			dataSource = applicationContext.getBean(dataSourceRef, DataSource.class);
 		}
 		if (StringKit.isNotEmpty(jedisPoolRef)) {
-			jedisPool = beanFactory.getBean(jedisPoolRef, JedisPool.class);
+			jedisPool = applicationContext.getBean(jedisPoolRef, JedisPool.class);
 		}
 		if (dataSource != null || jedisPool != null) {
 
 			updateDynamicConfiguration(dataSource, jedisPool);
 
-			if (timer > 0 && service == null) {
+			if (timer > 0) {
 				service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
