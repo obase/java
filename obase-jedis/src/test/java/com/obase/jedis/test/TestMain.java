@@ -1,26 +1,30 @@
 package com.obase.jedis.test;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import com.github.obase.jedis.JedisClient;
+import com.github.obase.jedis.TransactionCallback;
 import com.github.obase.jedis.impl.JedisClientImpl;
 
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Response;
+import redis.clients.jedis.Transaction;
 
 public class TestMain {
 
 	public static void main(String[] args) throws InterruptedException {
-		JedisPool jedisPool = new JedisPool("localhost", 6379);
-		JedisClient client = new JedisClientImpl(jedisPool);
+		JedisPool pool = new JedisPool("redis://user:f088@172.17.38.204:6379/0");
+		JedisClient client = new JedisClientImpl(pool);
+		List<Response<?>> rsp = client.execGetResponse(new TransactionCallback() {
+			@Override
+			public void doInTransaction(Transaction txn, Object... args) {
+				txn.get((String) args[0]);
+			}
+		}, "test");
 
-		System.out.println("lock");
-		client.tryLock("LOCK", "abc", 123);
-		TimeUnit.SECONDS.sleep(40);
-		System.out.println("unlock 123");
-		client.unlock("LOCK", "123");
-		TimeUnit.SECONDS.sleep(40);
-		System.out.println("unlock abc");
-		client.unlock("LOCK", "abc");
+		System.out.println(rsp);
+
+		System.out.println(client.getex("abcef".getBytes(), 5));
 	}
 
 }
