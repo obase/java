@@ -1859,12 +1859,12 @@ public class JedisClientProxyImpl implements JedisClient {
 	@Override
 	public Set<byte[]> zrevrangeByScore(byte[] key, byte[] max, byte[] min) {
 		Set<byte[]> ret;
-		if ((ret = master.zrevrangeByLex(key, max, min)).size() > 0) {
+		if ((ret = master.zrevrangeByScore(key, max, min)).size() > 0) {
 			return ret;
 		}
 		for (JedisClient s : slaves) {
 			try {
-				if ((ret = s.zrevrangeByLex(key, max, min)).size() > 0) {
+				if ((ret = s.zrevrangeByScore(key, max, min)).size() > 0) {
 					return ret;
 				}
 			} catch (Exception e) {
