@@ -102,6 +102,29 @@ public class MysqlClientImpl extends MysqlClientOperation {
 	final Map<Class<?>, SPstmtMeta> updateCache = new HashMap<Class<?>, SPstmtMeta>(); // 更新
 	final Map<Class<?>, SPstmtMeta> deleteCache = new HashMap<Class<?>, SPstmtMeta>(); // 删除
 
+	// 用于双活方案的快捷方法,从from复制所有cache
+	public void doInit(MysqlClientImpl from) {
+		this.statementCache.clear();
+		this.selectListCache.clear();
+		this.selectCache.clear();
+		this.insertCache.clear();
+		this.insertIgnoreCache.clear();
+		this.replaceCache.clear();
+		this.mergeCache.clear();
+		this.updateCache.clear();
+		this.deleteCache.clear();
+
+		this.statementCache.putAll(from.statementCache);
+		this.selectListCache.putAll(from.selectListCache);
+		this.selectCache.putAll(from.selectCache);
+		this.insertCache.putAll(from.insertCache);
+		this.insertIgnoreCache.putAll(from.insertIgnoreCache);
+		this.replaceCache.putAll(from.replaceCache);
+		this.mergeCache.putAll(from.mergeCache);
+		this.updateCache.putAll(from.updateCache);
+		this.deleteCache.putAll(from.deleteCache);
+	}
+
 	protected void doInit(Connection conn) throws Exception {
 		final Pattern separator = Pattern.compile("\\s*,\\s*");
 		final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
