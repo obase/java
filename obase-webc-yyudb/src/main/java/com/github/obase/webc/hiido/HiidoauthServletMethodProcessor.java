@@ -42,6 +42,14 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 
 	protected abstract String getHiidoLoginUrl();
 
+	protected String getHomepage(HttpServletRequest request) {
+		return getHomepage();
+	}
+
+	protected String getHiidoLoginUrl(HttpServletRequest request) {
+		return getHiidoLoginUrl();
+	}
+
 	@Override
 	public void setup(Collection<ServletMethodObject> rules) throws ServletException {
 
@@ -53,7 +61,13 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 					sendError(response, SC_INVALID_ACCOUNT, SC_INVALID_ACCOUNT, "Invalid account!");
 					return;
 				}
-				Kits.sendRedirect(response, Kits.getServletPath(request, ObjectKit.<String>ifnull(getHomepage(), "/")));
+				String homepage = getHomepage(request);
+				if (StringKit.isEmpty(homepage)) {
+					homepage = Kits.getServletPath(request, "/");
+				} else if (!homepage.startsWith("http")) {
+					homepage = Kits.getServletPath(request, homepage);
+				}
+				Kits.sendRedirect(response, homepage);
 			}
 		};
 
@@ -86,7 +100,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 
 	@Override
 	protected void redirectLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Kits.sendRedirect(response, ObjectKit.<String>ifnull(getHiidoLoginUrl(), HiidoKit.HIIDO_LOGIN_URL));
+		Kits.sendRedirect(response, ObjectKit.<String>ifnull(getHiidoLoginUrl(request), HiidoKit.HIIDO_LOGIN_URL));
 	}
 
 	// for subclass override
