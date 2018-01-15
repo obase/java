@@ -64,7 +64,7 @@ public abstract class HiidoauthServletMethodProcessor extends WsidServletMethodP
 				String homepage = getHomepage(request);
 				if (StringKit.isEmpty(homepage)) {
 					homepage = Kits.getServletPath(request, "/");
-				} else if (!homepage.startsWith("http")) {
+				} else if (homepage.indexOf("://") == -1) {
 					homepage = Kits.getServletPath(request, homepage);
 				}
 				Kits.sendRedirect(response, homepage);
