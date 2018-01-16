@@ -5780,4 +5780,58 @@ public class JedisClientProxyImpl implements JedisClient {
 		return null;
 	}
 
+	@Override
+	public Object eval(String script, int keyCount, String... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object eval(String script, List<String> keys, List<String> args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object eval(String script) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object evalsha(String script) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object evalsha(String sha1, List<String> keys, List<String> args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object evalsha(String sha1, int keyCount, String... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean scriptExists(String sha1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Boolean> scriptExists(String... sha1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String scriptLoad(String script) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

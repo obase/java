@@ -8,8 +8,9 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.MultiKeyBinaryCommands;
 import redis.clients.jedis.MultiKeyCommands;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.ScriptingCommands;
 
-public interface JedisClient extends BinaryJedisCommands, MultiKeyBinaryCommands, JedisCommands, MultiKeyCommands {
+public interface JedisClient extends BinaryJedisCommands, MultiKeyBinaryCommands, JedisCommands, MultiKeyCommands, ScriptingCommands {
 
 	List<Object> syncAndReturnAll(PipelineCallback callback, Object... args);
 

@@ -4816,4 +4816,121 @@ public class JedisClientImpl implements JedisClient {
 		}
 	}
 
+	@Override
+	public Object eval(String script, int keyCount, String... params) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.eval(script, keyCount, params);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Object eval(String script, List<String> keys, List<String> args) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.eval(script, keys, args);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Object eval(String script) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.eval(script);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Object evalsha(String script) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.evalsha(script);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Object evalsha(String sha1, List<String> keys, List<String> args) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.evalsha(sha1, keys, args);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Object evalsha(String sha1, int keyCount, String... params) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.evalsha(sha1, keyCount, params);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public Boolean scriptExists(String sha1) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.scriptExists(sha1);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public List<Boolean> scriptExists(String... sha1) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.scriptExists(sha1);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public String scriptLoad(String script) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.scriptLoad(script);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 }
