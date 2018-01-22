@@ -73,9 +73,7 @@ public class BaseServletMethodProcessor implements ServletMethodProcessor {
 
 	@Override
 	public void error(HttpServletRequest request, HttpServletResponse response, Throwable t) {
-		if (response.isCommitted()) {
-			return; // Fixbug when async context is broken
-		}
+
 		if (t != null) {
 
 			while (t instanceof WrappedException) {
