@@ -56,7 +56,13 @@ public final class AsmKit {
 			c = ClassKit.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			byte[] data = JdbcMetaClassWriter.dump(internalName, classMetaInfo);
-			c = ClassKit.defineClass(className, data);
+			synchronized (AsmKit.class) {
+				try {
+					c = ClassKit.loadClass(className);
+				} catch (ClassNotFoundException e2) {
+					c = ClassKit.defineClass(className, data);
+				}
+			}
 		}
 		return (JdbcMeta) c.newInstance();
 	}
@@ -70,7 +76,13 @@ public final class AsmKit {
 			ClassMetaInfo classMetaInfo = getClassMetaInfo(targetClassName);
 			String internalName = ClassKit.getInternalNameFromClassName(className);
 			byte[] data = JdbcMetaClassWriter.dump(internalName, classMetaInfo);
-			c = ClassKit.defineClass(className, data);
+			synchronized (AsmKit.class) {
+				try {
+					c = ClassKit.loadClass(className);
+				} catch (ClassNotFoundException e2) {
+					c = ClassKit.defineClass(className, data);
+				}
+			}
 		}
 		return (JdbcMeta) c.newInstance();
 	}
