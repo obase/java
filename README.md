@@ -1,7 +1,7 @@
 Obase系列是一套基于"spring+mysql+redis"的Java后端开发技术, 可以说是笔者多年开发经验沉湎.
 
 * obase-webc: 基于COC的MVC, 无web.xml启动, 很好支持前后端分离. 用户基于原生HttpServlet API开发. 
-* obase-mysql: 一套使用Annotation+ASM实现hibernate + mybatis优势功能的ORM框架. 自动封装, 一条SQL多种用途: 单值查询, 区间查询, 分页查询(支持字段排序), 其实ORM也可以很轻量!
+* obase-mysql: 一套使用Annotation+ASM实现hibernate + mybatis优势功能的ORM框架. 自动封装, 一条SQL多种用途: 单值查询, 区间查询, 分页查询(支持字段排序), 其实ORM也可以很轻量.
 * obase-jedis: 谈不上框架, 就是对JedisPool资源获取释放的封装.
 * obase-config: 实现PropertySourcePlaceholderConfiguer的功能, 并支持Redis, Mysql动态配置定期更新功能. 另外, 还支持配置项的AES128加密, 避免你的配置项明文存放.
 * obase-test: 嵌入式Tomcat8 + Junit4, 支持环境变量的动态注入. 可以容易测试https和spring bean.
