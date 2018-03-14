@@ -1,38 +1,38 @@
-ObaseÏµÁĞÊÇÒ»Ì×»ùÓÚ"spring+mysql+redis"µÄJavaºó¶Ë¿ª·¢¼¼Êõ, ¿ÉÒÔËµÊÇ±ÊÕß¶àÄê¿ª·¢¾­Ñé³ÁäÏ.
+Obaseç³»åˆ—æ˜¯ä¸€å¥—åŸºäº"spring+mysql+redis"çš„Javaåç«¯å¼€å‘æŠ€æœ¯, å¯ä»¥è¯´æ˜¯ç¬”è€…å¤šå¹´å¼€å‘ç»éªŒæ²‰æ¹.
 
-* obase-webc: »ùÓÚCOCµÄMVC, ÎŞweb.xmlÆô¶¯, ºÜºÃÖ§³ÖÇ°ºó¶Ë·ÖÀë. ÓÃ»§»ùÓÚÔ­ÉúHttpServlet API¿ª·¢. 
-* obase-mysql: Ò»Ì×ÕûºÏhibernate + mybatisµÄORM¿ò¼Ü. ×Ô¶¯·â×°, Ò»ÌõSQL¶àÖÖÓÃÍ¾: µ¥Öµ²éÑ¯, Çø¼ä²éÑ¯, ·ÖÒ³²éÑ¯(Ö§³Ö×Ö¶ÎÅÅĞò),  
-* obase-jedis: Ì¸²»ÉÏ¿ò¼Ü, ¾ÍÊÇ¶ÔJedisPool×ÊÔ´»ñÈ¡ÊÍ·ÅµÄ·â×°.
-* obase-config: ÊµÏÖPropertySourcePlaceholderConfiguerµÄ¹¦ÄÜ, ²¢Ö§³ÖRedis, Mysql¶¯Ì¬ÅäÖÃ¶¨ÆÚ¸üĞÂ¹¦ÄÜ. ÁíÍâ, »¹Ö§³ÖÅäÖÃÏîµÄAES128¼ÓÃÜ, ±ÜÃâÄãµÄÅäÖÃÏîÃ÷ÎÄ´æ·Å.
-* obase-test: Ç¶ÈëÊ½Tomcat8 + Junit4, Ö§³Ö»·¾³±äÁ¿µÄ¶¯Ì¬×¢Èë. ¿ÉÒÔÈİÒ×²âÊÔhttpsºÍspring bean.
-* obase-loader: ¼ÓÃÜ×Ö½ÚÂë·¢²¼Ê±ÓÃµÄclassloader. ¶ÔÓÚÉÌÒµ´úÂë±È½ÏÊµÓÃ!
+* obase-webc: åŸºäºCOCçš„MVC, æ— web.xmlå¯åŠ¨, å¾ˆå¥½æ”¯æŒå‰åç«¯åˆ†ç¦». ç”¨æˆ·åŸºäºåŸç”ŸHttpServlet APIå¼€å‘. 
+* obase-mysql: ä¸€å¥—æ•´åˆhibernate + mybatisçš„ORMæ¡†æ¶. è‡ªåŠ¨å°è£…, ä¸€æ¡SQLå¤šç§ç”¨é€”: å•å€¼æŸ¥è¯¢, åŒºé—´æŸ¥è¯¢, åˆ†é¡µæŸ¥è¯¢(æ”¯æŒå­—æ®µæ’åº),  
+* obase-jedis: è°ˆä¸ä¸Šæ¡†æ¶, å°±æ˜¯å¯¹JedisPoolèµ„æºè·å–é‡Šæ”¾çš„å°è£….
+* obase-config: å®ç°PropertySourcePlaceholderConfiguerçš„åŠŸèƒ½, å¹¶æ”¯æŒRedis, MysqlåŠ¨æ€é…ç½®å®šæœŸæ›´æ–°åŠŸèƒ½. å¦å¤–, è¿˜æ”¯æŒé…ç½®é¡¹çš„AES128åŠ å¯†, é¿å…ä½ çš„é…ç½®é¡¹æ˜æ–‡å­˜æ”¾.
+* obase-test: åµŒå…¥å¼Tomcat8 + Junit4, æ”¯æŒç¯å¢ƒå˜é‡çš„åŠ¨æ€æ³¨å…¥. å¯ä»¥å®¹æ˜“æµ‹è¯•httpså’Œspring bean.
+* obase-loader: åŠ å¯†å­—èŠ‚ç å‘å¸ƒæ—¶ç”¨çš„classloader. å¯¹äºå•†ä¸šä»£ç æ¯”è¾ƒå®ç”¨!
 
 ```
-ĞÂ°æ±¾,ĞÂÆøÏó,obase¾­¹ı0.x°æ±¾¹ı¶Éºó½øÈëÕıÊ½¹ı³Ì. 
-- obase-webÓëspring-bootµÄÉè¼ÆÀíÄîÎŞ·ì¶Ô½Ó, 
-- obase-mysqlÖ§³Ö¶¯Ì¬sql, ÍêÃÀ¼¯³ÉhibernateÓëmybatisµÄÓÅÊÆ! 
-ĞÂÔ´ÂëÔÚ¹«Ë¾ÄÚ²¿ÔËĞĞ²âÊÔ, ´ıÎÈ¶¨ÎŞÎóºóÔÙÕûÀíÏà¹ØÎÄµµ!
+æ–°ç‰ˆæœ¬,æ–°æ°”è±¡,obaseç»è¿‡0.xç‰ˆæœ¬è¿‡æ¸¡åå·²ç»å‘è¡Œæ­£å¼ç‰ˆæœ¬1.2.0. 
+- obase-webä¸spring-bootçš„è®¾è®¡ç†å¿µæ— ç¼å¯¹æ¥, 
+- obase-mysqlæ”¯æŒåŠ¨æ€sql, å®Œç¾é›†æˆhibernateä¸mybatisçš„ä¼˜åŠ¿! 
+æ–°æºç åœ¨å…¬å¸å†…éƒ¨å¤šä¸ªé¡¹ç›®è¿è¡Œç¨³å®š, ç›¸å…³æ–‡æ¡£æ­£åœ¨æ•´ç†è¡¥å……!
 ```
 
-¿ªÔ´obaseÔú¸ù"spring+mysql+redis", ¿ò¼ÜË¼Â·¿ÉÒÔÀ©Õ¹µ½ÆäËû... Èçmemcache, postsql. ÔÚ´Ë¾Í²»×öÌÖÂÛÁË. 
+å¼€æºobaseæ‰æ ¹"spring+mysql+redis", æ¡†æ¶æ€è·¯å¯ä»¥æ‰©å±•åˆ°å…¶ä»–... å¦‚memcache, postsql. åœ¨æ­¤å°±ä¸åšè®¨è®ºäº†. 
 
 # obase-webc
-* obase-webc×îĞÂ°æ±¾
+* obase-webcæœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-webc</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependency>
 ```
-## obase-webcÊÇÊ²Ã´?
-obase-webcÊÇ»ùÓÚservlet 3.0+µÄAsyncContextÊµÏÖµÄÎŞweb.xml¿ª·¢Ä£Ê½.ÔÚFilter²ãÃæÊµÏÖÁËSpring MVCµÄ¹¦ÄÜ, ²¢ÒÆ³ıÁËHandlerMappingÓëViewResolver, ÒÔCOC¼ò»¯Spring MVCµÄ·³ÈËÅäÖÃ. ÓÅµãÓĞÊ²Ã´? ÊÔÏÂßÂ.
+## obase-webcæ˜¯ä»€ä¹ˆ?
+obase-webcæ˜¯åŸºäºservlet 3.0+çš„AsyncContextå®ç°çš„æ— web.xmlå¼€å‘æ¨¡å¼.åœ¨Filterå±‚é¢å®ç°äº†Spring MVCçš„åŠŸèƒ½, å¹¶ç§»é™¤äº†HandlerMappingä¸ViewResolver, ä»¥COCç®€åŒ–Spring MVCçš„çƒ¦äººé…ç½®. ä¼˜ç‚¹æœ‰ä»€ä¹ˆ? è¯•ä¸‹å‘—.
 
-## obaes-webcÔõÃ´ÓÃ?
+## obaes-webcæ€ä¹ˆç”¨?
 
-obase-webcµÄÊ¹ÓÃ·½·¨:
+obase-webcçš„ä½¿ç”¨æ–¹æ³•:
 
-Ô´ÂëmavenÄ¿Â¼½á¹¹²Î¿¼: https://github.com/obase/java/tree/master/obase-demo, ÓÃ»§ĞèÒª¼Ì³Ğobase-parent
+æºç mavenç›®å½•ç»“æ„å‚è€ƒ: https://github.com/obase/java/tree/master/obase-demo, ç”¨æˆ·éœ€è¦ç»§æ‰¿obase-parent
 ```
 <parent>
 	<groupId>com.github.obase</groupId>
@@ -40,9 +40,9 @@ obase-webcµÄÊ¹ÓÃ·½·¨:
 	<version>1.1.0</version>
 </parent>
 ```
-ÀïÃæ¶¨ÒåÁËspring, servlet, jspµÄºËĞÄ°æ±¾.
+é‡Œé¢å®šä¹‰äº†spring, servlet, jspçš„æ ¸å¿ƒç‰ˆæœ¬.
 
-+ µÚ1²½: ´´½¨/META-INF/webc.xml
++ ç¬¬1æ­¥: åˆ›å»º/META-INF/webc.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <webc xmlns="http://obase.github.io/schema/webc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -52,9 +52,9 @@ obase-webcµÄÊ¹ÓÃ·½·¨:
 </webc>
 ```
 
-/WEB-INF/webc.xml»ò/META-INF/webc.xmlÊÇobase-webcÆôÓÃ"·§ÃÅ".  
+/WEB-INF/webc.xmlæˆ–/META-INF/webc.xmlæ˜¯obase-webcå¯ç”¨"é˜€é—¨".  
 
-+ µÚ2²½: ´´½¨/META-INF/servletContext.xml
++ ç¬¬2æ­¥: åˆ›å»º/META-INF/servletContext.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -70,7 +70,7 @@ obase-webcµÄÊ¹ÓÃ·½·¨:
 </beans>
 ```
 
-+ µÚ3²½: ´´½¨Controller
++ ç¬¬3æ­¥: åˆ›å»ºController
 ```
 package com.github.obase.demo.controller;
 
@@ -97,7 +97,7 @@ public class TestController {
 
 ```
 
-+ µÚ4²½: ´´½¨HttpServer
++ ç¬¬4æ­¥: åˆ›å»ºHttpServer
 ```
 package com.github.obase.test;
 
@@ -111,14 +111,14 @@ public class HttpServer {
 
 ```
 
-Æô¶¯HttpServer, ä¯ÀÀÆ÷ÊäÈë"http://localhost/test/hello?name=jason.he"
+å¯åŠ¨HttpServer, æµè§ˆå™¨è¾“å…¥"http://localhost/test/hello?name=jason.he"
 ```
 {"errno":0,"data":"hello jason.he"}
 ```
 
-## obase-webcÓëspring-bootÕûºÏ
+## obase-webcä¸spring-bootæ•´åˆ
 
-- mavenÒÀÀµ
+- mavenä¾èµ–
 ```
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -209,14 +209,14 @@ public class HttpServer {
 	</build>
 </project>
 ```
-ÆäÖĞpropertiesµÄÖµÈ·±£obase-webcÓëspring-bootÊ¹ÓÃÏàÍ¬°æ±¾ÒÀÀµ.
+å…¶ä¸­propertiesçš„å€¼ç¡®ä¿obase-webcä¸spring-bootä½¿ç”¨ç›¸åŒç‰ˆæœ¬ä¾èµ–.
 
-- java´úÂë
+- javaä»£ç 
 
 ```
 
-//×¢Òâorg.springframework.boot.web.servlet.ServletContextInitializer
-//²»ÊÇjavax.servlet.ServletContainerInitializer
+//æ³¨æ„org.springframework.boot.web.servlet.ServletContextInitializer
+//ä¸æ˜¯javax.servlet.ServletContainerInitializer
 
 package test.main;
 
@@ -236,140 +236,140 @@ public class AppMain extends WebcServletContainerInitializer implements ServletC
 }
 
 ```
-Ö´ĞĞmvn clean packageÃüÁî¼´¿ÉµÃµ½Ö´ĞĞµÄwar.
+æ‰§è¡Œmvn clean packageå‘½ä»¤å³å¯å¾—åˆ°æ‰§è¡Œçš„war.
 
-obase-webcµÄ³õÖÔ: Å×Æúspring-webmvc, ÔÚspring-web + Servlet 3.0+ »ù´¡½áºÏCOC´òÔìÒ»¿îÈ«ĞÂµÄMVC. 
+obase-webcçš„åˆè¡·: æŠ›å¼ƒspring-webmvc, åœ¨spring-web + Servlet 3.0+ åŸºç¡€ç»“åˆCOCæ‰“é€ ä¸€æ¬¾å…¨æ–°çš„MVC. 
 
-+ Ç°ºó¶Ë·ÖÀë, ÊµÏÖÎŞweb.xmlÆô¶¯, °Ñsrc/main/webappÄ¿Â¼ÍêÈ«½»¸øÇ°¶ËÍÅ¶Ó.
-+ Í³Ò»URLÓ³Éä, »ùÓÚCOCµÄÓ³Éä¹æÔò.
-+ ¿É¼ò¿É·³, ¼òµ¥Ê±´´½¨Ò»¸öwebc.xml¼´¿ÉÊ¹ÓÃ, ²»ÓÃÔÙÅäÖÃweb.xml, Ò²²»ÓÃÔÙÅäÖÃ¸÷ÖÖ¿ò¼Üservlet;  ¸´ÔÓÊ±¿ÉÒÔÏ¸Á£¶È¿ØÖÆAPI·ÃÎÊ²ßÂÔ, ½Ó¹ÜSpring SecurityµÄ¹¦ÄÜ. 
-+ Óëservlet¹²´æ, ÕâÑù¾ÍÄÜÓëspring-mvcÎŞ·ìÕûºÏ(ÀúÊ·ÒÅÁôÔ­Òò). --- »ùÓÚFilter¼¼ÊõÊµÏÖ.
-+ Ö§³Ö¶¯Ì¬session cookieĞ£Ñé. --- ÆôÓÃºócookie×Ô´øÊ±¼ä´ÁÓëhashÖ¸ÎÆ.
-+ Ö§³ÖÀàËÆrestfulµÄAPI, Ö§³ÖUIÓëAPI¹²ÓÃÏàÍ¬µÄController. --- @Controller + @ServletMethod
-+ Ö§³ÖÎ¢·şÎñ¿ò¼Ü. --- @Service + @InvokerService
-+ Ö§³Ö¶à»ú²¿Êğ+·Ö²¼Ê½»á»°.
-+ Ã»ÓĞ·´ÉäËğºÄ. reflectÌ«outÁË, »ùÓÚASM + ServletMethodFilter ×Ô¶¯×é×°À¹½Ø´úÂëµ½@ServletMethod·½·¨.
-+ ±£³Ö×îĞ¡ÇÖÈë. ¸Ãµã×î¹Ø¼ü, Ò²ÊÇ×îÖØÒª. Ê¹ÓÃÕßÖ»ĞèÖªµÀ@InvokerService, @ServletMethod, SerlvetMethodFilter, ServletMethodProcssor¼¸¸ö×¢½â»òAPI, ÆäËû»¹ÊÇHttpServlet API, »òÕßSpring API.
++ å‰åç«¯åˆ†ç¦», å®ç°æ— web.xmlå¯åŠ¨, æŠŠsrc/main/webappç›®å½•å®Œå…¨äº¤ç»™å‰ç«¯å›¢é˜Ÿ.
++ ç»Ÿä¸€URLæ˜ å°„, åŸºäºCOCçš„æ˜ å°„è§„åˆ™.
++ å¯ç®€å¯çƒ¦, ç®€å•æ—¶åˆ›å»ºä¸€ä¸ªwebc.xmlå³å¯ä½¿ç”¨, ä¸ç”¨å†é…ç½®web.xml, ä¹Ÿä¸ç”¨å†é…ç½®å„ç§æ¡†æ¶servlet;  å¤æ‚æ—¶å¯ä»¥ç»†ç²’åº¦æ§åˆ¶APIè®¿é—®ç­–ç•¥, æ¥ç®¡Spring Securityçš„åŠŸèƒ½. 
++ ä¸servletå…±å­˜, è¿™æ ·å°±èƒ½ä¸spring-mvcæ— ç¼æ•´åˆ(å†å²é—ç•™åŸå› ). --- åŸºäºFilteræŠ€æœ¯å®ç°.
++ æ”¯æŒåŠ¨æ€session cookieæ ¡éªŒ. --- å¯ç”¨åcookieè‡ªå¸¦æ—¶é—´æˆ³ä¸hashæŒ‡çº¹.
++ æ”¯æŒç±»ä¼¼restfulçš„API, æ”¯æŒUIä¸APIå…±ç”¨ç›¸åŒçš„Controller. --- @Controller + @ServletMethod
++ æ”¯æŒå¾®æœåŠ¡æ¡†æ¶. --- @Service + @InvokerService
++ æ”¯æŒå¤šæœºéƒ¨ç½²+åˆ†å¸ƒå¼ä¼šè¯.
++ æ²¡æœ‰åå°„æŸè€—. reflectå¤ªoutäº†, åŸºäºASM + ServletMethodFilter è‡ªåŠ¨ç»„è£…æ‹¦æˆªä»£ç åˆ°@ServletMethodæ–¹æ³•.
++ ä¿æŒæœ€å°ä¾µå…¥. è¯¥ç‚¹æœ€å…³é”®, ä¹Ÿæ˜¯æœ€é‡è¦. ä½¿ç”¨è€…åªéœ€çŸ¥é“@InvokerService, @ServletMethod, SerlvetMethodFilter, ServletMethodProcssorå‡ ä¸ªæ³¨è§£æˆ–API, å…¶ä»–è¿˜æ˜¯HttpServlet API, æˆ–è€…Spring API.
 
-ºóÃæ»á¾ßÌåÒ»Ò»½éÉÜ.
+åé¢ä¼šå…·ä½“ä¸€ä¸€ä»‹ç».
 
 # obase-jedis
-* obase-jedis ×îĞÂ°æ±¾
+* obase-jedis æœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-jedis</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependen
 ```
 
 # obase-test
 
-* obase-test ×îĞÂ°æ±¾
+* obase-test æœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-test</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependen
 ```
-## obase-testÊÇÊ²Ã´?
-·â×°ÁËembedded tomcat 8Óëjunit4, ¼òµ¥¼´¿ÉÊµÏÖhttpsµÄ²âÊÔ, ÒÔ¼°Spring ContextÉÏÏÂÎÄµ¥Ôª²âÊÔ. ÎªÊ²Ã´²»ÓÃJetty9? ÓÃ¹ıÄã¾ÍÖªµÀjetty9 ¶ÔÓÚServlet 3.0+µÄÖ§³ÖÓĞ¶à·³!
+## obase-testæ˜¯ä»€ä¹ˆ?
+å°è£…äº†embedded tomcat 8ä¸junit4, ç®€å•å³å¯å®ç°httpsçš„æµ‹è¯•, ä»¥åŠSpring Contextä¸Šä¸‹æ–‡å•å…ƒæµ‹è¯•. ä¸ºä»€ä¹ˆä¸ç”¨Jetty9? ç”¨è¿‡ä½ å°±çŸ¥é“jetty9 å¯¹äºServlet 3.0+çš„æ”¯æŒæœ‰å¤šçƒ¦!
 
 # obase-config
 
-* obase-config ×îĞÂ°æ±¾
+* obase-config æœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-config</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependen
 ```
-## obase-configÊÇÊ²Ã´?
-»ùÓÚSpring, ÊµÏÖPropertySourceConfigurerµÄ¹¦ÄÜ, ¸ü¶àµØ... Ö§³ÖredisÓëmysqlµÄ¶¯Ì¬ÅäÖÃ»ñÈ¡Óë¶¨Ê±¸üĞÂ, »¹ÓĞ... ¼ÓÃÜÅäÖÃÏî, Õâ¸ö¶ÔÓÚÃô¸ĞÊı¾İÀ´ËµÊÇÒ»ÖÖ¼ò½àµÄ´¦Àí·½Ê½.
+## obase-configæ˜¯ä»€ä¹ˆ?
+åŸºäºSpring, å®ç°PropertySourceConfigurerçš„åŠŸèƒ½, æ›´å¤šåœ°... æ”¯æŒredisä¸mysqlçš„åŠ¨æ€é…ç½®è·å–ä¸å®šæ—¶æ›´æ–°, è¿˜æœ‰... åŠ å¯†é…ç½®é¡¹, è¿™ä¸ªå¯¹äºæ•æ„Ÿæ•°æ®æ¥è¯´æ˜¯ä¸€ç§ç®€æ´çš„å¤„ç†æ–¹å¼.
 
 # obase-loader
 
-* obase-loader ×îĞÂ°æ±¾
+* obase-loader æœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-loader</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependen
 ```
-## obase-loaderÊÇÊ²Ã´?
-ÄãµÄjarĞèÒª¼ÓÃÜ·¢²¼Ã´? obase-loader»ùÓÚspring contextµÄclassloader»úÖÆ, ÊµÏÖ¼ÓÔØÊ±½âÃÜ×Ö½ÚÂë¹¦ÄÜ.
+## obase-loaderæ˜¯ä»€ä¹ˆ?
+ä½ çš„jaréœ€è¦åŠ å¯†å‘å¸ƒä¹ˆ? obase-loaderåŸºäºspring contextçš„classloaderæœºåˆ¶, å®ç°åŠ è½½æ—¶è§£å¯†å­—èŠ‚ç åŠŸèƒ½.
 
 # obase-mysql
 
-* obase-mysql×îĞÂ°æ±¾
+* obase-mysqlæœ€æ–°ç‰ˆæœ¬
 ```xml
 <dependency>
 	<groupId>com.github.obase</groupId>
 	<artifactId>obase-mysql</artifactId>
-	<version>0.8.2</version>
+	<version>1.2.0</version>
 </dependency>
 ```
 
-## obase-mysqlÊÇÊ²Ã´?
-¹ËÃûË¼Òé, obase-mysqlÊÇÕë¶ÔmysqlµÄÒ»¸öjdbc·â×°¹¤¾ß.ÔÚÊµ¼ÊÏîÄ¿Ê¹ÓÃÁË¼¸ÄêµÄhibernate, mybatis, spring-jdbcºó·¢ÏÖÃ¿ÖÖ¿ò¼Ü¸÷ÓĞÌØµã,Í¬Ê±´æÔÚÒ»Ğ©²»¾¡ÈËÒâµÄµØ·½:
+## obase-mysqlæ˜¯ä»€ä¹ˆ?
+é¡¾åæ€è®®, obase-mysqlæ˜¯é’ˆå¯¹mysqlçš„ä¸€ä¸ªjdbcå°è£…å·¥å…·.åœ¨å®é™…é¡¹ç›®ä½¿ç”¨äº†å‡ å¹´çš„hibernate, mybatis, spring-jdbcåå‘ç°æ¯ç§æ¡†æ¶å„æœ‰ç‰¹ç‚¹,åŒæ—¶å­˜åœ¨ä¸€äº›ä¸å°½äººæ„çš„åœ°æ–¹:
 
-¹ØÓÚHibernate: 
-* Hibernate·â×°Entity(ÅäÖÃhibernate.hbm2ddl.auto»¹ÄÜ×Ô¶¯¹ÜÀí±í½á¹¹),µ¥±í²Ù×÷²»ĞèĞ´ÈÎºÎSQL,ÕâµãºÜË¬. µ«¶à±í²Ù×÷ÄØ? HibernateµÄHQLÌ«ÖÂÃü,²»Ö§³Ö×Ó²éÑ¯,ÍâÁ¬½Ó(left join, right join)²éÑ¯±ØĞëÅäÖÃ@OneToMany, @ManyToMany µÈ¹ØÁª×¢½â. ºÜ¶àÍ¬Ñ§»áËµHibernateÖ§³ÖNative SQLÑ½. àÅ,»ùÓÚ±¾µØSQL½Ó¿Ú¿ÉÒÔĞ´ÈÎºÎSQL,µ«ÊÇÒªÇó¿ª·¢×Ô¼ºÈ¥·â×°Object[]½á¹û. Èç¹ûÕâÑùµÄÇé¾°¶àÁË, ÎªÊ²Ã´²»µ¹»ØÈ¥ÓÃSpring-jdbcµÄRowMapperÄØ? »òĞíÄãÓÖ»á±§Ô¹, ÄÄÃ¿ÕÅ±íÓÖÒªÈ¥Ğ´Ò»Ğ©À×Í¬µÄCRUD SQLÁË!!!
-* HibernateµÄHQL¾­¹ıantlrÓï·¨½âÎö³ÉADT(³éÏóÓï·¨Ê÷),×îºó½áºÏDialectÅäÖÃ×ª³É¾ßÌåÊı¾İ¿âµÄSQLÓï·¨, ÀıÈçºÜ¶àÏ²»¶µÄ·ÖÒ³²éÑ¯, ÔÚmysql×ª³Élimit clause, ÔÚoracleÔòÅäºÏrownum½øĞĞ¹ıÂË. ÕâÖĞ¼ä¾­¹ı2²ã×ª»», ĞÔÄÜÃ´? Ò»Ö±ÊÇºÜ¶à¿ª·¢±§Ô¹µÄ½¹µã.
-* HibernateÌá¹©ÁËÒ»¼¶»º´æ,ÉõÖÁÄã¿ÉÒÔÅäÖÃ¶ş¼¶´æ¼õÉÙÊı¾İ¿â²éÑ¯ÆµÂÊ,Ìá¸ßÊı¾İ²éÑ¯ĞÔÄÜ.Ä³ÖÖ²ãÃæ,ÕâÖÖcache¹ÜÀíµÄ¸ß³¬¼¼ÇÉÊµÔÚÁîÈËÉÍĞÄÔÃÄ¿,Ì¾Îª¹ÛÖ¹. µ«ÊÇ...µ«ÊÇ...¶ÔÓÚ´ó¶àÊı¾İµÄ»¥ÁªÍøÓ¦ÓÃÎªÁËHA(¸ß¿ÉÓÃ)ºÍLB(¸ºÔØ¾ùºâ), ¶¼»á²ÉÓÃ¶à»ú²¿ÊğÄ£Ê½. ÔÚÕâÖÖÇé¿öÏÂ, ¸÷É«µ¥»úµÄ»º´æ¾ø¶ÔÄÜÈÃÄã·¢·èÔÙ·¢ãÂ, ÖøÃûµÄCAPÀíÂÛµÃµ½×îÇĞÊµµÄÑéÖ¤. ×îºó,ÎªÁËÈÆ¹ı»º´æ,Ã¿´Î²Ù×÷Íêºó±ØĞëµ÷ÓÃflush(), clear()...ºÎ±ØÄØ? ÎÒÓÃmybatis, spring-jdbc²»ÊÇ¸üÊ¡ÊÂÃ´? µ«ÊÇ...µ¥±í²Ù×÷µÄĞèÇóÓÖ"µ°ÌÛ"ÁË.
-* Hibernate×ÜÌå¶øÑÔ,ÓĞ3¸öÊ¹ÓÃ²ã´Î, Ñ§Ï°ÄÑ¶ÈÖğ²ã·­±¶: 
-    1. ±íÓ³Éä, °üÀ¨µ¥×Ö¶ÎÓ³Éä,¶à×Ö¶ÎÓ³Éä. ´ó¶àÊı¿ª·¢¶¼Í£ÁôÔÚÕâ¸ö½×¶Î.
-    2. ±í¹ØÁª, °üÀ¨Ò»¶ÔÒ»¹ØÁª,Ò»¶Ô¶à¹ØÁª,¶à¶Ô¶à¹ØÁª. ¹ØÁª¶Ô²éÑ¯ĞÔÄÜµÄÓ°ÏìºÜ´ó, ÓÅ»¯²ßÂÔ¾ÍÊÇ½¨ÒéÍâ¼ü²¿·Ö¾¡¿ÉÄÜÓÃlazy,ÉÙÓÃeager,µ«ÒªÊ®·ÖĞ¡ĞÄ"µ°ÌÛ"µÄLazyInitializationException. ÁíÍâ, Hibernate¹Ù·½ÌØ±ğÇ¿µ÷¹ØÁªÉî¶ÈÎÊÌâ,½¨Òé²»Òª³¬¹ı3²ã. »¹ÓĞ, ÍÆ¼öÓÃĞ¡±í×÷ÎªÖ÷±í¹ØÁª´ó±í...µÈµÈ. ÄÄĞ©Ã»¶ÔHibernate½øĞĞÏµÍ³ÑĞ¾¿µÄ¿ª·¢, ÎÒÖ»ÄÜ½¨ÒéÈçÎŞ±ØÒª,±ğÔÚÄãµÄÏîÄ¿ÖĞÊ¹ÓÃ±í¹ØÁª.
-    3. ±í¼Ì³Ğ, HibernateµÄ¼Ì³Ğ²ßÂÔÓĞ3ÖÖÊµÏÖ²ßÂÔ: µ¥±í¼Ì³Ğ²ßÂÔ(table per class), Íâ¼üJoined²ßÂÔ(table per subclass), ºÍ±êÊ¶×Ö¶Î²ßÂÔ(table per class). Ñ¡Ôñ²»Í¬²ßÂÔ±ØĞë½÷É÷, Ó°Ïì×îÖÂÃüµÄ²»ÊÇ³ÌĞò, ¶øÊÇ±í½á¹¹ÓëÊı¾İ´æ´¢. ±Ï¾¹´úÂëµÄ¶«Î÷´ó²»ÁËÖØĞ´, µ«Êı¾İÂÒÁË, Äã»¹ÄÜ"µ°¶¨"µØÇáÃèµ­Ğ´ËµÒ»Éù: "´ó²»ÁËÖØĞÂÉú³ÉÊı¾İ"Ã´? ¹ûÕæÓ¢ĞÛ! 
+å…³äºHibernate: 
+* Hibernateå°è£…Entity(é…ç½®hibernate.hbm2ddl.autoè¿˜èƒ½è‡ªåŠ¨ç®¡ç†è¡¨ç»“æ„),å•è¡¨æ“ä½œä¸éœ€å†™ä»»ä½•SQL,è¿™ç‚¹å¾ˆçˆ½. ä½†å¤šè¡¨æ“ä½œå‘¢? Hibernateçš„HQLå¤ªè‡´å‘½,ä¸æ”¯æŒå­æŸ¥è¯¢,å¤–è¿æ¥(left join, right join)æŸ¥è¯¢å¿…é¡»é…ç½®@OneToMany, @ManyToMany ç­‰å…³è”æ³¨è§£. å¾ˆå¤šåŒå­¦ä¼šè¯´Hibernateæ”¯æŒNative SQLå‘€. å—¯,åŸºäºæœ¬åœ°SQLæ¥å£å¯ä»¥å†™ä»»ä½•SQL,ä½†æ˜¯è¦æ±‚å¼€å‘è‡ªå·±å»å°è£…Object[]ç»“æœ. å¦‚æœè¿™æ ·çš„æƒ…æ™¯å¤šäº†, ä¸ºä»€ä¹ˆä¸å€’å›å»ç”¨Spring-jdbcçš„RowMapperå‘¢? æˆ–è®¸ä½ åˆä¼šæŠ±æ€¨, å“ªæ¯å¼ è¡¨åˆè¦å»å†™ä¸€äº›é›·åŒçš„CRUD SQLäº†!!!
+* Hibernateçš„HQLç»è¿‡antlrè¯­æ³•è§£ææˆADT(æŠ½è±¡è¯­æ³•æ ‘),æœ€åç»“åˆDialecté…ç½®è½¬æˆå…·ä½“æ•°æ®åº“çš„SQLè¯­æ³•, ä¾‹å¦‚å¾ˆå¤šå–œæ¬¢çš„åˆ†é¡µæŸ¥è¯¢, åœ¨mysqlè½¬æˆlimit clause, åœ¨oracleåˆ™é…åˆrownumè¿›è¡Œè¿‡æ»¤. è¿™ä¸­é—´ç»è¿‡2å±‚è½¬æ¢, æ€§èƒ½ä¹ˆ? ä¸€ç›´æ˜¯å¾ˆå¤šå¼€å‘æŠ±æ€¨çš„ç„¦ç‚¹.
+* Hibernateæä¾›äº†ä¸€çº§ç¼“å­˜,ç”šè‡³ä½ å¯ä»¥é…ç½®äºŒçº§å­˜å‡å°‘æ•°æ®åº“æŸ¥è¯¢é¢‘ç‡,æé«˜æ•°æ®æŸ¥è¯¢æ€§èƒ½.æŸç§å±‚é¢,è¿™ç§cacheç®¡ç†çš„é«˜è¶…æŠ€å·§å®åœ¨ä»¤äººèµå¿ƒæ‚¦ç›®,å¹ä¸ºè§‚æ­¢. ä½†æ˜¯...ä½†æ˜¯...å¯¹äºå¤§å¤šæ•°æ®çš„äº’è”ç½‘åº”ç”¨ä¸ºäº†HA(é«˜å¯ç”¨)å’ŒLB(è´Ÿè½½å‡è¡¡), éƒ½ä¼šé‡‡ç”¨å¤šæœºéƒ¨ç½²æ¨¡å¼. åœ¨è¿™ç§æƒ…å†µä¸‹, å„è‰²å•æœºçš„ç¼“å­˜ç»å¯¹èƒ½è®©ä½ å‘ç–¯å†å‘æ‡µ, è‘—åçš„CAPç†è®ºå¾—åˆ°æœ€åˆ‡å®çš„éªŒè¯. æœ€å,ä¸ºäº†ç»•è¿‡ç¼“å­˜,æ¯æ¬¡æ“ä½œå®Œåå¿…é¡»è°ƒç”¨flush(), clear()...ä½•å¿…å‘¢? æˆ‘ç”¨mybatis, spring-jdbcä¸æ˜¯æ›´çœäº‹ä¹ˆ? ä½†æ˜¯...å•è¡¨æ“ä½œçš„éœ€æ±‚åˆ"è›‹ç–¼"äº†.
+* Hibernateæ€»ä½“è€Œè¨€,æœ‰3ä¸ªä½¿ç”¨å±‚æ¬¡, å­¦ä¹ éš¾åº¦é€å±‚ç¿»å€: 
+    1. è¡¨æ˜ å°„, åŒ…æ‹¬å•å­—æ®µæ˜ å°„,å¤šå­—æ®µæ˜ å°„. å¤§å¤šæ•°å¼€å‘éƒ½åœç•™åœ¨è¿™ä¸ªé˜¶æ®µ.
+    2. è¡¨å…³è”, åŒ…æ‹¬ä¸€å¯¹ä¸€å…³è”,ä¸€å¯¹å¤šå…³è”,å¤šå¯¹å¤šå…³è”. å…³è”å¯¹æŸ¥è¯¢æ€§èƒ½çš„å½±å“å¾ˆå¤§, ä¼˜åŒ–ç­–ç•¥å°±æ˜¯å»ºè®®å¤–é”®éƒ¨åˆ†å°½å¯èƒ½ç”¨lazy,å°‘ç”¨eager,ä½†è¦ååˆ†å°å¿ƒ"è›‹ç–¼"çš„LazyInitializationException. å¦å¤–, Hibernateå®˜æ–¹ç‰¹åˆ«å¼ºè°ƒå…³è”æ·±åº¦é—®é¢˜,å»ºè®®ä¸è¦è¶…è¿‡3å±‚. è¿˜æœ‰, æ¨èç”¨å°è¡¨ä½œä¸ºä¸»è¡¨å…³è”å¤§è¡¨...ç­‰ç­‰. å“ªäº›æ²¡å¯¹Hibernateè¿›è¡Œç³»ç»Ÿç ”ç©¶çš„å¼€å‘, æˆ‘åªèƒ½å»ºè®®å¦‚æ— å¿…è¦,åˆ«åœ¨ä½ çš„é¡¹ç›®ä¸­ä½¿ç”¨è¡¨å…³è”.
+    3. è¡¨ç»§æ‰¿, Hibernateçš„ç»§æ‰¿ç­–ç•¥æœ‰3ç§å®ç°ç­–ç•¥: å•è¡¨ç»§æ‰¿ç­–ç•¥(table per class), å¤–é”®Joinedç­–ç•¥(table per subclass), å’Œæ ‡è¯†å­—æ®µç­–ç•¥(table per class). é€‰æ‹©ä¸åŒç­–ç•¥å¿…é¡»è°¨æ…, å½±å“æœ€è‡´å‘½çš„ä¸æ˜¯ç¨‹åº, è€Œæ˜¯è¡¨ç»“æ„ä¸æ•°æ®å­˜å‚¨. æ¯•ç«Ÿä»£ç çš„ä¸œè¥¿å¤§ä¸äº†é‡å†™, ä½†æ•°æ®ä¹±äº†, ä½ è¿˜èƒ½"è›‹å®š"åœ°è½»ææ·¡å†™è¯´ä¸€å£°: "å¤§ä¸äº†é‡æ–°ç”Ÿæˆæ•°æ®"ä¹ˆ? æœçœŸè‹±é›„! 
 
-ÒÔÉÏÊÇÎÒ´Ó2009Äê¿ªÊ¼Ê¹ÓÃHibernateÒÔÀ´µÄÒ»Ğ©ÕæÊµ¸ĞÊÜ! ¼òµ¥×Ü½á: Ö»ÓÃhibernateµÄ±íÓ³Éä, ÉÙÁ¿Ê¹ÓÃ±í¹ØÁª,¶øÇÒ²ã¼¶<2. ´òËÀ²»ÓÃ±í¼Ì³Ğ...ÁíÍâ,¸ß²¢·¢ĞÔÄÜµÄ²éÑ¯½Ó¿ÚÊ¹ÓÃNative SQL. ±ØÒªÊ±Ê¹ÓÃprocedure.
+ä»¥ä¸Šæ˜¯æˆ‘ä»2009å¹´å¼€å§‹ä½¿ç”¨Hibernateä»¥æ¥çš„ä¸€äº›çœŸå®æ„Ÿå—! ç®€å•æ€»ç»“: åªç”¨hibernateçš„è¡¨æ˜ å°„, å°‘é‡ä½¿ç”¨è¡¨å…³è”,è€Œä¸”å±‚çº§<2. æ‰“æ­»ä¸ç”¨è¡¨ç»§æ‰¿...å¦å¤–,é«˜å¹¶å‘æ€§èƒ½çš„æŸ¥è¯¢æ¥å£ä½¿ç”¨Native SQL. å¿…è¦æ—¶ä½¿ç”¨procedure.
 
-¹ØÓÚMybatis(ibatis):
-* mybatisµÄºËĞÄ¾ÍÊÇSqlMap, ¹»¼òµ¥, ÎŞĞè×¸Êö, Èç¹ûmybatis¶¼¿´²»¶®ÄØ? 
-* mybatisµÄ¶¯Ì¬SQL±êÇ©, ¿´ÆğÀ´ÊÇ¹¦ÄÜ¹»Ç¿µÄ! ¶ÔÓÚ¶¯Ì¬Æ´½Ó,Ö»ÄÜËµÊÇ"É½ÓëË®µÄ¹ØÏµ", ÈÊÕßÀÖÉ½, ÖÇÕßÀÖË®. ¶¯Ì¬ÌØĞÔÂú×ãÁËÄÄĞ©Ï²»¶Æ´½ÓSQLµÄ¿ª·¢ĞÄÀí, ÌØ±ğÊÇÊ¹ÓÃ$²ÎÊıµÄ¾²Ì¬Ìæ»». Ö»Òª´æÔÚ¶¯Ì¬Æ´½Ó²ÎÊı, ¾ÍÓĞSQL×¢ÈëµÄ·çÏÕ! 
-* mybatisÖ§³ÖSQL²ÎÊıÓë½á¹ûµÄ×Ô¶¯Ó³Éä,Õâµã±ÈÆğhibenrateÁé»îºÜ¶à. µ«ÕâÖÖÊµÏÖÊÇ»ùÓÚ·´ÉäµÄ,Ö±½ÓµÄ½á¹û¾ÍÊÇµ¼ÖÂmybatis±Èhibernate native sqlÃ»ÓĞÌ«¶àµÄĞÔÄÜÓÅÊÆ.
+å…³äºMybatis(ibatis):
+* mybatisçš„æ ¸å¿ƒå°±æ˜¯SqlMap, å¤Ÿç®€å•, æ— éœ€èµ˜è¿°, å¦‚æœmybatiséƒ½çœ‹ä¸æ‡‚å‘¢? 
+* mybatisçš„åŠ¨æ€SQLæ ‡ç­¾, çœ‹èµ·æ¥æ˜¯åŠŸèƒ½å¤Ÿå¼ºçš„! å¯¹äºåŠ¨æ€æ‹¼æ¥,åªèƒ½è¯´æ˜¯"å±±ä¸æ°´çš„å…³ç³»", ä»è€…ä¹å±±, æ™ºè€…ä¹æ°´. åŠ¨æ€ç‰¹æ€§æ»¡è¶³äº†å“ªäº›å–œæ¬¢æ‹¼æ¥SQLçš„å¼€å‘å¿ƒç†, ç‰¹åˆ«æ˜¯ä½¿ç”¨$å‚æ•°çš„é™æ€æ›¿æ¢. åªè¦å­˜åœ¨åŠ¨æ€æ‹¼æ¥å‚æ•°, å°±æœ‰SQLæ³¨å…¥çš„é£é™©! 
+* mybatisæ”¯æŒSQLå‚æ•°ä¸ç»“æœçš„è‡ªåŠ¨æ˜ å°„,è¿™ç‚¹æ¯”èµ·hibenrateçµæ´»å¾ˆå¤š. ä½†è¿™ç§å®ç°æ˜¯åŸºäºåå°„çš„,ç›´æ¥çš„ç»“æœå°±æ˜¯å¯¼è‡´mybatisæ¯”hibernate native sqlæ²¡æœ‰å¤ªå¤šçš„æ€§èƒ½ä¼˜åŠ¿.
 
-ÒÔÉÏÊÇÎÒÕâ¼¸ÄêÊ¹ÓÃmybatisÒÔÀ´µÄÒ»Ğ©Ìå»á, ´ÓÄ³ÖÖ²ãÃæÀ´Ëµ, mybatisÄÜ¹»·ûºÏ´ó¶àÊı¿ª·¢ĞèÇó! ÄÑ¹ÖÌÔ±¦ÏµµÄ»ù´¡¼¼ÊõÖĞ¾ÍÓĞibatis. µ«ÊÇmybatisÃ»ÓĞÅúÁ¿²Ù×÷µÄ½Ó¿Ú, ÒÔ¼°²»ÄÜÏñhibernateÄÄÑù×Ô¶¯¹ÜÀíÊı¾İ±í½á¹¹, ÉõÖÁ·ÖÒ³Ò²ĞèÒª½èÖúµÚÈı·½²å¼ş...²»ÃâÓĞĞ©Ê§Âä.
+ä»¥ä¸Šæ˜¯æˆ‘è¿™å‡ å¹´ä½¿ç”¨mybatisä»¥æ¥çš„ä¸€äº›ä½“ä¼š, ä»æŸç§å±‚é¢æ¥è¯´, mybatisèƒ½å¤Ÿç¬¦åˆå¤§å¤šæ•°å¼€å‘éœ€æ±‚! éš¾æ€ªæ·˜å®ç³»çš„åŸºç¡€æŠ€æœ¯ä¸­å°±æœ‰ibatis. ä½†æ˜¯mybatisæ²¡æœ‰æ‰¹é‡æ“ä½œçš„æ¥å£, ä»¥åŠä¸èƒ½åƒhibernateå“ªæ ·è‡ªåŠ¨ç®¡ç†æ•°æ®è¡¨ç»“æ„, ç”šè‡³åˆ†é¡µä¹Ÿéœ€è¦å€ŸåŠ©ç¬¬ä¸‰æ–¹æ’ä»¶...ä¸å…æœ‰äº›å¤±è½.
 
-ºÜ¶àÏîÄ¿Í¬Ê±Ó¦ÓÃÁËhibernateÓëmybatis,È¡³¤²¹¶Ì,±¾À´Ë¼Â·ºÜ²»´í! µ«ÊÇ¶¼ºöÂÔÁËÒ»¸ö»îÉúÉúµÄÊÂÊµ: hibernateÓëmybatisÓëspringÊÂÎñµÄ¼¯³É½Ó¿Ú²»Í¬! »»ÑÔÖ®, ÏîÄ¿ÀïÃæµÄ´úÂë, ÒªÃ´ÓÃhibernate, ÒªÃ´ÓÃmybatis. »ìÓÃ¶şÕß, ÊÂÎñ»á³ÉºÜ´óµÄÎÊÌâ. 
+å¾ˆå¤šé¡¹ç›®åŒæ—¶åº”ç”¨äº†hibernateä¸mybatis,å–é•¿è¡¥çŸ­,æœ¬æ¥æ€è·¯å¾ˆä¸é”™! ä½†æ˜¯éƒ½å¿½ç•¥äº†ä¸€ä¸ªæ´»ç”Ÿç”Ÿçš„äº‹å®: hibernateä¸mybatisä¸springäº‹åŠ¡çš„é›†æˆæ¥å£ä¸åŒ! æ¢è¨€ä¹‹, é¡¹ç›®é‡Œé¢çš„ä»£ç , è¦ä¹ˆç”¨hibernate, è¦ä¹ˆç”¨mybatis. æ··ç”¨äºŒè€…, äº‹åŠ¡ä¼šæˆå¾ˆå¤§çš„é—®é¢˜. 
 
-ÑóÑóÈ÷È÷³¶ÁËÕâÃ´¶à, ´ó¼ÒÓ¦¸ÃÃ÷°×spring-mysqlclientµÄÉè¼Æ³õÖÔÁË°É. Ëµ°×ÁË¾ÍÊÇ×ÛºÏÁËhibernateÓëmybatisµÄºÃÓÃÌØĞÔ, Í¬Ê±Ê¹ÓÃASM×Ö½ÚÂë¼¼ÊõÌæ´ú¶¯Ì¬·´Éä, ÌáÉı²éÑ¯¹ı³ÌµÄĞÔÄÜ.
+æ´‹æ´‹æ´’æ´’æ‰¯äº†è¿™ä¹ˆå¤š, å¤§å®¶åº”è¯¥æ˜ç™½spring-mysqlclientçš„è®¾è®¡åˆè¡·äº†å§. è¯´ç™½äº†å°±æ˜¯ç»¼åˆäº†hibernateä¸mybatisçš„å¥½ç”¨ç‰¹æ€§, åŒæ—¶ä½¿ç”¨ASMå­—èŠ‚ç æŠ€æœ¯æ›¿ä»£åŠ¨æ€åå°„, æå‡æŸ¥è¯¢è¿‡ç¨‹çš„æ€§èƒ½.
 
-## obase-mysqlÓĞÄÄĞ©¹¦ÄÜ
+## obase-mysqlæœ‰å“ªäº›åŠŸèƒ½
 
-* mysqlclient¿ªÆôupdateTableÌØĞÔ, ÔÊĞí×Ô¶¯¸ù¾İ@TableÀà¸üĞÂÊı¾İ±í½á¹¹. µ«½öÏŞÓÚ"Ôö¼Ó"²Ù×÷. ¾ßÌå¹æÔò:
-    1. Èç¹û±í²»´æÔÚ, Ôò×Ô¶¯´´½¨±í, ÒÔ¼°¶¨ÒåÖ÷¼ü, Íâ¼ü, Ë÷Òı.
-    2. Èç¹û±í´æÔÚ, Ôò¼ì²é±í½á¹¹:
-        1. ±È½Ï×Ö¶Î, Èç¹û´æÔÚÍ¬Ãû×Ö¶Î, Ôò²»ÔÙĞŞ¸Ä.
-        1. ±È½ÏÖ÷¼ü, Èç¹û´æÔÚÖ÷¼üÔò²»ÔÙĞŞ¸Ä. µ«»á¼ì²éÖ÷¼ü×Ö¶ÎÊÇ·ñÏàÍ¬, ²¢ÏÔÊ¾Ïà¹Ø¾¯¸æĞÅÏ¢.
-        1. ±È½ÏÍâ¼ü, Èç¹û´æÔÚÍ¬ÃûÍâÃû, Ôò²»ÔÙĞŞ¸Ä.
-        1. ±È½ÏË÷Òı, Èç¹û´æÔÚÍ¬ÃûË÷Òı, Ôò²»ÔÙĞŞ¸Ä.
+* mysqlclientå¼€å¯updateTableç‰¹æ€§, å…è®¸è‡ªåŠ¨æ ¹æ®@Tableç±»æ›´æ–°æ•°æ®è¡¨ç»“æ„. ä½†ä»…é™äº"å¢åŠ "æ“ä½œ. å…·ä½“è§„åˆ™:
+    1. å¦‚æœè¡¨ä¸å­˜åœ¨, åˆ™è‡ªåŠ¨åˆ›å»ºè¡¨, ä»¥åŠå®šä¹‰ä¸»é”®, å¤–é”®, ç´¢å¼•.
+    2. å¦‚æœè¡¨å­˜åœ¨, åˆ™æ£€æŸ¥è¡¨ç»“æ„:
+        1. æ¯”è¾ƒå­—æ®µ, å¦‚æœå­˜åœ¨åŒåå­—æ®µ, åˆ™ä¸å†ä¿®æ”¹.
+        1. æ¯”è¾ƒä¸»é”®, å¦‚æœå­˜åœ¨ä¸»é”®åˆ™ä¸å†ä¿®æ”¹. ä½†ä¼šæ£€æŸ¥ä¸»é”®å­—æ®µæ˜¯å¦ç›¸åŒ, å¹¶æ˜¾ç¤ºç›¸å…³è­¦å‘Šä¿¡æ¯.
+        1. æ¯”è¾ƒå¤–é”®, å¦‚æœå­˜åœ¨åŒåå¤–å, åˆ™ä¸å†ä¿®æ”¹.
+        1. æ¯”è¾ƒç´¢å¼•, å¦‚æœå­˜åœ¨åŒåç´¢å¼•, åˆ™ä¸å†ä¿®æ”¹.
         
-        ÏêÏ¸¹ı³Ì, ¿ÉÒÔ²é¿´ **com.github.risedragon.mysql.jdbc.SqlDdlKit.processUpdateTable()** ·½·¨.
+        è¯¦ç»†è¿‡ç¨‹, å¯ä»¥æŸ¥çœ‹ **com.github.risedragon.mysql.jdbc.SqlDdlKit.processUpdateTable()** æ–¹æ³•.
         
-* mysqlclientÌá¹©µ¥±í¼ÇÂ¼µÄinsert, update, replace, merge, delete, batchInsert, batchUpdate, batchReplace, batchMerge, batchDelete, select, select2, selectFirst, selectRange, selectPage²Ù×÷. ÕâĞ©²Ù×÷Ö»ĞèÅäÖÃ@Table, @Column×¢½â¼´¿É, ²»ÓÃĞ´ÈÎºÎSQL. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+* mysqlclientæä¾›å•è¡¨è®°å½•çš„insert, update, replace, merge, delete, batchInsert, batchUpdate, batchReplace, batchMerge, batchDelete, select, select2, selectFirst, selectRange, selectPageæ“ä½œ. è¿™äº›æ“ä½œåªéœ€é…ç½®@Table, @Columnæ³¨è§£å³å¯, ä¸ç”¨å†™ä»»ä½•SQL. è¯¦ç»†ç”¨æ³•, å¯ä»¥å‚è§<å¿«é€Ÿä¸Šæ‰‹>.
 
-* mysqlclientÌá¹©ÃüÃûSQLÖ§³Ö, ²¢¶Ô²ÎÊıÓë½á¹ûµÄÌáÈ¡×Ô¶¯·â×°. ³ıÁËÔ¤¶¨ÒåµÄSqlTypeÓëJavaTypeÀàÔ¤¶¨µÄscalarÀàĞÍ, ÓÃ»§¿ÉÒÔ»ùÓÚActionMeta½Ó¿Ú¶¨ÖÆÊµÏÖ, Í¨¹ı **JdbcAction.markSqlType()** ×¢²áµ½¿ò¼Ü, ×î³£¼û¾ÍÊÇÖ§³Ö¸´ºÏ²ÎÊıIN(:list). ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+* mysqlclientæä¾›å‘½åSQLæ”¯æŒ, å¹¶å¯¹å‚æ•°ä¸ç»“æœçš„æå–è‡ªåŠ¨å°è£…. é™¤äº†é¢„å®šä¹‰çš„SqlTypeä¸JavaTypeç±»é¢„å®šçš„scalarç±»å‹, ç”¨æˆ·å¯ä»¥åŸºäºActionMetaæ¥å£å®šåˆ¶å®ç°, é€šè¿‡ **JdbcAction.markSqlType()** æ³¨å†Œåˆ°æ¡†æ¶, æœ€å¸¸è§å°±æ˜¯æ”¯æŒå¤åˆå‚æ•°IN(:list). è¯¦ç»†ç”¨æ³•, å¯ä»¥å‚è§<å¿«é€Ÿä¸Šæ‰‹>.
 
-* mysqlclientÌá¹©SQLµÄ³£¼û²éÑ¯½Ó¿Ú: query, queryFist, queryRange, queryPage. ÆäÖĞ·ÖÒ³½Ó¿ÚPage, »¹Ìá¹©×Ö¶ÎÅÅĞò¹¦ÄÜ. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>.
+* mysqlclientæä¾›SQLçš„å¸¸è§æŸ¥è¯¢æ¥å£: query, queryFist, queryRange, queryPage. å…¶ä¸­åˆ†é¡µæ¥å£Page, è¿˜æä¾›å­—æ®µæ’åºåŠŸèƒ½. è¯¦ç»†ç”¨æ³•, å¯ä»¥å‚è§<å¿«é€Ÿä¸Šæ‰‹>.
 
-* mysqlclientÌá¹©SQLµÄ³£¼û²Ù×÷½Ó¿Ú: execute, batchExecute. 
+* mysqlclientæä¾›SQLçš„å¸¸è§æ“ä½œæ¥å£: execute, batchExecute. 
 
-* ÁíÍâ, mysqlclientÌá¹©¶ÀÁ¢ÊÂÎñ¹ÜÀí½Ó¿ÚMysqlClientExtÂú×ã²»ĞèÒªSpringµÄPlatformTransactionManager¹ÜÀíÊÂÎñµÄÓ¦ÓÃ, ÍêÈ«±à³ÌÏ¸Á£¶È¿ØÖÆÊÂÎñµÄÌá½»Óë»Ø¹ö. ÏêÏ¸ÓÃ·¨, ¿ÉÒÔ²Î¼û<¿ìËÙÉÏÊÖ>
+* å¦å¤–, mysqlclientæä¾›ç‹¬ç«‹äº‹åŠ¡ç®¡ç†æ¥å£MysqlClientExtæ»¡è¶³ä¸éœ€è¦Springçš„PlatformTransactionManagerç®¡ç†äº‹åŠ¡çš„åº”ç”¨, å®Œå…¨ç¼–ç¨‹ç»†ç²’åº¦æ§åˆ¶äº‹åŠ¡çš„æäº¤ä¸å›æ»š. è¯¦ç»†ç”¨æ³•, å¯ä»¥å‚è§<å¿«é€Ÿä¸Šæ‰‹>
 
-## obase-mysql¿ìËÙÉÏÊÖ
+## obase-mysqlå¿«é€Ÿä¸Šæ‰‹
 
-* ¶¨ÒåÊµÌå
+* å®šä¹‰å®ä½“
    
-Ê¹ÓÃ@Table×¢½â
+ä½¿ç”¨@Tableæ³¨è§£
 ```java
     @OptimisticLock(column = "version")
 public abstract class Base {
 
-	@Column(key = true, autoIncrement = true, comment = "×ÔÔöÖ÷¼ü")
+	@Column(key = true, autoIncrement = true, comment = "è‡ªå¢ä¸»é”®")
 	Long id;
 
 	@Column(length = 16)
@@ -440,31 +440,31 @@ public abstract class Base {
 @Table(engine=Engine.InnoDB, characterSet="UTF8")
 public class Employee extends Base {
 
-	@Column(length = 64, comment = "¹¤ºÅ")
+	@Column(length = 64, comment = "å·¥å·")
 	String cardNo;
-	@Column(length = 16, comment = "ÀàĞÍ")
+	@Column(length = 16, comment = "ç±»å‹")
 	String type;
-	@Column(length = 16, comment = "ĞÕÃû")
+	@Column(length = 16, comment = "å§“å")
 	String name;
-	@Column(length = 8, comment = "ĞÔ±ğ")
+	@Column(length = 8, comment = "æ€§åˆ«")
 	String gender;
-	@Column(length = 16, comment = "²¿ÃÅ")
+	@Column(length = 16, comment = "éƒ¨é—¨")
 	String groupName;
-	@Column(length = 16, comment = "ÊÖ»úºÅÂë")
+	@Column(length = 16, comment = "æ‰‹æœºå·ç ")
 	String phone;
-	@Column(length = 18, comment = "Éí·İÖ¤ºÅÂë", unique = true)
+	@Column(length = 18, comment = "èº«ä»½è¯å·ç ", unique = true)
 	String sid;
-	@Column(length = 18, comment = "»¤ÕÕºÅÂë", unique = true)
+	@Column(length = 18, comment = "æŠ¤ç…§å·ç ", unique = true)
 	String passportNo;
-	@Column(length = 18, comment = "»¤ÕÕºº×ÖÆ´Òô")
+	@Column(length = 18, comment = "æŠ¤ç…§æ±‰å­—æ‹¼éŸ³")
 	String passportAbbr;
-	@Column(length = 8, comment = "ĞéÄâ·¿¼äºÅ")
+	@Column(length = 8, comment = "è™šæ‹Ÿæˆ¿é—´å·")
 	String room;
-	@Column(comment = "´øĞ½ÂÃÓÎ¼ÙÆÚ")
+	@Column(comment = "å¸¦è–ªæ—…æ¸¸å‡æœŸ")
 	Date paidHoliday;
-	@Column(length = 8, defaultValue = "Äê¼Ù", comment = "µÖ¿Û¼ÙÆÚ")
+	@Column(length = 8, defaultValue = "å¹´å‡", comment = "æŠµæ‰£å‡æœŸ")
 	String holidayType;
-	@Column(length = 18, comment = "°ì¹«µØµã")
+	@Column(length = 18, comment = "åŠå…¬åœ°ç‚¹")
 	String officeLocation;
 
 	@Column
@@ -597,7 +597,7 @@ public class Employee extends Base {
 
 ```
 
-Ê¹ÓÃ\<table\>±êÇ©
+ä½¿ç”¨\<table\>æ ‡ç­¾
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <mysql>
@@ -605,13 +605,13 @@ public class Employee extends Base {
     ...
 </mysql>
 ```
-* ¶¨Òå³Ö¾ÃÓëÁÙÊ±µÄJdbcAction
+* å®šä¹‰æŒä¹…ä¸ä¸´æ—¶çš„JdbcAction
     
-    JdbcAction½Ó¿ÚÊµÏÖSQL²ÎÊıÉèÖÃÓë½á¹ûÌáÈ¡µÄ·â×°. mysqlclient»ùÓÚASM×Ô¶¯Éú³ÉÏà¹ØµÄ´úÀíÀàĞÍ. 
+    JdbcActionæ¥å£å®ç°SQLå‚æ•°è®¾ç½®ä¸ç»“æœæå–çš„å°è£…. mysqlclientåŸºäºASMè‡ªåŠ¨ç”Ÿæˆç›¸å…³çš„ä»£ç†ç±»å‹. 
     
-    **×¢Òâ: @Table×¢½â»ò<table>±êÇ©¶¨ÒåµÄÊµÌåÒÑ¾­ÊÇ¸öMeta, ÎŞĞèÔÙÖØ¸´¶¨Òå!**
+    **æ³¨æ„: @Tableæ³¨è§£æˆ–<table>æ ‡ç­¾å®šä¹‰çš„å®ä½“å·²ç»æ˜¯ä¸ªMeta, æ— éœ€å†é‡å¤å®šä¹‰!**
 
-Ê¹ÓÃ@Meta×¢½â
+ä½¿ç”¨@Metaæ³¨è§£
 ```java
 @Meta
 public class EmpPart {
@@ -658,7 +658,7 @@ public class EmpPart {
 }
 ```
 
-Ê¹ÓÃ\<meta\>±êÇ©
+ä½¿ç”¨\<meta\>æ ‡ç­¾
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <mysql>
@@ -667,11 +667,11 @@ public class EmpPart {
 </mysql>
 ```
 
-* ¶¨Òåsql
-Ê¹ÓÃ\<sql\>±êÇ©
+* å®šä¹‰sql
+ä½¿ç”¨\<sql\>æ ‡ç­¾
 
- **×¢Òâ:namespaceÊÇ¿ÉÑ¡µÄ,Ò»µ©¶¨Òå,Ê¹ÓÃSQLÊ±±ØĞë´øÉÏ,ÀıÈçÏÂÊöxmlÖĞÎªtest.insertPartEmployee**
-[ÍêÕûschema¶¨Òå](https://github.com/risedragon/schema/blob/master/risedev-mysql-1.0.xsd)
+ **æ³¨æ„:namespaceæ˜¯å¯é€‰çš„,ä¸€æ—¦å®šä¹‰,ä½¿ç”¨SQLæ—¶å¿…é¡»å¸¦ä¸Š,ä¾‹å¦‚ä¸‹è¿°xmlä¸­ä¸ºtest.insertPartEmployee**
+[å®Œæ•´schemaå®šä¹‰](https://github.com/risedragon/schema/blob/master/risedev-mysql-1.0.xsd)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -683,9 +683,9 @@ public class EmpPart {
 </mysql>
 ```
 
-* ÔÚspringÖĞÅäÖÃmysqlclient
+* åœ¨springä¸­é…ç½®mysqlclient
 
-    ÈİÆ÷¹ÜÀíÊÂÎñµÄÊµÏÖ **MysqlClientPlatformTransactionImpl**
+    å®¹å™¨ç®¡ç†äº‹åŠ¡çš„å®ç° **MysqlClientPlatformTransactionImpl**
     ```xml
     	<bean id="mysqlClient" class="com.github.risedragon.mysql.impl.MysqlClientPlatformTransactionImpl" init-method="init">
 		<property name="dataSource" ref="dataSource" />
@@ -696,7 +696,7 @@ public class EmpPart {
 	</bean>
 
     ```
-    ±à³Ì¹ÜÀíÊÂÎñµÄÊµÏÖ **MysqlClientConnectTransactionImpl**
+    ç¼–ç¨‹ç®¡ç†äº‹åŠ¡çš„å®ç° **MysqlClientConnectTransactionImpl**
     ```xml
     	<bean id="mysqlClient" class="com.github.risedragon.mysql.impl.MysqlClientConnectTransactionImpl" init-method="init">
 		<property name="dataSource" ref="dataSource" />
@@ -707,28 +707,28 @@ public class EmpPart {
 	</bean>
 
     ```   
-    ¸÷¸öÊôĞÔËµÃ÷£º
+    å„ä¸ªå±æ€§è¯´æ˜ï¼š
     
 
-    ÊôĞÔ | ¹¦ÄÜ | Ä¬ÈÏÖµ
+    å±æ€§ | åŠŸèƒ½ | é»˜è®¤å€¼
     ---|---|---
-    dataSource | Êı¾İÔ´ÒıÓÃ£¬ÈÎºÎjava.sql.DataSourceÊµÀı | ÎŞ
-    packagesToScan | É¨Ãè@Table»ò@MetaÀàµÄÆğÊ¼°ü£¬¶àÖµÓÃ¶ººÅ·Ö¸ô£¬ÀıÈç"a.b.c,a.b.d" | ÎŞ
-    configLocations | ¼ÓÔØsql xmlµÄSpring Resource Pattern, ¶àÖµÓÃ¶ººÅ·Ö¸ô£¬ÀıÈç¡°classpath:a/b/c/\*.xml,classpath:a/b/d/\*.xml¡± | ÎŞ
-    showSql | ÏÔÊ¾²Ù×÷µÄSQL. ½¨Òé²âÊÔ»·¾³´ò¿ª£¬Éú²ú»·¾³¹Ø±Õ | false, Ä¬ÈÏ¹Ø±Õ
-    updateTable | ÊÇ·ñ¸üĞÂ±í½á¹¹. Èç¹ûÎªtrue, Ôò¸ù¾İ@TableÓë@ColumnµÄ¶¨Òå¸üĞÂ±í½á¹¹. ÏêÏ¸¹æÔò²Î¼û<mysqlclient¿ªÆôupdateTableÌØĞÔ>. | false, Ä¬ÈÏ¹Ø±Õ´ËÌØĞÔ!
+    dataSource | æ•°æ®æºå¼•ç”¨ï¼Œä»»ä½•java.sql.DataSourceå®ä¾‹ | æ— 
+    packagesToScan | æ‰«æ@Tableæˆ–@Metaç±»çš„èµ·å§‹åŒ…ï¼Œå¤šå€¼ç”¨é€—å·åˆ†éš”ï¼Œä¾‹å¦‚"a.b.c,a.b.d" | æ— 
+    configLocations | åŠ è½½sql xmlçš„Spring Resource Pattern, å¤šå€¼ç”¨é€—å·åˆ†éš”ï¼Œä¾‹å¦‚â€œclasspath:a/b/c/\*.xml,classpath:a/b/d/\*.xmlâ€ | æ— 
+    showSql | æ˜¾ç¤ºæ“ä½œçš„SQL. å»ºè®®æµ‹è¯•ç¯å¢ƒæ‰“å¼€ï¼Œç”Ÿäº§ç¯å¢ƒå…³é—­ | false, é»˜è®¤å…³é—­
+    updateTable | æ˜¯å¦æ›´æ–°è¡¨ç»“æ„. å¦‚æœä¸ºtrue, åˆ™æ ¹æ®@Tableä¸@Columnçš„å®šä¹‰æ›´æ–°è¡¨ç»“æ„. è¯¦ç»†è§„åˆ™å‚è§<mysqlclientå¼€å¯updateTableç‰¹æ€§>. | false, é»˜è®¤å…³é—­æ­¤ç‰¹æ€§!
 
     
-* ÔÚspringÖĞÖ§³ÖÈİÆ÷ÊÂÎñ
+* åœ¨springä¸­æ”¯æŒå®¹å™¨äº‹åŠ¡
 
-    »ùÓÚ×¢½â@Transactional
+    åŸºäºæ³¨è§£@Transactional
     ```xml
     <bean id="transactionManager" class="com.github.risedragon.spring.transaction.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<tx:annotation-driven transaction-manager="transactionManager" />
     ```
-    »ùÓÚTransactionTemplate
+    åŸºäºTransactionTemplate
     ```xml
     <bean id="transactionManager" class="com.github.risedragon.spring.transaction.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -738,7 +738,7 @@ public class EmpPart {
 	</bean>
     ```
 
-* ÊµÌå²Ù×÷: insert, insertIgnore, replace, update, merge, delete, select, select2, batchInsert, batchInsertIgnore, batchReplace, batchUpdate, batchMerge, batchDelete, selectFirst, selectRange, selectPageµÈ
+* å®ä½“æ“ä½œ: insert, insertIgnore, replace, update, merge, delete, select, select2, batchInsert, batchInsertIgnore, batchReplace, batchUpdate, batchMerge, batchDelete, selectFirst, selectRange, selectPageç­‰
 ```java
 @Service
 @Transactional
@@ -749,7 +749,7 @@ public class GenericService {
 
 	public void insret() throws SQLException {
 		Employee emp = new Employee();
-		emp.setGroupName("²âÊÔ²¿ÃÅ");
+		emp.setGroupName("æµ‹è¯•éƒ¨é—¨");
 		emp.setCardNo("135-137");
 		Long id = mysqlClient.insert(emp, Long.class);
 
@@ -819,7 +819,7 @@ public class GenericService {
 			EmpPart part = new EmpPart();
 			part.setCardNo(String.format("000-001-%05d", i + 2000));
 			part.setId(i * 1L + base);
-			part.setGroupName("²âÊÔSQL·Ö×é");
+			part.setGroupName("æµ‹è¯•SQLåˆ†ç»„");
 			part.setVersion(null);
 			array[i] = part;
 		}
@@ -868,37 +868,37 @@ public class GenericService {
 }
 ```
 
-* SQL²Ù×÷: query, queryFirst, queryRange, queryPage, execute, batchExecute
+* SQLæ“ä½œ: query, queryFirst, queryRange, queryPage, execute, batchExecute
 
-    <¼ûÉÏ
+    <è§ä¸Š
 
-## obase-mysql ¸ß¼¶Ó¦ÓÃ
+## obase-mysql é«˜çº§åº”ç”¨
 
-* Áé»îµÄÀÖ¹ÛËø¶¨ÖÆ
+* çµæ´»çš„ä¹è§‚é”å®šåˆ¶
 
-* ½áºÏJAVA¼Ì³ĞÌåÏµ£¬ÊµÏÖÒıÇæÊı¾İ²Ù×÷µÄÁé»îĞÔ
+* ç»“åˆJAVAç»§æ‰¿ä½“ç³»ï¼Œå®ç°å¼•æ“æ•°æ®æ“ä½œçš„çµæ´»æ€§
 
-* Ö§³ÖÁé»î¶à±äµÄÊı¾İ·µ»Ø½Ó¿Ú
+* æ”¯æŒçµæ´»å¤šå˜çš„æ•°æ®è¿”å›æ¥å£
 
-##  obase-mysql ¶¨ÖÆÀ©Õ¹
+##  obase-mysql å®šåˆ¶æ‰©å±•
 
-* À©Õ¹JdbcAction
+* æ‰©å±•JdbcAction
     
-    ¼ÙÉèÒª¶ÔEmpPart×Ô¶¨ÒåJdbcActionÊµÏÖ, Ö»ĞèÒª°´ÕÕÃüÃû¹æ·¶<targetClass>$JdbcActionÊµÏÖ×ÓÀà¼´¿É. ÀıÈç
+    å‡è®¾è¦å¯¹EmpPartè‡ªå®šä¹‰JdbcActionå®ç°, åªéœ€è¦æŒ‰ç…§å‘½åè§„èŒƒ<targetClass>$JdbcActionå®ç°å­ç±»å³å¯. ä¾‹å¦‚
 ```java
     public class EmpPart$JdbcAction extends JdbcAction{
       ...
     }
 ```
-    Í¨¹ıAsmKit.newJdbcAction()¾Í¿ÉÒÔ¼ÓÔØ´´½¨ÊµÀı.
+    é€šè¿‡AsmKit.newJdbcAction()å°±å¯ä»¥åŠ è½½åˆ›å»ºå®ä¾‹.
 
-* À©Õ¹ActionMeta
+* æ‰©å±•ActionMeta
     
-    Èç¹û¶ÔÄ³¸ö×Ö¶ÎÀàĞÍÒªÌØ±ğ¶¨ÖÆ, ÇëÊµÏÖActionMeta, ²¢ÓÉJdbcAction.markSqlType()×¢²á, ºóÃæÓöµ½¸ÃÀàĞÍµÄ×Ö¶Îºó»á×Ô¶¯µ÷ÓÃ¸ÃActionMetaÉèÖÃ²ÎÊı»òÌáÈ¡½á¹û. ÀıÈç¼¯ºÏ²ÎÊıµÄ´¦Àí.
+    å¦‚æœå¯¹æŸä¸ªå­—æ®µç±»å‹è¦ç‰¹åˆ«å®šåˆ¶, è¯·å®ç°ActionMeta, å¹¶ç”±JdbcAction.markSqlType()æ³¨å†Œ, åé¢é‡åˆ°è¯¥ç±»å‹çš„å­—æ®µåä¼šè‡ªåŠ¨è°ƒç”¨è¯¥ActionMetaè®¾ç½®å‚æ•°æˆ–æå–ç»“æœ. ä¾‹å¦‚é›†åˆå‚æ•°çš„å¤„ç†.
 
 
-# ÁªÏµ·½Ê½
+# è”ç³»æ–¹å¼
     
-¿ª·¢Õß | ÁªÏµ·½Ê½
+å¼€å‘è€… | è”ç³»æ–¹å¼
 ---|---
 jasonhe | jasonhe.hzw@foxmail.com, QQ:1255422783
