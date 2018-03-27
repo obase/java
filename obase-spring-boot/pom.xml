@@ -60,6 +60,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-test</artifactId>
+			<scope>test</scope>
+			<version>${obase.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

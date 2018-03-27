@@ -1,6 +1,7 @@
-package demo.test.contoller;
+package demo.test.controller;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +16,7 @@ public class IndexController {
 
 	@ServletMethod(path = Webc.$, csrf = false)
 	public void index(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Kits.writePlain(response, "你已经成功访问了此页面!");
+		Kits.writePlain(response, "你已经成功访问了此页面! 当前时间:" + new Date());
 	}
 
 }
