@@ -10,7 +10,7 @@ import com.github.obase.webc.WebcServletContainerInitializer;
 public class Main extends WebcServletContainerInitializer implements ServletContextInitializer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AppMain.class, args);
+		SpringApplication.run(Main.class, args);
 	}
 
 }
