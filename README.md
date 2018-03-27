@@ -118,28 +118,29 @@ public class HttpServer {
 
 ## obase-webc与spring-boot整合
 
+```
+DEMO: https://github.com/obase/java/tree/master/obase-spring-boot
+```
+
 - maven依赖
 ```
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.obase.boot</groupId>
-	<artifactId>obase-boot-demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-
-	<properties>
-		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
-		<spring.version>4.3.10.RELEASE</spring.version>
-		<jackson.version>2.9.0</jackson.version>
-		<java.version>1.8</java.version>
-		<obase.version>1.1.0-SNAPSHOT</obase.version>
-	</properties>
-
 	<parent>
 		<groupId>com.github.obase</groupId>
 		<artifactId>obase-parent</artifactId>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 	</parent>
+	<artifactId>obase-spring-boot</artifactId>
+	<packaging>war</packaging>
+
+	<properties>
+		<spring.boot.version>1.5.9.RELEASE</spring.boot.version>
+		<spring.version>4.3.10.RELEASE</spring.version>
+		<jackson.version>2.9.0</jackson.version>
+		<java.version>1.8</java.version>
+		<obase.version>1.2.0-SNAPSHOT</obase.version>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -185,6 +186,13 @@ public class HttpServer {
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.obase</groupId>
+			<artifactId>obase-test</artifactId>
+			<scope>test</scope>
+			<version>${obase.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -207,6 +215,7 @@ public class HttpServer {
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
 ```
 其中properties的值确保obase-webc与spring-boot使用相同版本依赖.
@@ -218,7 +227,7 @@ public class HttpServer {
 //注意org.springframework.boot.web.servlet.ServletContextInitializer
 //不是javax.servlet.ServletContainerInitializer
 
-package test.main;
+package demo.test.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -227,13 +236,14 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import com.github.obase.webc.WebcServletContainerInitializer;
 
 @SpringBootApplication
-public class AppMain extends WebcServletContainerInitializer implements ServletContextInitializer {
+public class Main extends WebcServletContainerInitializer implements ServletContextInitializer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AppMain.class, args);
+		SpringApplication.run(Main.class, args);
 	}
 
 }
+
 
 ```
 执行mvn clean package命令即可得到执行的war.
